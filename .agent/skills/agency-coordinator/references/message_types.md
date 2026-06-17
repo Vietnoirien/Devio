@@ -1,0 +1,152 @@
+# Message Types Reference
+
+This document defines all valid message types for the Devio Agency Message Bus (`inbox.jsonl`).
+The `agency-coordinator` skill uses this reference to interpret and route messages.
+
+---
+
+## Type Definitions
+
+### `SUBMIT`
+**Sender:** Any agent completing a deliverable.
+**Purpose:** Signals that a document or artifact is ready for peer review. Opens the review window for the current phase.
+**Status on creation:** `OPEN`
+**Required fields:** `ref_doc` pointing to the deliverable file.
+**Resolves when:** At least one `APPROVE` is posted in response by a qualified reviewer for that phase.
+
+```json
+{
+  "id": "msg-004",
+  "from": "agency-ceo",
+  "to": "agency-architect",
+  "phase": "PROPOSAL",
+  "type": "SUBMIT",
+  "ref_doc": "02_proposal.md",
+  "message": "Proposal v1 is ready for your technical review. Pay attention to Phase 2 timeline.",
+  "status": "OPEN"
+}
+```
+
+---
+
+### `REQUEST_CHANGE`
+**Sender:** Any reviewing agent.
+**Purpose:** Formally disputes a deliverable and blocks phase advancement. The author must post a `REVISION` to resolve it.
+**Status on creation:** `OPEN`
+**Resolves when:** A matching `REVISION` is posted by the original author with `in_reply_to` referencing this message's `id`, AND the reviewer subsequently posts `APPROVE`.
+
+```json
+{
+  "id": "msg-005",
+  "from": "agency-architect",
+  "to": "agency-ceo",
+  "phase": "PROPOSAL",
+  "type": "REQUEST_CHANGE",
+  "ref_doc": "02_proposal.md",
+  "message": "Phase 2 at 2 weeks is not achievable given the stated DB migration scope. Recommend 4 weeks minimum.",
+  "status": "OPEN"
+}
+```
+
+---
+
+### `REVISION`
+**Sender:** The agent who produced the challenged deliverable.
+**Purpose:** Acknowledges a `REQUEST_CHANGE`, describes what was modified, and prompts the reviewer to re-assess.
+**Status on creation:** `RESOLVED` (it resolves the author's obligation; the reviewer must still `APPROVE`).
+**Required fields:** `in_reply_to` referencing the `REQUEST_CHANGE` message id.
+
+```json
+{
+  "id": "msg-006",
+  "from": "agency-ceo",
+  "to": "agency-architect",
+  "phase": "PROPOSAL",
+  "type": "REVISION",
+  "ref_doc": "02_proposal.md",
+  "in_reply_to": "msg-005",
+  "message": "Phase 2 revised to 4 weeks. Budget updated to reflect extra sprint. Document updated.",
+  "status": "RESOLVED"
+}
+```
+
+---
+
+### `APPROVE`
+**Sender:** A reviewing agent.
+**Purpose:** Signs off on a deliverable. Phase advances when all required reviewers for that phase have posted `APPROVE`.
+**Status on creation:** `RESOLVED`
+
+```json
+{
+  "id": "msg-007",
+  "from": "agency-architect",
+  "to": "agency-coordinator",
+  "phase": "PROPOSAL",
+  "type": "APPROVE",
+  "ref_doc": "02_proposal.md",
+  "message": "Proposal v2 looks good. Timeline is realistic. Technical assumptions are sound. Approved.",
+  "status": "RESOLVED"
+}
+```
+
+---
+
+### `ESCALATE`
+**Sender:** Any agent.
+**Purpose:** Signals a deadlock, ambiguity, or decision that requires human (client/partner) input. **Fully stops the agency loop** until the human resolves it.
+**Status on creation:** `OPEN`
+**Resolves when:** Human provides a decision, which is posted as a `REVISION` with `status: "RESOLVED"`.
+
+```json
+{
+  "id": "msg-012",
+  "from": "agency-qa",
+  "to": "agency-architect",
+  "phase": "REVIEW",
+  "type": "ESCALATE",
+  "ref_doc": "03_architecture.md",
+  "message": "Authentication design uses JWT with no refresh token rotation. This is a OWASP A07 violation. Fixing this requires an architectural change. Human decision needed on auth strategy.",
+  "status": "OPEN"
+}
+```
+
+---
+
+### `INFO`
+**Sender:** Any agent.
+**Purpose:** Shares context or constraints with another agent without requiring action. Does **not** block phase advancement.
+**Status on creation:** `RESOLVED` (informational only)
+
+```json
+{
+  "id": "msg-003",
+  "from": "agency-ceo",
+  "to": "agency-architect",
+  "phase": "PROPOSAL",
+  "type": "INFO",
+  "ref_doc": null,
+  "message": "Client has a hard budget ceiling of €25,000. Any architecture proposal must fit within this constraint. Cloud costs must be estimated.",
+  "status": "RESOLVED"
+}
+```
+
+---
+
+## Message Lifecycle Summary
+
+```
+SUBMIT (OPEN)
+  ↓ reviewer reads
+REQUEST_CHANGE (OPEN) ← blocks phase
+  ↓ author reads
+REVISION (RESOLVED) ← unblocks author obligation
+  ↓ reviewer re-reads
+APPROVE (RESOLVED) ← unblocks phase
+```
+
+---
+
+## ID Naming Convention
+
+Message IDs must follow the format `msg-NNN` where NNN is a zero-padded sequential integer (e.g., `msg-001`, `msg-042`). Read `inbox.jsonl` and increment from the last ID found.
