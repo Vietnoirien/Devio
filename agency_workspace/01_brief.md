@@ -1,100 +1,91 @@
 # Client Brief
 
-> Fill in this document to start your Devio AI Agency engagement.
-> Once complete, load the `agency-coordinator` skill in Antigravity to begin.
-
----
-
 ## 1. About Your Organisation
 
 **Company name:**
-[Your company or organisation name]
+Devio Client
 
 **Industry / sector:**
-[e.g., E-commerce, Healthcare, FinTech, SaaS, Logistics…]
+Software Development / AI Tooling
 
 **Company size:**
-[e.g., Startup, SME (10–200 employees), Enterprise (200+)]
+N/A
 
 ---
 
 ## 2. The Problem You Want to Solve
 
 **In 2–3 sentences, describe the core problem or opportunity:**
-[e.g., "Our support team spends 4 hours per day manually routing customer tickets to the right department.
-We want to automate this process so tickets are classified and routed within seconds of being received."]
+Le client souhaite intégrer directement les équipes Devio (via leurs personas et interfaces) dans l'IDE Antigravity. L'objectif est d'offrir une véritable interface graphique permettant de piloter l'agence IA sans quitter l'environnement de développement.
 
 **Who experiences this problem?**
-[e.g., "Internal support agents and end customers waiting for responses"]
+Les développeurs utilisant le framework Devio.
 
 **What is the cost of NOT solving it?**
-[e.g., "Each delayed ticket costs us approximately €15 in agent time. At 80 tickets/day, that is €1,200/day."]
+Une expérience utilisateur fragmentée et moins intégrée, limitant l'adoption et la productivité.
 
 ---
 
 ## 3. Your Vision of the Solution
 
 **What do you imagine the solution looking like?**
-[Describe it at a high level — no need for technical detail. The Architect will handle that.]
+Un plugin ou une extension native pour Antigravity IDE comprenant toutes les fonctionnalités MVP :
+- Tableau de bord de projet
+- Message bus / Inbox
+- Chat avec les agents
+- Éditeur de brief
+- Visionneuse de livrables
 
 **Are there existing systems this solution must integrate with?**
-[e.g., "Yes — Zendesk for ticketing, Salesforce CRM, and our internal PostgreSQL database"]
+L'intégration doit pouvoir lire et écrire dans les fichiers du workspace (`agency_workspace`) ET communiquer directement avec l'API Antigravity.
 
 **Are there systems it must NOT touch or replace?**
-[e.g., "Our billing system must remain unchanged"]
+N/A.
 
 ---
 
 ## 4. Target Users
 
 **Who will use this system?**
-[e.g., "Internal staff only", "End customers", "Both"]
+Les utilisateurs d'Antigravity IDE souhaitant exploiter l'agence Devio.
 
 **Approximate number of users:**
-[e.g., "15 internal agents", "Up to 5,000 active customers per month"]
+N/A. Le package sera distribué manuellement.
 
 **Technical proficiency of users:**
-[e.g., "Non-technical end users", "Technical internal team comfortable with dashboards"]
+Développeurs.
 
 ---
 
 ## 5. Timeline & Budget
 
 **When do you need this delivered?**
-[e.g., "Phase 1 within 6 weeks, full delivery within 3 months"]
+Dès que possible, implémentation MVP priorisée.
 
 **Is there a hard deadline? (e.g., product launch, board demo, regulatory date)**
-[Yes / No — if yes, describe:]
+Non spécifié.
 
 **Budget range (approximate):**
-- [ ] Under €10,000
-- [ ] €10,000 – €25,000
-- [ ] €25,000 – €50,000
-- [ ] €50,000 – €100,000
-- [ ] Over €100,000
-- [ ] To be discussed
+- [x] Budget illimité
 
 ---
 
 ## 6. Success Criteria
 
 **How will you know this project is a success?**
-[List 2–4 concrete, measurable outcomes]
-
-1. [e.g., "Ticket routing time reduced from 4 hours to under 5 minutes"]
-2. [e.g., "Support agent satisfaction score improves by at least 20%"]
-3.
-4.
+1. L'agence Devio est entièrement pilotable depuis l'interface graphique dans Antigravity IDE.
+2. Toutes les fonctionnalités MVP sont présentes et opérationnelles.
+3. Les interactions avec l'API Antigravity fonctionnent correctement.
 
 ---
 
 ## 7. Constraints & Special Requirements
 
 **Compliance / regulatory requirements:**
-[e.g., "GDPR applies — all data must remain in the EU", "HIPAA compliant required", "None"]
+Aucune.
 
 **Technology constraints:**
-[e.g., "Must deploy on AWS", "Team uses Python only", "We have no DevOps capacity — needs to be fully managed"]
+Doit s'intégrer de manière native dans l'environnement Antigravity IDE. Note: Le choix initial de faire un plugin VS Code a été écarté ("bad call") au profit d'Antigravity IDE directement. Les équipes doivent faire des recherches sur la façon de développer une telle intégration pour Antigravity IDE.
 
 **Anything else we should know?**
-[Open field — previous failed attempts, political constraints, team dynamics, etc.]
+Le livrable doit être distribuable manuellement (équivalent d'un .vsix).

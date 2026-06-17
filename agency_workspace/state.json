@@ -1,10 +1,10 @@
 {
-  "phase": "BRIEF",
-  "owner": "agency-ceo",
-  "project": "",
-  "client": "",
-  "started_at": "",
-  "updated_at": "",
+  "phase": "DEVELOPMENT",
+  "owner": "agency-developer",
+  "project": "Antigravity IDE Plugin",
+  "client": "Devio Client",
+  "started_at": "2026-06-17T18:50:00Z",
+  "updated_at": "2026-06-17T19:16:00Z",
   "blocked_by": [],
   "history": []
 }
