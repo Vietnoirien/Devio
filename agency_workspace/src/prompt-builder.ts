@@ -1,14 +1,17 @@
-import * as path from 'path';
+import * as vscode from 'vscode';
 
 export class PromptBuilder {
-    constructor(private workspacePath: string) {}
+    constructor(private workspacePath: string, private globalStorageUri: vscode.Uri) {}
 
     async buildPrompt(persona: string, phase: string): Promise<{ prompt: string; validationKey: string }> {
         const validationKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         
+        const skillPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'skills', persona, 'SKILL.md').fsPath;
+        const typesPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'skills', 'agency-coordinator', 'references', 'message_types.md').fsPath;
+
         const prompt = `Phase: ${phase}
-Context: @.agent/skills/${persona}/SKILL.md
-Context: @.agent/skills/agency-coordinator/references/message_types.md
+Context: @${skillPath}
+Context: @${typesPath}
 History: @agency_workspace/inbox.jsonl
 
 CRITICAL INSTRUCTION: You are ${persona}.

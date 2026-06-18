@@ -20,6 +20,7 @@ Au lieu de dépendre d'un pont HTTP fragile vers une extension séparée, Devio 
 
 ### Ce qui est inclus
 
+- **Empaquetage Global de l'Agence** — les profils d'agents et les compétences (skills) sont empaquetés directement dans le plugin et installés de manière autonome dans le stockage global de l'éditeur (Global Storage), rendant l'agence Devio disponible depuis n'importe quel espace de travail.
 - **Moteur d'Orchestration Natif** — un exécuteur de boucle intégré à l'hôte d'extension VS Code qui gère le cycle de vie complet des phases : BRIEF → RESEARCH → PROPOSAL → ARCHITECTURE → DEVELOPMENT → REVIEW → DELIVERY → DONE.
 - **Intégration CDP Native** — intégration directe de `cdp.ts` et des services associés depuis le fork. Le moteur communique directement avec la couche UI de l'IDE, éliminant le polling HTTP.
 - **Gestion des Fenêtres** — évaluation intelligente et ciblage pour gérer les multiples instances d'Antigravity IDE de manière fluide.
@@ -93,14 +94,15 @@ Au lieu de dépendre d'un pont HTTP fragile vers une extension séparée, Devio 
 
 ---
 
-### Phase 4 — Polissage, MCP & Livraison
+### Phase 4 — Polissage, MCP & Livraison Globale
 
-**Objectif :** Renforcer le moteur, exposer le serveur MCP, et empaqueter le plugin final.
+**Objectif :** Renforcer le moteur, exposer le serveur MCP, implémenter l'installation globale des ressources de l'agence et empaqueter le plugin final.
 
 **Durée :** 1 semaine
 
 **Livrables Clés :**
 - Intégrer et empaqueter `mcp-server.mjs`.
+- Implémentation du système d'installation globale (copie des dossiers `agents` et `skills` vers `globalStorageUri`) via des mises à jour spécifiques des chemins dans `src/extension.ts` (pour l'initialisation) et `src/prompt-builder.ts` (pour charger les compétences et prompts depuis le stockage global plutôt que l'espace de travail).
 - Tests unitaires et d'intégration complets.
 - Paquet `.vsix` livrable.
 

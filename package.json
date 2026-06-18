@@ -2,7 +2,7 @@
   "name": "devio-antigravity-plugin",
   "displayName": "Devio AI Agency Plugin",
   "description": "Autonomous Coding Agent Platform for Devio IDE",
-  "version": "0.6.36",
+  "version": "0.6.40",
   "publisher": "devio",
   "private": true,
   "engines": {
@@ -12,7 +12,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:devio.start"
+    "onCommand:devio.start",
+    "onView:devio-sidebar-view"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -26,6 +27,24 @@
         "title": "Devio: Set Antigravity Link Token"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devio-sidebar",
+          "title": "Devio",
+          "icon": "media/d-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "devio-sidebar": [
+        {
+          "type": "webview",
+          "id": "devio-sidebar-view",
+          "name": "Devio AI Agency"
+        }
+      ]
+    },
     "configuration": {
       "title": "Devio AI Agency",
       "properties": {

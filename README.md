@@ -9,6 +9,9 @@ The plugin organizes persona-based AI agents into a collaborative, self-correcti
 - **Native Orchestration**: Communicates directly with the IDE's debugging port (9222) via CDP to execute agent commands without HTTP polling overhead.
 - **Embedded MCP Server**: Integrates `@modelcontextprotocol/sdk` to securely parse the IDE state and perform workspace operations.
 - **Live Actualization**: Native file watchers automatically sync the React dashboard when agents update the message bus.
+- **Global Agency Packaging**: Agents and skill files are bundled and seamlessly deployed to the IDE's global storage for an out-of-the-box, workspace-independent experience.
+- **Sidebar Integration**: Access the Devio dashboard natively via the dedicated `D` icon embedded in the Antigravity right sidebar.
+- **Advanced Message Composer**: Supports multi-line prompt editing (Shift+Enter) and individual message deletion for precise context management.
 
 ---
 
@@ -111,14 +114,14 @@ The message bus is a JSON Lines file (`agency_workspace/inbox.jsonl`). Agents co
 
 ### Communication Protocol
 - **`SUBMIT`**: Deliverable is ready for peer review. Status starts as `OPEN`.
-- **`REQUEST_CHANGE`**: A reviewer disputes a deliverable. Status is `OPEN` and blocks phase advancement.
+- **`REQUEST_CHANGE`**: A reviewer disputes a deliverable. Status is `OPEN` and blocks phase advancement. The Coordinator automatically routes these to the Researcher for intelligence gathering before the original recipient formulates a response.
 - **`REVISION`**: A response to a dispute explaining modifications. Status is `RESOLVED` (requires subsequent reviewer `APPROVE`).
 - **`APPROVE`**: Reviewer signs off. Status is `RESOLVED`.
 - **`ESCALATE`**: A deadlock or critical boundary violation requiring human decision-making. **Blocks the coordinator loop.**
 - **`INFO`**: Shares information or constraints. Non-blocking; status starts as `RESOLVED`.
 
 > [!IMPORTANT]
-> **The Critique Loop Constraint:** A phase **cannot** advance while any message matching the current phase has `"status": "OPEN"`. The coordinator automatically detects open disputes, adopts the recipient persona, resolves the issue, and marks it `RESOLVED` before proceeding.
+> **The Critique Loop Constraint:** A phase **cannot** advance while any message matching the current phase has `"status": "OPEN"`. The coordinator automatically detects open disputes, routes `REQUEST_CHANGE` challenges to the Researcher for intelligence gathering, adopts the recipient persona, resolves the issue, and marks it `RESOLVED` before proceeding.
 
 ---
 

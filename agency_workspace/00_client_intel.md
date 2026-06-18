@@ -253,3 +253,19 @@ Instead of relying on brittle HTTP polling to a separate extension, Devio can me
 - **Elimination of Auth/Port Overhead:** Merging removes the need for SecretStorage token management and port configuration, as the Devio extension host process will securely manage the CDP connections in memory.
 - **MCP Server Hosting:** Devio can bundle `mcp-server.mjs` to expose its capabilities natively to other AI agents.
 - **Recommendation for Architect:** Abandon the HTTP `AgLinkClient` design from the previous proposal. Design the new architecture to directly utilize the CDP services module to drive the orchestration loop, gaining stability and window management features natively.
+
+---
+
+## Addendum — Global Packaging of Agents & Skills
+*Triggered by client request, Phase DELIVERY (redirected to RESEARCH)*
+
+**Finding:** To make agents and skills globally available across any workspace without relying on the original Devio project source, the extension must package these files and install them to the extension's global storage directory provided by the VSCode/Antigravity API.
+
+### Key Implementation Details
+1. **Packaging:** The `agents` and `skills` directories must be included in the `.vsix` bundle. Ensure `.vscodeignore` does not exclude them.
+2. **Global Storage Installation:** Upon extension activation, the extension should verify if the agency files exist in the globally accessible `context.globalStorageUri`. If not, it must copy them natively from its own installation directory (`context.extensionUri`) to the global storage directory using `vscode.workspace.fs.copy` or Node.js `fs.cpSync`.
+3. **Workspace Orchestration:** The engine (`WorkspaceManager` or orchestrator) must then read and write all agency state, agent profiles, and skills from this global path rather than resolving them relative to the current active workspace.
+4. Recommendation for Architect: Add an initialization sequence to the `ExtensionContext` activation to handle the global installation. Update all path resolution logic to default to the global storage URI. Specifically:
+   - `src/extension.ts`: Pass `context.globalStorageUri.fsPath` down to `PromptBuilder`. Implement the copy logic here.
+   - `src/prompt-builder.ts`: Update the `Context: @.agent/skills/...` lines to use the absolute path from the global storage (e.g., `Context: @${path.join(globalStoragePath, '.agent/skills', persona, 'SKILL.md')}`) so the agent reads the globally installed files instead of local ones.
+   - `package.json` / `.vscodeignore`: Ensure `.agent` is included in the `.vsix` bundle.

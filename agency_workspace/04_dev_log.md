@@ -581,4 +581,61 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - **Files modified:**
 - - `agency_workspace/src/workspace-manager.ts`
 - - `agency_workspace/src/webview/App.tsx`
-- - `package.json`
+- `package.json`
+
+---
+
+## Task: Message Composer Multi-line Feature
+
+**TDD cycle:**
+- 🔴 RED: The message composer UI was a single-line text input, making it difficult to write long messages. Tests existed for Enter key submission but not for Shift+Enter newlines.
+- 🟢 GREEN: Migrated the composer input from `<input type="text">` to `<textarea>`. Added a `resize: vertical;` rule to the CSS. Implemented a keydown listener to capture `Enter` for submission while explicitly checking `!e.shiftKey` to allow Shift+Enter for native newlines. Tests for form submission and Run Agency triggers continue to pass flawlessly. All 71 tests pass.
+- 🔵 REFACTOR: None needed.
+
+**Files modified:**
+- `agency_workspace/src/webview/App.tsx`
+- `agency_workspace/src/webview/App.css`
+
+---
+
+## Task: Bump Version per Client Request (Version Searching Enforcement)
+
+**TDD cycle:**
+- 🔴 RED: Client rejected the delivery because the version in package.json (0.6.36) was not bumped despite changes.
+- 🟢 GREEN: Read `package.json`, bumped version to `0.6.37`, and rebuilt the package using `npm run package`. The version is now aligned with semantic versioning.
+- 🔵 REFACTOR: None needed.
+
+**Files modified:**
+- `package.json`
+
+---
+
+## Task: T-09 Sidebar Icon & View
+
+**TDD cycle:**
+- 🔴 RED: `window.registerWebviewViewProvider` was not mocked in tests, causing extension.test.ts to fail when migrating from WebviewPanel.
+- 🟢 GREEN: Implemented `DevioSidebarProvider` extending `vscode.WebviewViewProvider`. Updated `extension.ts` to register this provider instead of creating a `WebviewPanel`. Updated `extension.test.ts` to mock and test `registerWebviewViewProvider`. Updated `package.json` with `viewsContainers` and `views` contributions using a new `media/d-icon.svg`. Bumped version to `0.6.38` and all tests pass (71 total).
+- 🔵 REFACTOR: None needed.
+
+**Files created/modified:**
+- `package.json` — modified (sidebar views and icon)
+- `media/d-icon.svg` — new
+- `agency_workspace/src/extension.ts` — modified (migrated WebviewPanel to Sidebar View)
+- `agency_workspace/src/extension.test.ts` — modified (mocked WebviewViewProvider)
+
+---
+
+## Task: T-10 Global Agency Packaging
+
+**TDD cycle:**
+- 🔴 RED: Added tests to `extension.test.ts` to mock file system copying on `activate`. Failed because `vscode.workspace.fs.createDirectory` and `copy` were not called.
+- 🟢 GREEN: Implemented `.agent` folder copy into `context.globalStorageUri` upon extension activation. Passed `globalStorageUri` to `PromptBuilder`. Updated `prompt-builder.ts` to read prompt dependencies absolutely from `globalStorageUri`. Explicitly added `!.agent` to `.vscodeignore` to package artifacts correctly. All tests pass.
+- 🔵 REFACTOR: Bumped `package.json` to version `0.6.39`.
+
+**Files created/modified:**
+- `.vscodeignore` — new (explicitly allow `.agent`)
+- `agency_workspace/src/extension.ts` — modified (added installation script)
+- `agency_workspace/src/extension.test.ts` — modified (added test coverage)
+- `agency_workspace/src/prompt-builder.ts` — modified (using globalStorageUri path)
+- `agency_workspace/src/prompt-builder.test.ts` — modified (updated assertions)
+- `package.json` — modified (bumped version to 0.6.39)

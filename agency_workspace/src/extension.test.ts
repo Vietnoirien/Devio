@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 const mockRegisterCommand = vi.fn();
-const mockCreateWebviewPanel = vi.fn();
+const mockRegisterWebviewViewProvider = vi.fn();
 
 vi.mock('vscode', () => {
   return {
@@ -9,11 +9,13 @@ vi.mock('vscode', () => {
       registerCommand: (id: string, callback: Function) => {
         mockRegisterCommand(id, callback);
         return { dispose: vi.fn() };
-      }
+      },
+      executeCommand: vi.fn()
     },
     window: {
-      createWebviewPanel: (viewType: string, title: string, showOptions: any, options: any) => {
-        return mockCreateWebviewPanel(viewType, title, showOptions, options);
+      registerWebviewViewProvider: (viewId: string, provider: any) => {
+        mockRegisterWebviewViewProvider(viewId, provider);
+        return { dispose: vi.fn() };
       },
       showInformationMessage: vi.fn(),
       showErrorMessage: vi.fn(),
@@ -33,6 +35,10 @@ vi.mock('vscode', () => {
       }
     },
     workspace: {
+      fs: {
+        createDirectory: vi.fn().mockResolvedValue(undefined),
+        copy: vi.fn().mockResolvedValue(undefined)
+      },
       workspaceFolders: [
         {
           uri: {
@@ -52,7 +58,8 @@ vi.mock('vscode', () => {
         onDidCreate: vi.fn(),
         onDidDelete: vi.fn(),
         dispose: vi.fn()
-      })
+      }),
+      findFiles: vi.fn().mockResolvedValue([])
     }
   };
 });
@@ -104,69 +111,47 @@ import { activate } from './extension';
 describe('Extension Activation', () => {
   beforeEach(() => {
     mockRegisterCommand.mockReset();
-    mockCreateWebviewPanel.mockReset();
+    mockRegisterWebviewViewProvider.mockReset();
     mockRunTurn.mockReset();
   });
 
-  it('should register devio.start command on activation', () => {
+  it('should register devio.start command on activation', async () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
-    activate(mockContext);
+    await activate(mockContext);
 
     expect(mockRegisterCommand).toHaveBeenCalledWith('devio.start', expect.any(Function));
   });
 
-  it('should create Webview panel when devio.start is executed', async () => {
+  it('should register devio-sidebar-view provider on activation', async () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
-    activate(mockContext);
+    await activate(mockContext);
 
-    const commandCallback = mockRegisterCommand.mock.calls[0][1];
-
-    // Mock Webview Panel
-    const mockPostMessage = vi.fn();
-    const mockOnDidReceiveMessage = vi.fn();
-    const mockPanel = {
-      webview: {
-        html: '',
-        onDidReceiveMessage: mockOnDidReceiveMessage,
-        postMessage: mockPostMessage
-      },
-      onDidDispose: vi.fn()
-    };
-    mockCreateWebviewPanel.mockReturnValue(mockPanel);
-
-    // Execute the command callback
-    await commandCallback();
-
-    expect(mockCreateWebviewPanel).toHaveBeenCalledWith(
-      'devioDashboard',
-      'Devio AI Agency',
-      1,
-      expect.objectContaining({
-        enableScripts: true
-      })
-    );
-    expect(mockPanel.webview.html).toBe('<html>mock html</html>');
+    expect(mockRegisterWebviewViewProvider).toHaveBeenCalledWith('devio-sidebar-view', expect.any(Object));
   });
 
   it('should sync workspace data to Webview when ready message is received', async () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
-    activate(mockContext);
-    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+    await activate(mockContext);
+    const provider = mockRegisterWebviewViewProvider.mock.calls[0][1];
 
     const mockPostMessage = vi.fn().mockResolvedValue(true);
     let messageListener: Function | null = null;
@@ -175,17 +160,17 @@ describe('Extension Activation', () => {
       return { dispose: () => {} };
     };
 
-    const mockPanel = {
+    const mockWebviewView = {
       webview: {
         html: '',
         onDidReceiveMessage: mockOnDidReceiveMessage,
-        postMessage: mockPostMessage
+        postMessage: mockPostMessage,
+        options: {}
       },
       onDidDispose: vi.fn()
-    };
-    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+    } as any;
 
-    await commandCallback();
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
 
     expect(messageListener).toBeDefined();
     
@@ -205,11 +190,12 @@ describe('Extension Activation', () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
-    activate(mockContext);
-    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+    await activate(mockContext);
+    const provider = mockRegisterWebviewViewProvider.mock.calls[0][1];
 
     let messageListener: Function | null = null;
     const mockOnDidReceiveMessage = (listener: Function) => {
@@ -217,20 +203,19 @@ describe('Extension Activation', () => {
       return { dispose: () => {} };
     };
 
-    const mockPanel = {
+    const mockWebviewView = {
       webview: {
         html: '',
         onDidReceiveMessage: mockOnDidReceiveMessage,
-        postMessage: vi.fn()
+        postMessage: vi.fn(),
+        options: {}
       },
       onDidDispose: vi.fn()
-    };
-    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+    } as any;
 
-    await commandCallback();
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
 
     if (messageListener) {
-      // Simulate the orchestration engine running a turn and then producing a message to the client
       mockRunTurn.mockImplementationOnce(async () => {
         const { WorkspaceManager } = await import('./workspace-manager');
         (WorkspaceManager as any).stopLoop();
@@ -252,11 +237,12 @@ describe('Extension Activation', () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
-    activate(mockContext);
-    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+    await activate(mockContext);
+    const provider = mockRegisterWebviewViewProvider.mock.calls[0][1];
 
     let messageListener: Function | null = null;
     const mockOnDidReceiveMessage = (listener: Function) => {
@@ -264,22 +250,21 @@ describe('Extension Activation', () => {
       return { dispose: () => {} };
     };
 
-    const mockPanel = {
+    const mockWebviewView = {
       webview: {
         html: '',
         onDidReceiveMessage: mockOnDidReceiveMessage,
-        postMessage: vi.fn()
+        postMessage: vi.fn(),
+        options: {}
       },
       onDidDispose: vi.fn()
-    };
-    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+    } as any;
 
-    // Provide the appendInbox mock
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
     const { WorkspaceManager } = await import('./workspace-manager');
     const mockAppendInbox = vi.fn().mockResolvedValue(undefined);
     (WorkspaceManager as any).prototype.appendInbox = mockAppendInbox;
-
-    await commandCallback();
 
     if (messageListener) {
       const mockMessage = {
@@ -301,11 +286,12 @@ describe('Extension Activation', () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
-    activate(mockContext);
-    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+    await activate(mockContext);
+    const provider = mockRegisterWebviewViewProvider.mock.calls[0][1];
 
     let messageListener: Function | null = null;
     const mockOnDidReceiveMessage = (listener: Function) => {
@@ -313,22 +299,21 @@ describe('Extension Activation', () => {
       return { dispose: () => {} };
     };
 
-    const mockPanel = {
+    const mockWebviewView = {
       webview: {
         html: '',
         onDidReceiveMessage: mockOnDidReceiveMessage,
-        postMessage: vi.fn()
+        postMessage: vi.fn(),
+        options: {}
       },
       onDidDispose: vi.fn()
-    };
-    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+    } as any;
 
-    // Provide the clearInbox mock
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
     const { WorkspaceManager } = await import('./workspace-manager');
     const mockClearInbox = vi.fn().mockResolvedValue(undefined);
     (WorkspaceManager as any).prototype.clearInbox = mockClearInbox;
-
-    await commandCallback();
 
     if (messageListener) {
       const mockMessage = { command: 'clearChat' };
@@ -342,6 +327,7 @@ describe('Extension Activation', () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
@@ -350,25 +336,26 @@ describe('Extension Activation', () => {
       get: vi.fn().mockReturnValue(9222)
     });
 
-    activate(mockContext);
-    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+    await activate(mockContext);
+    const provider = mockRegisterWebviewViewProvider.mock.calls[0][1];
 
     const mockPostMessage = vi.fn().mockResolvedValue(true);
     let messageListener: Function | null = null;
-    const mockPanel = {
+    
+    const mockWebviewView = {
       webview: {
         html: '',
         onDidReceiveMessage: (listener: Function) => {
           messageListener = listener;
           return { dispose: () => {} };
         },
-        postMessage: mockPostMessage
+        postMessage: mockPostMessage,
+        options: {}
       },
       onDidDispose: vi.fn()
-    };
-    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+    } as any;
 
-    await commandCallback();
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
 
     if (messageListener) {
       await (messageListener as Function)({ command: 'ready' });
@@ -385,6 +372,7 @@ describe('Extension Activation', () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 
@@ -397,30 +385,28 @@ describe('Extension Activation', () => {
     };
     (vscodeMock.workspace.createFileSystemWatcher as any).mockReturnValue(mockWatcher);
 
-    activate(mockContext);
-    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+    await activate(mockContext);
+    const provider = mockRegisterWebviewViewProvider.mock.calls[0][1];
 
     const mockPostMessage = vi.fn().mockResolvedValue(true);
-    const mockPanel = {
+    const mockWebviewView = {
       webview: {
         html: '',
         onDidReceiveMessage: vi.fn(),
-        postMessage: mockPostMessage
+        postMessage: mockPostMessage,
+        options: {}
       },
       onDidDispose: vi.fn()
-    };
-    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+    } as any;
 
-    await commandCallback();
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
 
     expect(vscodeMock.workspace.createFileSystemWatcher).toHaveBeenCalled();
     expect(mockWatcher.onDidChange).toHaveBeenCalled();
     
-    // Simulate a file change
     const onDidChangeCallback = mockWatcher.onDidChange.mock.calls[0][0];
     await onDidChangeCallback();
     
-    // Should post an update
     expect(mockPostMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'update'
@@ -428,4 +414,3 @@ describe('Extension Activation', () => {
     );
   });
 });
-

@@ -52,6 +52,7 @@ The `agency-coordinator` skill uses this reference to interpret and route messag
 ### `REQUEST_CHANGE`
 **Sender:** Any reviewing agent.
 **Purpose:** Formally disputes a deliverable and blocks phase advancement. The author must post a `REVISION` to resolve it.
+**Routing Rule:** The Coordinator MUST first route ALL `REQUEST_CHANGE` messages to `agency-researcher` to gather intelligence. The researcher will post an `INFO` message with their findings back to the Coordinator, who will then route the original `REQUEST_CHANGE` to the target author.
 **Status on creation:** `OPEN`
 **Resolves when:** A matching `REVISION` is posted by the original author with `in_reply_to` referencing this message's `id`, AND the reviewer subsequently posts `APPROVE`.
 

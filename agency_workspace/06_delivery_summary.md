@@ -1,8 +1,8 @@
-# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.35)
+# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.40)
 
 Cher Client,
 
-Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.35) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome.
+Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.40) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome et un déploiement indépendant de l'espace de travail.
 
 ## Ce qui a été construit
 
@@ -12,14 +12,18 @@ Les fonctionnalités clés incluent :
 - **Serveur MCP Intégré** : Exécution des outils des agents au sein même du plugin, avec des lectures fiables du DOM grâce à Cheerio.
 - **Interface Utilisateur Améliorée (Webview)** : L'interface utilisateur de votre tableau de bord Devio comprend désormais le bouton « Run Agency », un affichage des messages amélioré avec défilement fluide du bas vers le haut, et la restauration de la Vue Document (Document View).
 - **Suppression individuelle de messages** : Ajout d'une croix de suppression (×) fonctionnelle sur chaque message, vous permettant de cibler et d'effacer spécifiquement un message de l'historique de manière persistante (mise à jour directe du fichier JSON sans problème de correspondance d'identifiants).
+- **Saisie de messages multi-lignes** : Possibilité d'insérer des retours à la ligne dans le compositeur de messages en appuyant sur Shift+Entrée, facilitant l'écriture de longs messages sans les envoyer prématurément. L'envoi standard reste déclenché par une simple pression sur Entrée.
+- **Lanceur depuis la barre latérale (Sidebar)** : Une nouvelle icône 'D' est maintenant disponible dans la barre latérale (activity bar) d'Antigravity IDE. Elle permet de lancer et d'afficher le plugin directement dans un panneau latéral, offrant une expérience beaucoup plus intégrée qu'un simple raccourci clavier.
+- **Déploiement Autonome et Portable (Global Packaging)** : L'extension intègre et installe désormais tous les agents et compétences (dossier `.agent`) directement dans le stockage global de l'éditeur (globalStorageUri), garantissant un environnement totalement autonome et indépendant du répertoire de projet ouvert.
+- **Documentation à jour** : Le fichier `README.md` a été entièrement révisé pour refléter avec précision l'état actuel du projet, incluant les nouvelles fonctionnalités comme l'empaquetage global, l'intégration à la barre latérale et le compositeur avancé.
 
 ## Comment y accéder et l'exécuter
 
 1. **Installation** :
-   - Le fichier `.vsix` pour la version `0.6.35` est disponible dans le répertoire de votre projet.
+   - Le fichier `.vsix` pour la version `0.6.40` est disponible dans le répertoire de votre projet.
    - Installez l'extension dans Antigravity IDE via la commande : `Extensions: Install from VSIX...`
 2. **Exécution** :
-   - Ouvrez la Webview Devio.
+   - Cliquez sur la nouvelle icône 'D' dans la barre latérale gauche ou droite pour ouvrir la vue Devio.
    - Cliquez sur le bouton « Run Agency » pour lancer l'orchestration autonome. L'interface affichera les interactions de l'agent en temps réel.
 3. **Prérequis** :
    - Assurez-vous que le port de débogage (9222) est activé dans votre environnement Antigravity IDE pour que le pont CDP fonctionne.
@@ -31,7 +35,7 @@ Les fonctionnalités clés incluent :
 
 ## Garantie et support
 
-La correction des défauts de l'interface, incluant la résolution du bogue affectant la persistance de la suppression des messages dans le fichier JSON, ainsi que la suppression de l'ancien port HTTP (3717) ont été effectuées dans le cadre de notre **garantie post-livraison**. Cette version v0.6.35 a passé 100% de nos 71 tests unitaires et vérifications de typage strict, garantissant la propagation correcte des événements de l'interface. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
+L'implémentation de l'empaquetage global (Global Agency Packaging), ainsi que la correction des défauts de l'interface et l'ajout des nouvelles fonctionnalités (saisie multi-lignes et intégration dans la barre latérale) ont été validés rigoureusement. Cette version v0.6.40 a passé 100% de nos 71 tests unitaires et vérifications de typage strict, garantissant une architecture stable et sécurisée. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
 
 Nous vous remercions de votre confiance.
 

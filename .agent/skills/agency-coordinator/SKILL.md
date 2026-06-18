@@ -78,11 +78,12 @@ Before doing anything else each turn, scan `inbox.jsonl` for entries matching:
 
 If any exist:
 
-1. **Identify the recipient** (`"to"` field) of the blocking message.
-2. **Load that persona's skill** (`agency-ceo`, `agency-architect`, `agency-researcher`, `agency-developer`, or `agency-qa`).
-3. **Act as that persona** to read the challenge and produce a resolution.
-4. **Post a `REVISION` or `APPROVE`** message to `inbox.jsonl` updating the blocker's `status` to `"RESOLVED"`.
-5. **Re-check** — if all messages are now resolved, advance the phase.
+1. **Check for REQUEST_CHANGE**: If the blocking message is of type `REQUEST_CHANGE`, you MUST immediately route it to `agency-researcher` BEFORE the recipient acts on it. Load the `agency-researcher` skill and instruct them to gather intelligence regarding the requested change. Wait for the researcher to post an `INFO` message with their findings.
+2. **Identify the recipient** (`"to"` field) of the blocking message (after researcher intel is gathered, or if not a `REQUEST_CHANGE`).
+3. **Load that persona's skill** (`agency-ceo`, `agency-architect`, `agency-researcher`, `agency-developer`, or `agency-qa`).
+4. **Act as that persona** to read the challenge (and the researcher's intel, if applicable) and produce a resolution.
+5. **Post a `REVISION` or `APPROVE`** message to `inbox.jsonl` updating the blocker's `status` to `"RESOLVED"`.
+6. **Re-check** — if all messages are now resolved, advance the phase.
 
 > **Rule:** A phase MUST NOT advance while any message for that phase has `"status": "OPEN"`.
 

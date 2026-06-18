@@ -78,6 +78,21 @@ graph TD
 - **Tech Choice:** `@modelcontextprotocol/sdk` (Current Stable).
 - **Rationale:** Fulfills client requirement to natively host MCP capabilities without requiring an external process.
 
+### 3.7. Sidebar Webview View (`src/webview/provider.ts`)
+- **Purpose:** Provides a persistent "D" icon in the Antigravity IDE sidebar (activity bar / view container) to host the plugin UI, replacing the manual command palette trigger.
+- **Tech Choice:** VS Code `viewsContainers` and `views` manifest contributions, resolving to a `WebviewViewProvider`.
+- **Rationale:** Improves UX by making the plugin UI consistently accessible without manual invocation.
+
+### 3.8. Global Agency Packaging Mechanism
+- **Purpose:** Copies the agency profiles and skills from the `.vsix` bundle to the IDE's global storage upon activation, allowing the plugin to run autonomously in any workspace without relying on external file structures.
+- **Tech Choice:** VS Code `context.globalStorageUri` combined with `vscode.workspace.fs.copy`.
+- **Implementation Details:**
+  1. The `.vscodeignore` file must explicitly include the `.agent` directory (e.g., `!.agent`), overriding the default behavior that ignores dot-folders.
+  2. The `ExtensionContext.globalStorageUri` must be explicitly passed to `PromptBuilder` during initialization so it can resolve the correct path.
+  3. Directory creation (`vscode.workspace.fs.createDirectory`) must be called for `globalStorageUri` before initiating the copy operation.
+  4. The copy operation (`vscode.workspace.fs.copy`) must explicitly set `{ overwrite: true }` to ensure agency artifacts update seamlessly during plugin upgrades.
+- **Rationale:** Ensures a portable, self-contained development environment per the latest client requirement.
+
 ---
 
 ## 4. API Contract
@@ -135,8 +150,10 @@ The primary data structures remain unchanged from V2, persisting via file I/O:
 | **T-06** | **Embedded MCP Integration** | 2h | T-02 | `mcp-server.mjs` is bundled and responding to local JSON-RPC requests on the standard transport. |
 | **T-07** | **Final Tests & QA** | 5h | All above | Extension builds into a `.vsix` with zero QA severity (CRITICAL/HIGH) defects. |
 | **T-08** | **Clear Chat Feature** | 2h | T-07 | Webview UI has a 'Clear Chat' button that sends `clearChat` IPC command. Extension host listens to it, truncates `inbox.jsonl`, and updates the UI state. |
+| **T-09** | **Sidebar Icon & View** | 2h | T-07 | Update `package.json` to include `viewsContainers` and `views` manifest contributions with a 'D' icon. Implement `WebviewViewProvider` to render the UI in the sidebar, replacing the manual `WebviewPanel`. |
+| **T-10** | **Global Agency Packaging** | 3h | T-07 | Update `.vscodeignore` to explicitly include `.agent`. `src/extension.ts` creates `globalStorageUri` directory, then copies `agents` and `skills` from extension bundle with `{ overwrite: true }`. `ExtensionContext.globalStorageUri` is passed to `src/prompt-builder.ts` to load prompts. |
 
-**Total Estimated Hours:** 32h
+**Total Estimated Hours:** 37h
 
 ---
 

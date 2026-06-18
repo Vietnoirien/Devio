@@ -8,13 +8,25 @@ import { PromptBuilder } from './prompt-builder';
 import { WorkspaceWriter } from './workspace-writer';
 import { OrchestrationEngine } from './orchestration-engine';
 
-/**
- * Activates the Devio AI Agency Extension.
- */
-export function activate(context: vscode.ExtensionContext) {
-  console.log('Devio AI Agency Plugin activated');
+class DevioSidebarProvider implements vscode.WebviewViewProvider {
+  public static readonly viewType = 'devio-sidebar-view';
+  
+  constructor(private readonly _extensionUri: vscode.Uri, private readonly _globalStorageUri: vscode.Uri) { }
 
-  const disposable = vscode.commands.registerCommand('devio.start', async () => {
+  public resolveWebviewView(
+    webviewView: vscode.WebviewView,
+    context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken,
+  ) {
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [
+        vscode.Uri.joinPath(this._extensionUri, 'dist-webview')
+      ]
+    };
+
+    webviewView.webview.html = getWebviewContent(webviewView.webview, this._extensionUri);
+
     // Determine the active workspace directory
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders || workspaceFolders.length === 0) {
@@ -34,34 +46,15 @@ export function activate(context: vscode.ExtensionContext) {
     const responseSelector = config.get<string>('responseSelector', '.message, [data-testid*="message" i], article');
 
     const convMgr = new ConversationManager(nativeBridge, newChatSelector, vscode.commands, responseSelector);
-    const promptBuilder = new PromptBuilder(workspaceRoot);
+    const promptBuilder = new PromptBuilder(workspaceRoot, this._globalStorageUri);
     const writer = new WorkspaceWriter(workspaceManager);
     const orchestrationEngine = new OrchestrationEngine(nativeBridge, convMgr, promptBuilder, writer, responseSelector);
 
-    // Create the Webview Panel
-    const panel = vscode.window.createWebviewPanel(
-      'devioDashboard',
-      'Devio AI Agency',
-      vscode.ViewColumn.One,
-      {
-        enableScripts: true,
-        retainContextWhenHidden: true,
-        // Restrict file system access to the Webview's dist folder for security
-        localResourceRoots: [
-          vscode.Uri.joinPath(context.extensionUri, 'dist-webview')
-        ]
-      }
-    );
-
-    // Render the initial HTML layout
-    panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
-
-    // Helper to read workspace data and push updates to the Webview
     async function syncWorkspaceData() {
       try {
         const state = await workspaceManager.readState();
         const messages = await workspaceManager.readInbox();
-        await panel.webview.postMessage({
+        await webviewView.webview.postMessage({
           type: 'update',
           state,
           messages
@@ -74,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
     async function runHealthCheck() {
       try {
         const result = await healthChecker.check();
-        await panel.webview.postMessage({
+        await webviewView.webview.postMessage({
           type: 'health_result',
           result
         });
@@ -83,8 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
 
-    // Handle messages coming from the Webview (React)
-    panel.webview.onDidReceiveMessage(
+    webviewView.webview.onDidReceiveMessage(
       async (message) => {
         switch (message.command) {
           case 'ready':
@@ -143,7 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
                   await workspaceManager.writeState(state);
                 }
 
-                const fresh = config.get<boolean>('freshConversationPerTurn', true);
+                const fresh = vscode.workspace.getConfiguration('devio').get<boolean>('freshConversationPerTurn', true);
                 await orchestrationEngine.runTurn(state.owner || 'agency-ceo', state.phase || 'DEVELOPMENT', fresh);
                 await syncWorkspaceData();
 
@@ -162,7 +154,6 @@ export function activate(context: vscode.ExtensionContext) {
           case 'openDocument':
             try {
               const docPath = message.file;
-              // use vscode.workspace.fs or fs/promises
               const fs = require('fs/promises');
               const path = require('path');
               let fullPath = path.join(workspaceRoot, docPath);
@@ -170,7 +161,6 @@ export function activate(context: vscode.ExtensionContext) {
               try {
                 content = await fs.readFile(fullPath, 'utf8');
               } catch (e) {
-                // If direct path fails, search for the file in the workspace
                 const files = await vscode.workspace.findFiles(`**/${path.basename(docPath)}`, '**/node_modules/**', 1);
                 if (files && files.length > 0) {
                   fullPath = files[0].fsPath;
@@ -179,7 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
                   throw new Error(`File not found: ${docPath}`);
                 }
               }
-              await panel.webview.postMessage({
+              await webviewView.webview.postMessage({
                 type: 'documentContent',
                 file: docPath,
                 content: content
@@ -192,8 +182,6 @@ export function activate(context: vscode.ExtensionContext) {
             try {
               const fs = require('fs/promises');
               const path = require('path');
-              // Import IDEAL_GEMINI_MD dynamically or require it
-              // Since it's in health-checker.ts, we can just require it or declare it
               const { IDEAL_GEMINI_MD } = require('./health-checker');
               await fs.writeFile(path.join(workspaceRoot, 'GEMINI.md'), IDEAL_GEMINI_MD, 'utf8');
               vscode.window.showInformationMessage('GEMINI.md applied successfully.');
@@ -203,12 +191,9 @@ export function activate(context: vscode.ExtensionContext) {
             }
             break;
         }
-      },
-      undefined,
-      context.subscriptions
+      }
     );
 
-    // Live actualization of messages via IPC using a file watcher
     const inboxPattern = new vscode.RelativePattern(workspaceRoot, 'agency_workspace/inbox.jsonl');
     const inboxWatcher = vscode.workspace.createFileSystemWatcher(inboxPattern);
 
@@ -216,14 +201,36 @@ export function activate(context: vscode.ExtensionContext) {
       await syncWorkspaceData();
     });
 
-    panel.onDidDispose(() => {
+    webviewView.onDidDispose(() => {
       inboxWatcher.dispose();
     });
+  }
+}
 
-    context.subscriptions.push(inboxWatcher);
+/**
+ * Activates the Devio AI Agency Extension.
+ */
+export async function activate(context: vscode.ExtensionContext) {
+  console.log('Devio AI Agency Plugin activated');
+
+  try {
+    await vscode.workspace.fs.createDirectory(context.globalStorageUri);
+    const extensionAgentUri = vscode.Uri.joinPath(context.extensionUri, '.agent');
+    const globalAgentUri = vscode.Uri.joinPath(context.globalStorageUri, '.agent');
+    await vscode.workspace.fs.copy(extensionAgentUri, globalAgentUri, { overwrite: true });
+  } catch (err) {
+    console.error('Failed to copy .agent to globalStorageUri', err);
+  }
+
+  const provider = new DevioSidebarProvider(context.extensionUri, context.globalStorageUri);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(DevioSidebarProvider.viewType, provider)
+  );
+
+  const startCommandDisposable = vscode.commands.registerCommand('devio.start', () => {
+    vscode.commands.executeCommand('devio-sidebar-view.focus');
   });
-
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(startCommandDisposable);
 
   const setTokenDisposable = vscode.commands.registerCommand('devio.setAntigravityLinkToken', async () => {
     const token = await vscode.window.showInputBox({

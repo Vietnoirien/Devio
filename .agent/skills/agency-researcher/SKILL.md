@@ -196,6 +196,18 @@ After writing `00_client_intel.md`, post the following to `inbox.jsonl`:
 
 ---
 
+## Phase: ANY (Handling REQUEST_CHANGE)
+
+**Goal:** Gather intelligence when a `REQUEST_CHANGE` is triggered, before the author enacts the change.
+
+When the Coordinator routes a `REQUEST_CHANGE` to you:
+1. **Analyze the requested change** and the context of the current deliverable.
+2. **Perform necessary research** to gather intelligence, fact-check requirements, or find best practices relevant to the change request.
+3. **Document your findings** and provide actionable intelligence.
+4. **Reply** by posting an `INFO` message to `inbox.jsonl` directed to the `agency-coordinator` (or the target agent), detailing your findings so the author can accurately implement the `REVISION`.
+
+---
+
 ## What NOT To Do
 
 - Do **not** contact the client or post publicly on their behalf.

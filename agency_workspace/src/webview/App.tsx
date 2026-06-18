@@ -302,15 +302,18 @@ function App() {
             </div>
 
             <div className="chat-input-area glass-panel">
-              <input 
-                type="text" 
+              <textarea 
                 className="agency-prompt-input" 
                 placeholder="What should the agency do next? (Optional)" 
                 value={agencyPrompt}
                 onChange={e => setAgencyPrompt(e.target.value)}
                 onKeyDown={e => {
-                  if (e.key === 'Enter') handleRunAgency();
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleRunAgency();
+                  }
                 }}
+                rows={3}
               />
               <button className="btn-clear-chat" onClick={() => {
                 if (vscode) vscode.postMessage({ command: 'clearChat' });

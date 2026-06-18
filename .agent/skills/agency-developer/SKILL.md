@@ -45,7 +45,7 @@ For each task, follow the **strict TDD cycle** defined in `references/coding_sta
 3. **🔵 REFACTOR** — Clean up the code without adding behaviour. Run the full suite again.
 4. Repeat for the next acceptance criterion.
 5. Log all three states in `agency_workspace/04_dev_log.md` (see dev log format in Section 7 of coding standards). **CRITICAL:** Always APPEND to the dev log. NEVER overwrite or erase previous entries.
-6. When releasing a build or modifying a project file like package.json, strictly follow Semantic Versioning (SemVer) rules. Ensure you bump the version correctly and NEVER downgrade or erase previous version numbers.
+6. When releasing a build or modifying a project file like package.json, strictly follow Semantic Versioning (SemVer) rules. **CRITICAL:** Do not rely on memory for the current version. You must actively search for the current version in `package.json` (e.g., using specific tools) before bumping it. Every change must result in a version change. Reference the SemVer workflow here: https://semver.org/. Ensure you bump the version correctly and NEVER downgrade or erase previous version numbers.
 7. Place files in `agency_workspace/src/` (or the path specified in the architecture).
 
 > **Hard rule:** If you cannot show a `🔴 RED` entry in the dev log for a task, that task is considered unverified. QA will reject it as a `HIGH` finding.
