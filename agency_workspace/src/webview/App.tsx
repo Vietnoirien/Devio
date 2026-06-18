@@ -255,7 +255,7 @@ function App() {
                       <span className="msg-time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
                       <button 
                         className="btn-delete-msg" 
-                        onClick={() => vscode ? vscode.postMessage({ command: 'deleteMessage', messageId: msg.id }) : null}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); vscode ? vscode.postMessage({ command: 'deleteMessage', messageId: msg.id }) : null; }}
                         title="Delete Message"
                       >×</button>
                     </div>

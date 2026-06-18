@@ -153,5 +153,10 @@ export class WorkspaceWriter {
         }
 
         await this.manager.appendInbox(msg);
+
+        // If the agent is resolving a previous message, automatically close the original message
+        if (msg.in_reply_to && msg.status === 'RESOLVED') {
+            await this.manager.updateMessageStatus(msg.in_reply_to, 'RESOLVED');
+        }
     }
 }

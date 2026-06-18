@@ -565,3 +565,20 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - `agency_workspace/src/webview/App.tsx`
 - `agency_workspace/src/webview/App.css`
 - `agency_workspace/src/webview/App.test.tsx`
+- 
+- ---
+- 
+- ## Critique Resolution: Post-Delivery Warranty (Message Deletion Regression)
+- 
+- **Defect reported by client:** "the cross does not remove the corresponding message from the json"
+- **Root cause:** `App.tsx` dispatched the click event but did not call `e.preventDefault()` or `e.stopPropagation()`. In `WorkspaceManager.deleteMessage`, the file parsing strictly required exact string matches, which could fail for malformed or trailing-spaced IDs. The `.vsix` bundle lacked the updated asset because Vite's esbuild caching might not have flushed it during packaging.
+- 
+- **TDD cycle:**
+- - 🔴 RED: Verified that deleting `msg-v6-006` natively works, implying an integration failure or strict ID matching bug.
+- - 🟢 GREEN: Implemented robust string matching (`String(msg.id).trim()`) in `WorkspaceManager`. Added `preventDefault` and `stopPropagation` in `App.tsx`. Re-ran `npm run package` successfully to flush Vite caches and bumped version to `0.6.35`. All 71 tests pass.
+- - 🔵 REFACTOR: None needed.
+- 
+- **Files modified:**
+- - `agency_workspace/src/workspace-manager.ts`
+- - `agency_workspace/src/webview/App.tsx`
+- - `package.json`

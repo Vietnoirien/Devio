@@ -1,8 +1,8 @@
-# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.32)
+# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.35)
 
 Cher Client,
 
-Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.32) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome.
+Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.35) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome.
 
 ## Ce qui a été construit
 
@@ -11,12 +11,12 @@ Les fonctionnalités clés incluent :
 - **Pont CDP Natif (WebSocket sur le port 9222)** : Connexion directe et fiable au processus de débogage d'Antigravity IDE pour la manipulation des fenêtres et des chats.
 - **Serveur MCP Intégré** : Exécution des outils des agents au sein même du plugin, avec des lectures fiables du DOM grâce à Cheerio.
 - **Interface Utilisateur Améliorée (Webview)** : L'interface utilisateur de votre tableau de bord Devio comprend désormais le bouton « Run Agency », un affichage des messages amélioré avec défilement fluide du bas vers le haut, et la restauration de la Vue Document (Document View).
-- **Suppression individuelle de messages** : Ajout d'une croix de suppression (×) sur chaque message, vous permettant de cibler et d'effacer spécifiquement un message de l'historique sans devoir réinitialiser tout le chat.
+- **Suppression individuelle de messages** : Ajout d'une croix de suppression (×) fonctionnelle sur chaque message, vous permettant de cibler et d'effacer spécifiquement un message de l'historique de manière persistante (mise à jour directe du fichier JSON sans problème de correspondance d'identifiants).
 
 ## Comment y accéder et l'exécuter
 
 1. **Installation** :
-   - Le fichier `.vsix` pour la version `0.6.32` est disponible dans le répertoire de votre projet.
+   - Le fichier `.vsix` pour la version `0.6.35` est disponible dans le répertoire de votre projet.
    - Installez l'extension dans Antigravity IDE via la commande : `Extensions: Install from VSIX...`
 2. **Exécution** :
    - Ouvrez la Webview Devio.
@@ -31,7 +31,7 @@ Les fonctionnalités clés incluent :
 
 ## Garantie et support
 
-La correction des défauts de l'interface (scrolling, boutons manquants, l'ajout de la petite croix pour la suppression individuelle de messages) et la suppression de l'ancien port HTTP (3717) ont été effectuées dans le cadre de notre **garantie post-livraison**. Cette version a passé 100% de nos 71 tests unitaires et vérifications de typage strict. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
+La correction des défauts de l'interface, incluant la résolution du bogue affectant la persistance de la suppression des messages dans le fichier JSON, ainsi que la suppression de l'ancien port HTTP (3717) ont été effectuées dans le cadre de notre **garantie post-livraison**. Cette version v0.6.35 a passé 100% de nos 71 tests unitaires et vérifications de typage strict, garantissant la propagation correcte des événements de l'interface. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
 
 Nous vous remercions de votre confiance.
 

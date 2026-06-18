@@ -170,7 +170,7 @@ export class WorkspaceManager {
         if (line.trim() === '') return false;
         try {
           const msg = JSON.parse(line);
-          return msg.id !== messageId;
+          return String(msg.id).trim() !== String(messageId).trim();
         } catch {
           return true;
         }
@@ -182,6 +182,39 @@ export class WorkspaceManager {
       await fs.writeFile(inboxPath, newContent, 'utf8');
     } catch (err: any) {
       throw new Error(`Failed to delete message from inbox.jsonl at ${this.getInboxPath()}: ${err.message}`);
+    } finally {
+      await this.releaseLock();
+    }
+  }
+
+  /**
+   * Updates the status of a specific message in inbox.jsonl by ID.
+   */
+  async updateMessageStatus(messageId: string, status: "OPEN" | "RESOLVED"): Promise<void> {
+    await this.acquireLock();
+    try {
+      const inboxPath = this.getInboxPath();
+      if (!(await this.fileExists(inboxPath))) {
+        return;
+      }
+      const data = await fs.readFile(inboxPath, 'utf8');
+      const lines = data.split('\n');
+      const updatedLines = lines.map(line => {
+        if (line.trim() === '') return line;
+        try {
+          const msg = JSON.parse(line);
+          if (String(msg.id).trim() === String(messageId).trim()) {
+            msg.status = status;
+            return JSON.stringify(msg);
+          }
+          return line;
+        } catch {
+          return line;
+        }
+      });
+      await fs.writeFile(inboxPath, updatedLines.join('\n'), 'utf8');
+    } catch (err: any) {
+      throw new Error(`Failed to update message status in inbox.jsonl at ${this.getInboxPath()}: ${err.message}`);
     } finally {
       await this.releaseLock();
     }
