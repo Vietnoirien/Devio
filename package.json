@@ -2,7 +2,7 @@
   "name": "devio-antigravity-plugin",
   "displayName": "Devio AI Agency Plugin",
   "description": "Autonomous Coding Agent Platform for Devio IDE",
-  "version": "0.6.42",
+  "version": "0.6.44",
   "publisher": "devio",
   "private": true,
   "engines": {
