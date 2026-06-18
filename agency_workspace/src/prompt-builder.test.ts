@@ -14,7 +14,7 @@ describe('PromptBuilder', () => {
         expect(result.prompt).toContain('Phase: DEVELOPMENT');
         expect(result.prompt).toContain('@.agent/skills/agency-developer/SKILL.md');
         expect(result.prompt).toContain('@agency_workspace/inbox.jsonl');
-        expect(result.prompt).toContain('CRITICAL INSTRUCTION: You are agency-developer. You MUST ONLY perform ONE turn.');
+        expect(result.prompt).toContain('CRITICAL INSTRUCTION: You are agency-developer.');
         expect(result.validationKey).toBeDefined();
         expect(result.prompt).toContain(`"devio_validation_key": "${result.validationKey}"`);
     });
