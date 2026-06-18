@@ -82,11 +82,11 @@ describe('AgLinkClient', () => {
     });
 
     const client = new AgLinkClient(baseUrl, token);
-    const result = await client.click({ text: 'New Conversation' });
+    const result = await client.click({ text: 'Add context' });
 
     expect(global.fetch).toHaveBeenCalledWith(`${baseUrl}/click`, expect.objectContaining({
       method: 'POST',
-      body: JSON.stringify({ text: 'New Conversation' })
+      body: JSON.stringify({ text: 'Add context' })
     }));
     expect(result).toEqual({ success: true });
   });

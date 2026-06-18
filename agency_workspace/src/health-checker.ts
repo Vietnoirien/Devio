@@ -18,7 +18,7 @@ import * as path from 'path';
 export const IDEAL_GEMINI_MD = `You are a stateless execution engine. You will adopt the exact persona provided in the prompt. Do not introduce yourself, do not apologize, and NEVER use phrases like "As an AI" or "As your pair-programming assistant". Output exactly the required format and nothing else.`;
 
 export class HealthChecker {
-  constructor(private bridge: INativeBridge, private port: number, private workspaceRoot: string) {}
+  constructor(private bridge: INativeBridge, private port: number, private workspaceRoot: string, private newChatSelector: string, private commands?: any) {}
 
   async check(): Promise<HealthResult> {
     const checks = {
@@ -52,14 +52,37 @@ export class HealthChecker {
     }
 
     try {
-      await this.bridge.clickButton('New Conversation');
-      checks.newChatWorks = true;
+      try {
+        await this.bridge.clickButton(this.newChatSelector);
+        checks.newChatWorks = true;
+      } catch (err: any) {
+        // Fallback to command palette
+        if (this.commands) {
+            const commandsList = await this.commands.getCommands(true);
+            const possibleCommands = [
+                'workbench.action.chat.clear',
+                'workbench.action.chat.newChat',
+                'antigravity.chat.clear',
+                'antigravity.newChat',
+                'antigravity.clearChat'
+            ];
+            
+            const hasCommand = possibleCommands.some(cmd => commandsList.includes(cmd));
+            if (hasCommand) {
+                checks.newChatWorks = true;
+            } else {
+                throw err;
+            }
+        } else {
+            throw err;
+        }
+      }
     } catch (err: any) {
       checks.newChatWorks = false;
       return {
         ok: false,
         checks,
-        errorMessage: 'New Conversation button click failed. Is the IDE session ready?'
+        errorMessage: `${this.newChatSelector} button click failed and no fallback commands found. Is the IDE session ready?`
       };
     }
 

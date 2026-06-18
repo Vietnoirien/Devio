@@ -28,9 +28,10 @@ export function activate(context: vscode.ExtensionContext) {
     const config = vscode.workspace.getConfiguration('devio');
     const port = 9222;
     const nativeBridge = new NativeBridge();
-    const healthChecker = new HealthChecker(nativeBridge, port, workspaceRoot);
+    const newChatSelector = config.get<string>('newChatSelector', 'Add context');
+    const healthChecker = new HealthChecker(nativeBridge, port, workspaceRoot, newChatSelector, vscode.commands);
 
-    const convMgr = new ConversationManager(nativeBridge, config.get<string>('newChatSelector', 'New Conversation'));
+    const convMgr = new ConversationManager(nativeBridge, newChatSelector, vscode.commands);
     const promptBuilder = new PromptBuilder(workspaceRoot);
     const writer = new WorkspaceWriter(workspaceManager);
     const orchestrationEngine = new OrchestrationEngine(nativeBridge, convMgr, promptBuilder, writer);
@@ -98,10 +99,41 @@ export function activate(context: vscode.ExtensionContext) {
             break;
           case 'runAgency':
             try {
-              const state = await workspaceManager.readState();
-              const fresh = config.get<boolean>('freshConversationPerTurn', true);
-              await orchestrationEngine.runTurn(state.owner || 'agency-ceo', state.phase || 'DEVELOPMENT', fresh);
-              await syncWorkspaceData();
+              let isRunning = true;
+              while (isRunning) {
+                const state = await workspaceManager.readState();
+                
+                // Read inbox to see who the last message was addressed to
+                const messages = await workspaceManager.readInbox();
+                const lastMessage = messages[messages.length - 1];
+
+                // Stop if the last message is addressed to the client
+                if (lastMessage && lastMessage.to === 'client') {
+                  vscode.window.showInformationMessage('Agency paused: Waiting for client input.');
+                  break;
+                }
+
+                // If the last message was to another agent, update the owner
+                if (lastMessage && lastMessage.to && lastMessage.to !== state.owner) {
+                  state.owner = lastMessage.to;
+                  if (lastMessage.phase) {
+                    state.phase = lastMessage.phase as any;
+                  }
+                  await workspaceManager.writeState(state);
+                }
+
+                const fresh = config.get<boolean>('freshConversationPerTurn', true);
+                await orchestrationEngine.runTurn(state.owner || 'agency-ceo', state.phase || 'DEVELOPMENT', fresh);
+                await syncWorkspaceData();
+
+                // Check the newly added message
+                const newMessages = await workspaceManager.readInbox();
+                const newLastMessage = newMessages[newMessages.length - 1];
+                if (newLastMessage && newLastMessage.to === 'client') {
+                  vscode.window.showInformationMessage('Agency paused: Waiting for client input.');
+                  break;
+                }
+              }
             } catch (err: any) {
               vscode.window.showErrorMessage(`Failed to run Agency: ${err.message}`);
             }

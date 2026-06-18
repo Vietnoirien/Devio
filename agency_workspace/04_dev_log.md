@@ -519,6 +519,18 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 
 **Files modified:**
 - `agency_workspace/src/webview/App.test.tsx`
-- `agency_workspace/src/webview/App.tsx`
 - `agency_workspace/src/webview/App.css`
 - `agency_workspace/src/extension.ts`
+
+---
+
+## Task: Fix: Run Agency failing to open fresh conversation
+
+**TDD cycle:**
+- 🔴 RED: `conversation-manager.test.ts` was relying on a `this.bridge.clickButton(this.newChatSelector)` to open a new chat. But Antigravity 2.0 removed the "New Chat" button, and clicking "Add context" fails to reset the chat, causing an infinite poll loop (timeout) for an empty chat.
+- 🟢 GREEN: Modified `ConversationManager.openFreshChat()` to prioritize executing the IDE commands (`workbench.action.chat.clear`, `antigravity.chat.clear`, etc.) directly via `this.commands.executeCommand()` instead of clicking the UI button. Retained `clickButton` only as a fallback. Tests updated and pass.
+- 🔵 REFACTOR: None needed.
+
+**Files modified:**
+- `agency_workspace/src/conversation-manager.ts`
+- `agency_workspace/src/conversation-manager.test.ts`

@@ -2,7 +2,7 @@
   "name": "devio-antigravity-plugin",
   "displayName": "Devio AI Agency Plugin",
   "description": "Autonomous Coding Agent Platform for Devio IDE",
-  "version": "0.6.11",
+  "version": "0.6.15",
   "publisher": "devio",
   "private": true,
   "engines": {
@@ -50,8 +50,8 @@
         },
         "devio.newChatSelector": {
           "type": "string",
-          "default": "New Conversation",
-          "description": "Text label or CSS selector for the New Chat button"
+          "default": "Add context",
+          "description": "The exact aria-label, title, or inner text of the button to start a fresh chat session."
         },
         "devio.responseSelector": {
           "type": "string",

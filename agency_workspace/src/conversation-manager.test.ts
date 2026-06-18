@@ -13,7 +13,7 @@ describe('ConversationManager', () => {
             injectMessage: vi.fn(),
             clickButton: vi.fn()
         };
-        manager = new ConversationManager(bridge, 'New Conversation');
+        manager = new ConversationManager(bridge, 'Add context');
     });
 
     it('should click new conversation button and wait for clear', async () => {
@@ -22,7 +22,7 @@ describe('ConversationManager', () => {
         
         await manager.openFreshChat();
         
-        expect(bridge.clickButton).toHaveBeenCalledWith('New Conversation');
+        expect(bridge.clickButton).toHaveBeenCalledWith('Add context');
         expect(bridge.captureSnapshot).toHaveBeenCalledTimes(2);
     });
 

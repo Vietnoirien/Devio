@@ -1,0 +1,302 @@
+[
+  {
+    "aria": "Customize Layout...",
+    "title": null
+  },
+  {
+    "aria": "Toggle Primary Side Bar (Ctrl+B)",
+    "title": null
+  },
+  {
+    "aria": "Toggle Panel (Ctrl+J)",
+    "title": null
+  },
+  {
+    "aria": "Toggle Agent (Ctrl+Alt+B)",
+    "title": null
+  },
+  {
+    "aria": "Open in Cider",
+    "title": null
+  },
+  {
+    "aria": "Reload Window",
+    "title": null
+  },
+  {
+    "aria": "Quick Open",
+    "title": null
+  },
+  {
+    "aria": "Open Browser (Preview)",
+    "title": null
+  },
+  {
+    "aria": "Editor-Specific Settings",
+    "title": null
+  },
+  {
+    "aria": "Profile - New Antigravity update available.",
+    "title": null
+  },
+  {
+    "aria": "Explorer (Ctrl+Shift+E)",
+    "title": null
+  },
+  {
+    "aria": "Code Search (Ctrl+Shift+F)",
+    "title": null
+  },
+  {
+    "aria": "Source Control (Ctrl+Shift+G) - 5 pending changes",
+    "title": null
+  },
+  {
+    "aria": "Run and Debug (Ctrl+Shift+D)",
+    "title": null
+  },
+  {
+    "aria": "Remote Explorer",
+    "title": null
+  },
+  {
+    "aria": "Extensions (Ctrl+Shift+X)",
+    "title": null
+  },
+  {
+    "aria": "Containers",
+    "title": null
+  },
+  {
+    "aria": "Views and More Actions...",
+    "title": null
+  },
+  {
+    "aria": "New File...",
+    "title": null
+  },
+  {
+    "aria": "New Folder...",
+    "title": null
+  },
+  {
+    "aria": "Refresh Explorer",
+    "title": null
+  },
+  {
+    "aria": "Collapse Folders in Explorer",
+    "title": null
+  },
+  {
+    "aria": "Collapse All",
+    "title": null
+  },
+  {
+    "aria": "More Actions...",
+    "title": null
+  },
+  {
+    "aria": "Pin the Current Timeline",
+    "title": null
+  },
+  {
+    "aria": "Refresh",
+    "title": null
+  },
+  {
+    "aria": "Filter Timeline",
+    "title": null
+  },
+  {
+    "aria": "More Actions...",
+    "title": null
+  },
+  {
+    "aria": "Close (Ctrl+W)",
+    "title": null
+  },
+  {
+    "aria": "Close (Ctrl+W)",
+    "title": null
+  },
+  {
+    "aria": "Close (Ctrl+W)",
+    "title": null
+  },
+  {
+    "aria": "Close (Ctrl+W)",
+    "title": null
+  },
+  {
+    "aria": "Close (Ctrl+W)",
+    "title": null
+  },
+  {
+    "aria": "Close (Ctrl+W)",
+    "title": null
+  },
+  {
+    "aria": "Split Editor Right\n[Alt] Split Editor Down",
+    "title": null
+  },
+  {
+    "aria": "Go Back (BrowserBack)",
+    "title": null
+  },
+  {
+    "aria": "Go Forward (Ctrl+Shift+-)",
+    "title": null
+  },
+  {
+    "aria": "More Actions...",
+    "title": null
+  },
+  {
+    "aria": "Problems (Ctrl+Shift+M) - Total 3 Problems",
+    "title": null
+  },
+  {
+    "aria": "Output (Ctrl+K Ctrl+H)",
+    "title": null
+  },
+  {
+    "aria": "Debug Console (Ctrl+Shift+Y)",
+    "title": null
+  },
+  {
+    "aria": "Terminal",
+    "title": null
+  },
+  {
+    "aria": "Ports",
+    "title": null
+  },
+  {
+    "aria": "Clear Output",
+    "title": null
+  },
+  {
+    "aria": "Turn Auto Scrolling Off",
+    "title": null
+  },
+  {
+    "aria": "Views and More Actions...",
+    "title": null
+  },
+  {
+    "aria": "Maximize Panel Size",
+    "title": null
+  },
+  {
+    "aria": "Hide Panel (Ctrl+J)",
+    "title": null
+  },
+  {
+    "aria": "Clear Output",
+    "title": null
+  },
+  {
+    "aria": "Turn Auto Scrolling Off",
+    "title": null
+  },
+  {
+    "aria": "More Actions...",
+    "title": null
+  },
+  {
+    "aria": "Maximize Secondary Side Bar Size",
+    "title": null
+  },
+  {
+    "aria": "Hide Secondary Side Bar",
+    "title": null
+  },
+  {
+    "aria": "Add context",
+    "title": null
+  },
+  {
+    "aria": "Select model, current: Gemini 3.1 Pro (High)",
+    "title": null
+  },
+  {
+    "aria": "Cancel",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Remove from Recently Used",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Remove from Recently Used",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Remove from Recently Used",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  },
+  {
+    "aria": "Configure Keybinding",
+    "title": null
+  }
+]

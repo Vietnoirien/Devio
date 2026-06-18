@@ -20,7 +20,7 @@ describe('HealthChecker', () => {
     mockBridge.connectCDP.mockResolvedValue();
     mockBridge.clickButton.mockResolvedValue();
 
-    const checker = new HealthChecker(mockBridge, port, '/mock/workspace');
+    const checker = new HealthChecker(mockBridge, port, '/mock/workspace', 'Add context');
     const result = await checker.check();
 
     expect(result).toEqual({
@@ -38,7 +38,7 @@ describe('HealthChecker', () => {
   it('should fail bridgeReachable if connectCDP fails', async () => {
     mockBridge.connectCDP.mockRejectedValue(new Error('Connection failed'));
     
-    const checker = new HealthChecker(mockBridge, port, '/mock/workspace');
+    const checker = new HealthChecker(mockBridge, port, '/mock/workspace', 'Add context');
     const result = await checker.check();
 
     expect(result.ok).toBe(false);
@@ -52,11 +52,11 @@ describe('HealthChecker', () => {
     mockBridge.connectCDP.mockResolvedValue();
     mockBridge.clickButton.mockRejectedValue(new Error('Click failed'));
 
-    const checker = new HealthChecker(mockBridge, port, '/mock/workspace');
+    const checker = new HealthChecker(mockBridge, port, '/mock/workspace', 'Add context');
     const result = await checker.check();
 
     expect(result.ok).toBe(false);
     expect(result.checks.newChatWorks).toBe(false);
-    expect(result.errorMessage).toContain('New Conversation button');
+    expect(result.errorMessage).toContain('Add context button');
   });
 });

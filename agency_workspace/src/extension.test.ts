@@ -43,7 +43,7 @@ vi.mock('vscode', () => {
       getConfiguration: vi.fn().mockReturnValue({
         get: vi.fn((key: string, defaultValue: any) => {
           if (key === 'freshConversationPerTurn') return true;
-          if (key === 'newChatSelector') return 'New Conversation';
+          if (key === 'newChatSelector') return 'Add context';
           return 9222;
         })
       }),
@@ -59,10 +59,19 @@ vi.mock('vscode', () => {
 
 // Mock the WorkspaceManager and webview-provider
 vi.mock('./workspace-manager', () => {
+  let inboxState = [{ id: 'msg-001', message: 'Hello', to: 'agency-ceo', phase: 'DEVELOPMENT' }];
   return {
     WorkspaceManager: class {
       readState = vi.fn().mockResolvedValue({ owner: 'agency-ceo', phase: 'DEVELOPMENT', project: 'Devio Test' });
-      readInbox = vi.fn().mockResolvedValue([{ id: 'msg-001', message: 'Hello' }]);
+      readInbox = vi.fn().mockImplementation(() => Promise.resolve(inboxState));
+      writeState = vi.fn().mockResolvedValue(undefined);
+      // Let the tests push a client message to stop the loop
+      static stopLoop() {
+        inboxState.push({ id: 'msg-stop', message: 'Done', to: 'client', phase: 'DONE' });
+      }
+      static resetInbox() {
+        inboxState = [{ id: 'msg-001', message: 'Hello', to: 'agency-ceo', phase: 'DEVELOPMENT' }];
+      }
     }
   };
 });
@@ -221,12 +230,21 @@ describe('Extension Activation', () => {
     await commandCallback();
 
     if (messageListener) {
+      // Simulate the orchestration engine running a turn and then producing a message to the client
+      mockRunTurn.mockImplementationOnce(async () => {
+        const { WorkspaceManager } = await import('./workspace-manager');
+        (WorkspaceManager as any).stopLoop();
+      });
+
       const mockMessage = {
         command: 'runAgency'
       };
       await (messageListener as Function)(mockMessage);
       
       expect(mockRunTurn).toHaveBeenCalledWith('agency-ceo', 'DEVELOPMENT', true);
+      
+      const { WorkspaceManager } = await import('./workspace-manager');
+      (WorkspaceManager as any).resetInbox();
     }
   });
 
