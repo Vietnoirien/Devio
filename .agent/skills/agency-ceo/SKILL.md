@@ -46,15 +46,16 @@ Before doing **anything else** in any phase, detect the client's language:
 **Goal:** Understand the client's request and prepare to write the proposal.
 
 1. Read `agency_workspace/01_brief.md`.
-2. If it is incomplete or vague, ask the user (acting as the client) targeted clarifying questions. Cover:
+2. If it is incomplete or vague, ask the user (acting as the client) targeted clarifying questions by posting a message to `"to": "client"`. This will pause the agency and wait for human input. Cover:
    - Business goal (what problem are we solving?)
    - Target users / audience
    - Existing systems or constraints
    - Timeline expectations
    - Budget range
    - Success criteria
-3. Once you have enough to proceed, update `01_brief.md` with a clean summary and post `INFO` to `agency-architect` with any budget constraints discovered.
-4. Update `state.json` phase to `PROPOSAL`.
+3. If you lack business context or industry facts, post a message to `"agency-researcher"` to gather the intel instead of guessing.
+4. Once you have enough to proceed, update `01_brief.md` with a clean summary and post `INFO` to `agency-architect` with any budget constraints discovered.
+5. Update `state.json` phase to `PROPOSAL`.
 
 ---
 
@@ -69,6 +70,7 @@ Before writing a single word of the proposal:
 1. Check that `agency_workspace/00_client_intel.md` exists and has `Status: COMPLETE`.
 2. If it does **not** exist, **stop**. Post an `INFO` message to `agency-coordinator` requesting the RESEARCH phase be triggered. Do not draft the proposal until the researcher's report is available.
 3. If it exists, **read it in full**. Use the client's actual products, services, pain points, and digital presence to make the proposal specific and credible — not generic.
+4. **NO ASSUMPTIONS RULE:** If you are unsure about a fact during drafting, pause and send an `INFO` or `REQUEST_CHANGE` message to `"agency-researcher"` to validate it.
 
 > **Rule:** A proposal that does not reference the client's real business context (drawn from `00_client_intel.md`) is unprofessional and will be rejected by the Architect during review.
 
@@ -106,7 +108,8 @@ Use the template at `assets/proposal_template.md`. Your proposal must include:
    - How to access / run it
    - Known limitations or future recommendations
    - Warranty / support terms (if applicable)
-4. Post `APPROVE` to `agency-coordinator` to close the engagement.
+4. **DELIVER TO CLIENT:** Post a `SUBMIT` message with `"to": "client"`. This is mandatory. You must explicitly deliver the package to the client and wait for their response. Do not just loop internally.
+5. Once the client approves, post `APPROVE` to `agency-coordinator` to close the engagement.
 
 ---
 

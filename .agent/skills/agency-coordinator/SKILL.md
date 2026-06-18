@@ -87,14 +87,14 @@ If any exist:
 
 ---
 
-## Escalation Handling
+## Escalation & Client Interaction Handling
 
-If a message has `"type": "ESCALATE"`, the agency is blocked and requires human input. Do the following:
+If a message has `"type": "ESCALATE"` OR if a message is sent `"to": "client"`, the agency is blocked and requires human input. Do the following:
 
-1. Stop the agency loop.
-2. Clearly summarize the escalation issue to the user.
-3. Present the options: (a) make a decision yourself, (b) provide clarifying info.
-4. Once the user responds, resume by posting a `REVISION` resolving the escalation and continuing.
+1. Stop the agency loop immediately.
+2. Clearly summarize the issue or the deliverable to the user (the client).
+3. Present the options: (a) provide clarifying info, (b) approve the deliverable, or (c) request changes.
+4. Once the user responds, resume by posting a `REVISION` or `APPROVE` resolving the block and continuing.
 
 ---
 
