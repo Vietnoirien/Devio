@@ -70,11 +70,11 @@ describe('NativeBridge', () => {
         const mockConnection = { id: '1', ws: {} as any, call: vi.fn(), contexts: [], title: 'Antigravity', url: 'ws://127.0.0.1:9222' };
         vi.mocked(cdp.discoverInstances).mockResolvedValue([{ port: 9222, url: 'ws', id: '1', title: 't' }]);
         vi.mocked(cdp.connectCDP).mockResolvedValue(mockConnection);
-        vi.mocked(antigravity.clickElement).mockResolvedValue({ success: true, method: 'text_hit', target: 'New Chat' });
+        vi.mocked(antigravity.clickElement).mockResolvedValue({ success: true, method: 'text_hit', target: 'New Conversation' });
 
         await bridge.connectCDP(9222);
-        await bridge.clickButton('New Chat');
+        await bridge.clickButton('New Conversation');
 
-        expect(antigravity.clickElement).toHaveBeenCalledWith(mockConnection, 'New Chat');
+        expect(antigravity.clickElement).toHaveBeenCalledWith(mockConnection, 'New Conversation');
     });
 });

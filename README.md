@@ -1,8 +1,14 @@
-# Devio AI Agency Framework
+# Devio Antigravity IDE Plugin
 
-A state-machine-driven, multi-agent software engineering enterprise running natively in Google Antigravity.
+This repository provides the native IDE extension for the **Devio AI Agency Framework**, bringing a state-machine-driven, multi-agent software engineering enterprise directly into your Google Antigravity development environment.
 
-Devio organizes persona-based AI agents into a collaborative, self-correcting development team. The agents communicate via a shared message bus (`inbox.jsonl`), collaborate on a common Blackboard (`agency_workspace/`), and enforce strict quality, security, and testing gates (including mandatory Test-Driven Development) before any code is delivered.
+The plugin organizes persona-based AI agents into a collaborative, self-correcting development team. The agents communicate via a shared message bus (`inbox.jsonl`), collaborate on a common Blackboard (`agency_workspace/`), and enforce strict quality, security, and testing gates (including mandatory Test-Driven Development) before any code is delivered.
+
+## ✨ Plugin Features
+- **Interactive Dashboard**: A complete React-based glassmorphism UI to monitor agency state, view the message bus, and trigger orchestration turns directly inside the IDE.
+- **Native Orchestration**: Communicates directly with the IDE's debugging port (9222) via CDP to execute agent commands without HTTP polling overhead.
+- **Embedded MCP Server**: Integrates `@modelcontextprotocol/sdk` to securely parse the IDE state and perform workspace operations.
+- **Live Actualization**: Native file watchers automatically sync the React dashboard when agents update the message bus.
 
 ---
 
@@ -135,38 +141,21 @@ agency_workspace/
 
 ---
 
-## ⚙️ Installation & Global Skill Management
+## ⚙️ Plugin Build & Installation
 
-Devio includes global installation scripts to install the agency skills into your Google Antigravity global skills directory (`~/.gemini/antigravity/skills`). This makes the agency personas available to coordinate work in any folder.
-
-> [!NOTE]
-> Workspace-level skills located in a local `.agent/skills/` folder will always take precedence over globally installed versions.
-
-### On Linux / macOS (Bash)
-Interactive menu:
-```bash
-./install_global.sh
-```
-
-Non-interactive commands:
-```bash
-./install_global.sh --install     # Install skills to global directory (skips existing)
-./install_global.sh --update      # Reinstall / overwrite global skills
-./install_global.sh --uninstall   # Remove Devio skills from global directory
-```
-
-### On Windows (PowerShell)
-Interactive menu:
-```powershell
-.\install_global.ps1
-```
-
-Non-interactive commands:
-```powershell
-.\install_global.ps1 -Install     # Install skills to global directory (skips existing)
-.\install_global.ps1 -Update      # Reinstall / overwrite global skills
-.\install_global.ps1 -Uninstall   # Remove Devio skills from global directory
-```
+1. Clone the repository and install dependencies:
+   ```bash
+   npm install
+   ```
+2. Build the extension bundle and React webview:
+   ```bash
+   npm run build
+   ```
+3. Package the extension into a VSIX file:
+   ```bash
+   npm run package
+   ```
+4. Install the generated `.vsix` file directly into your IDE.
 
 ---
 

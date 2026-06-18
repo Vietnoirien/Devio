@@ -22,6 +22,9 @@ vi.mock('vscode', () => {
     ViewColumn: {
       One: 1
     },
+    RelativePattern: class {
+      constructor(public base: string, public pattern: string) {}
+    },
     Uri: {
       joinPath: (baseUri: any, ...pathSegments: string[]) => {
         return {
@@ -38,7 +41,17 @@ vi.mock('vscode', () => {
         }
       ],
       getConfiguration: vi.fn().mockReturnValue({
-        get: vi.fn().mockReturnValue(3717)
+        get: vi.fn((key: string, defaultValue: any) => {
+          if (key === 'freshConversationPerTurn') return true;
+          if (key === 'newChatSelector') return 'New Conversation';
+          return 9222;
+        })
+      }),
+      createFileSystemWatcher: vi.fn().mockReturnValue({
+        onDidChange: vi.fn(),
+        onDidCreate: vi.fn(),
+        onDidDelete: vi.fn(),
+        dispose: vi.fn()
       })
     }
   };
@@ -48,7 +61,7 @@ vi.mock('vscode', () => {
 vi.mock('./workspace-manager', () => {
   return {
     WorkspaceManager: class {
-      readState = vi.fn().mockResolvedValue({ phase: 'DEVELOPMENT', project: 'Devio Test' });
+      readState = vi.fn().mockResolvedValue({ owner: 'agency-ceo', phase: 'DEVELOPMENT', project: 'Devio Test' });
       readInbox = vi.fn().mockResolvedValue([{ id: 'msg-001', message: 'Hello' }]);
     }
   };
@@ -60,19 +73,19 @@ vi.mock('./webview-provider', () => {
   };
 });
 
-const mockInvokeAgent = vi.fn().mockResolvedValue({});
-vi.mock('./antigravity-bridge', () => {
-  return {
-    AntigravityBridge: class {
-      invokeAgent = mockInvokeAgent;
-    }
-  };
-});
-
 vi.mock('./health-checker', () => {
   return {
     HealthChecker: class {
       check = vi.fn().mockResolvedValue({ ok: true, checks: {} });
+    }
+  };
+});
+
+const mockRunTurn = vi.fn().mockResolvedValue(undefined);
+vi.mock('./orchestration-engine', () => {
+  return {
+    OrchestrationEngine: class {
+      runTurn = mockRunTurn;
     }
   };
 });
@@ -83,6 +96,7 @@ describe('Extension Activation', () => {
   beforeEach(() => {
     mockRegisterCommand.mockReset();
     mockCreateWebviewPanel.mockReset();
+    mockRunTurn.mockReset();
   });
 
   it('should register devio.start command on activation', () => {
@@ -157,7 +171,8 @@ describe('Extension Activation', () => {
         html: '',
         onDidReceiveMessage: mockOnDidReceiveMessage,
         postMessage: mockPostMessage
-      }
+      },
+      onDidDispose: vi.fn()
     };
     mockCreateWebviewPanel.mockReturnValue(mockPanel);
 
@@ -177,7 +192,7 @@ describe('Extension Activation', () => {
     }
   });
 
-  it('should handle sendMessage command and invoke agent', async () => {
+  it('should handle runAgency command and invoke OrchestrationEngine', async () => {
     const mockContext = {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
@@ -198,7 +213,46 @@ describe('Extension Activation', () => {
         html: '',
         onDidReceiveMessage: mockOnDidReceiveMessage,
         postMessage: vi.fn()
-      }
+      },
+      onDidDispose: vi.fn()
+    };
+    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+
+    await commandCallback();
+
+    if (messageListener) {
+      const mockMessage = {
+        command: 'runAgency'
+      };
+      await (messageListener as Function)(mockMessage);
+      
+      expect(mockRunTurn).toHaveBeenCalledWith('agency-ceo', 'DEVELOPMENT', true);
+    }
+  });
+
+  it('should handle sendMessage command and append to inbox', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    activate(mockContext);
+    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockPanel = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: vi.fn()
+      },
+      onDidDispose: vi.fn()
     };
     mockCreateWebviewPanel.mockReturnValue(mockPanel);
 
@@ -222,50 +276,7 @@ describe('Extension Activation', () => {
       await (messageListener as Function)(mockMessage);
       
       expect(mockAppendInbox).toHaveBeenCalledWith(mockMessage.message);
-      expect(mockInvokeAgent).toHaveBeenCalledWith({
-        agent: 'agency-developer',
-        action: 'process_message',
-        workspace_path: '/mock-workspace-root',
-        context: { current_phase: 'DEVELOPMENT' }
-      });
     }
-  });
-
-  it('should register devio.setAntigravityLinkToken command on activation', () => {
-    const mockContext = {
-      subscriptions: [],
-      extensionUri: { path: '/mock-extension' }
-    } as any;
-
-    activate(mockContext);
-
-    expect(mockRegisterCommand).toHaveBeenCalledWith('devio.setAntigravityLinkToken', expect.any(Function));
-  });
-
-  it('should prompt user and store token in SecretStorage when devio.setAntigravityLinkToken is executed', async () => {
-    const mockStore = vi.fn().mockResolvedValue(undefined);
-    const mockContext = {
-      subscriptions: [],
-      extensionUri: { path: '/mock-extension' },
-      secrets: { store: mockStore }
-    } as any;
-
-    const vscodeMock = await import('vscode');
-    (vscodeMock.window.showInputBox as any).mockResolvedValue('user-input-token');
-
-    activate(mockContext);
-
-    const tokenCommandCall = mockRegisterCommand.mock.calls.find((call: any[]) => call[0] === 'devio.setAntigravityLinkToken');
-    expect(tokenCommandCall).toBeDefined();
-
-    await tokenCommandCall![1]();
-
-    expect(vscodeMock.window.showInputBox).toHaveBeenCalledWith(expect.objectContaining({
-      prompt: expect.any(String),
-      password: true
-    }));
-    expect(mockStore).toHaveBeenCalledWith('DEVIO_AG_LINK_TOKEN', 'user-input-token');
-    expect(vscodeMock.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('successfully'));
   });
 
   it('should run HealthChecker and post health_result to Webview when ready message is received', async () => {
@@ -277,7 +288,7 @@ describe('Extension Activation', () => {
 
     const vscodeMock = await import('vscode');
     (vscodeMock.workspace.getConfiguration as any) = vi.fn().mockReturnValue({
-      get: vi.fn().mockReturnValue(3717)
+      get: vi.fn().mockReturnValue(9222)
     });
 
     activate(mockContext);
@@ -293,7 +304,8 @@ describe('Extension Activation', () => {
           return { dispose: () => {} };
         },
         postMessage: mockPostMessage
-      }
+      },
+      onDidDispose: vi.fn()
     };
     mockCreateWebviewPanel.mockReturnValue(mockPanel);
 
@@ -309,4 +321,52 @@ describe('Extension Activation', () => {
       );
     }
   });
+
+  it('should set up a file system watcher for live actualization', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    const vscodeMock = await import('vscode');
+    const mockWatcher = {
+      onDidChange: vi.fn(),
+      onDidCreate: vi.fn(),
+      onDidDelete: vi.fn(),
+      dispose: vi.fn()
+    };
+    (vscodeMock.workspace.createFileSystemWatcher as any).mockReturnValue(mockWatcher);
+
+    activate(mockContext);
+    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+
+    const mockPostMessage = vi.fn().mockResolvedValue(true);
+    const mockPanel = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: vi.fn(),
+        postMessage: mockPostMessage
+      },
+      onDidDispose: vi.fn()
+    };
+    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+
+    await commandCallback();
+
+    expect(vscodeMock.workspace.createFileSystemWatcher).toHaveBeenCalled();
+    expect(mockWatcher.onDidChange).toHaveBeenCalled();
+    
+    // Simulate a file change
+    const onDidChangeCallback = mockWatcher.onDidChange.mock.calls[0][0];
+    await onDidChangeCallback();
+    
+    // Should post an update
+    expect(mockPostMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'update'
+      })
+    );
+  });
 });
+

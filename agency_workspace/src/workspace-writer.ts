@@ -40,6 +40,8 @@ export class WorkspaceWriter {
             const tagName = el.tagName.toLowerCase();
             const $el = $(el);
 
+            if (['style', 'script', 'meta', 'link'].includes(tagName)) return;
+
             if (tagName === 'pre') {
                 const code = $el.find('code').text();
                 // Check if the previous text part was a file URL
@@ -71,19 +73,60 @@ export class WorkspaceWriter {
             await fs.writeFile(file.path, file.content, 'utf8');
         }
 
-        // Add to inbox
-        const msg: AgencyMessage = {
-            id: `msg-${Date.now()}`,
-            timestamp: new Date().toISOString(),
-            from,
-            to,
-            phase,
-            type: "INFO",
-            ref_doc: null,
-            message: response.text,
-            in_reply_to: null,
-            status: "RESOLVED"
-        };
+        let msg: AgencyMessage | null = null;
+
+        // Strategy 1: Find the last line that is a valid JSON object (JSONL format)
+        const lines = response.text.split('\n');
+        for (let i = lines.length - 1; i >= 0; i--) {
+            const line = lines[i].trim();
+            if (line.startsWith('{') && line.endsWith('}')) {
+                try {
+                    const parsed = JSON.parse(line);
+                    if (parsed && parsed.id && parsed.type) {
+                        msg = parsed as AgencyMessage;
+                        break;
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+        }
+
+        // Strategy 2: Extract the last matching { ... } block
+        if (!msg) {
+            for (let i = response.text.length - 1; i >= 0; i--) {
+                if (response.text[i] === '}') {
+                    let braceCount = 0;
+                    let startIndex = -1;
+                    for (let j = i; j >= 0; j--) {
+                        if (response.text[j] === '}') braceCount++;
+                        if (response.text[j] === '{') braceCount--;
+                        if (braceCount === 0) {
+                            startIndex = j;
+                            break;
+                        }
+                    }
+                    if (startIndex !== -1) {
+                        try {
+                            const candidate = response.text.substring(startIndex, i + 1);
+                            const parsed = JSON.parse(candidate);
+                            if (parsed && parsed.id && parsed.type) {
+                                msg = parsed as AgencyMessage;
+                                break;
+                            }
+                        } catch (e) {
+                            // ignore
+                        }
+                        i = startIndex; // Skip to before this block
+                    }
+                }
+            }
+        }
+
+        if (!msg) {
+            throw new Error(`Failed to parse a valid AgencyMessage from response. Extracted text: ${response.text.substring(0, 100)}...`);
+        }
+
         await this.manager.appendInbox(msg);
     }
 }

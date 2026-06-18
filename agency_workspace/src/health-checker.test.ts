@@ -1,24 +1,26 @@
 import { vi, describe, it, expect, beforeEach, type Mocked } from 'vitest';
 import { HealthChecker } from './health-checker';
-import { AgLinkClient } from './ag-link-client';
+import { INativeBridge } from './native-bridge';
 
 describe('HealthChecker', () => {
-  let mockClient: Mocked<AgLinkClient>;
+  let mockBridge: Mocked<INativeBridge>;
 
   beforeEach(() => {
-    mockClient = {
-      ping: vi.fn(),
-      click: vi.fn(),
+    mockBridge = {
+      connectCDP: vi.fn(),
+      captureSnapshot: vi.fn(),
+      injectMessage: vi.fn(),
+      clickButton: vi.fn(),
     } as any;
   });
 
-  const port = 3717;
+  const port = 9222;
 
-  it('should pass all checks if bridge is reachable, auth valid, and click succeeds', async () => {
-    mockClient.ping.mockResolvedValue({ ok: true });
-    mockClient.click.mockResolvedValue({ success: true });
+  it('should pass all checks if bridge is reachable and click succeeds', async () => {
+    mockBridge.connectCDP.mockResolvedValue();
+    mockBridge.clickButton.mockResolvedValue();
 
-    const checker = new HealthChecker(mockClient, port);
+    const checker = new HealthChecker(mockBridge, port, '/mock/workspace');
     const result = await checker.check();
 
     expect(result).toEqual({
@@ -27,45 +29,34 @@ describe('HealthChecker', () => {
         bridgeReachable: true,
         authValid: true,
         newChatWorks: true,
+        geminiMdValid: false,
         portUsed: port
       }
     });
   });
 
-  it('should fail bridgeReachable and authValid if ping fails', async () => {
-    mockClient.ping.mockResolvedValue({ ok: false });
+  it('should fail bridgeReachable if connectCDP fails', async () => {
+    mockBridge.connectCDP.mockRejectedValue(new Error('Connection failed'));
     
-    const checker = new HealthChecker(mockClient, port);
+    const checker = new HealthChecker(mockBridge, port, '/mock/workspace');
     const result = await checker.check();
 
     expect(result.ok).toBe(false);
     expect(result.checks.bridgeReachable).toBe(false);
-    expect(result.checks.authValid).toBe(false);
+    expect(result.checks.authValid).toBe(true);
     expect(result.errorMessage).toContain(port.toString());
-    expect(result.errorMessage).toContain('Cannot reach Antigravity Link');
+    expect(result.errorMessage).toContain('Cannot reach Antigravity IDE');
   });
 
-  it('should fail authValid if ping returns status 401', async () => {
-    mockClient.ping.mockResolvedValue({ ok: false, status: 401 });
+  it('should fail newChatWorks if clickButton fails', async () => {
+    mockBridge.connectCDP.mockResolvedValue();
+    mockBridge.clickButton.mockRejectedValue(new Error('Click failed'));
 
-    const checker = new HealthChecker(mockClient, port);
-    const result = await checker.check();
-
-    expect(result.ok).toBe(false);
-    expect(result.checks.bridgeReachable).toBe(true);
-    expect(result.checks.authValid).toBe(false);
-    expect(result.errorMessage).toContain('Authentication failed');
-  });
-
-  it('should fail newChatWorks if click fails', async () => {
-    mockClient.ping.mockResolvedValue({ ok: true });
-    mockClient.click.mockRejectedValue(new Error('Click failed'));
-
-    const checker = new HealthChecker(mockClient, port);
+    const checker = new HealthChecker(mockBridge, port, '/mock/workspace');
     const result = await checker.check();
 
     expect(result.ok).toBe(false);
     expect(result.checks.newChatWorks).toBe(false);
-    expect(result.errorMessage).toContain('New Chat button');
+    expect(result.errorMessage).toContain('New Conversation button');
   });
 });

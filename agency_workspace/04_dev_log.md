@@ -491,3 +491,34 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - `agency_workspace/src/health-checker.test.ts`
 - `agency_workspace/src/native-bridge.test.ts`
 - `agency_workspace/src/workspace-writer.ts`
+
+---
+
+## Critique Resolution: Post-Delivery Warranty (V3 Native Merge Regressions)
+
+**TDD cycle:**
+- 🔴 RED: Added tests to `health-checker.test.ts` for NativeBridge integration, `extension.test.ts` for OrchestrationEngine invoke and `App.test.tsx` for new UI controls ('Run Agency', Settings, Document View) and scrolling layout. All tests failed appropriately.
+- 🟢 GREEN: Removed port 3717 legacy logic. Updated `health-checker.ts` and `extension.ts` to use `NativeBridge` directly on port 9222. Modified `App.tsx` and `App.css` to render bottom-anchored message views (`flex-direction: column-reverse`) and mapped the UI controls to IPC `runAgency` commands. Implemented an `fsWatcher` in `extension.ts` on `inbox.jsonl` to ensure live actualization.
+- 🔵 REFACTOR: All 61 tests passed across 16 suites. Bumped `package.json` to `0.6.0` and updated `README.md` to document the Native Merge features.
+
+**Files modified:**
+- `agency_workspace/src/health-checker.ts` & `.test.ts`
+- `agency_workspace/src/extension.ts` & `.test.ts`
+- `agency_workspace/src/webview/App.tsx` & `.test.tsx`
+- `package.json`
+- `README.md`
+
+---
+
+## Task: UI Redesign (Client Request)
+
+**TDD cycle:**
+- 🔴 RED: Added tests to `App.test.tsx` for the new tabbed interface, run agency prompt, and openDocument link. 8 tests failed because the UI does not implement these elements yet.
+- 🟢 GREEN: Implemented the new tabbed UI in `App.tsx` and premium visual design in `App.css`. Updated `extension.ts` to correctly handle `openDocument` and fixed the `App.test.tsx` test cases to correctly query the new component structure (metadata and composer moved to "Dev Tools / Settings" tab). All 61 tests now pass.
+- 🔵 REFACTOR: None needed.
+
+**Files modified:**
+- `agency_workspace/src/webview/App.test.tsx`
+- `agency_workspace/src/webview/App.tsx`
+- `agency_workspace/src/webview/App.css`
+- `agency_workspace/src/extension.ts`

@@ -27,4 +27,65 @@ describe('WorkspaceWriter', () => {
         expect(parsed.files[0].path).toBe('/path/to/file.ts');
         expect(parsed.files[0].content).toBe('const a = 1;');
     });
+
+    describe('applyResponse', () => {
+        it('should extract valid JSONL format from response text', async () => {
+            const mockManager = { appendInbox: vi.fn() } as any;
+            const writer = new WorkspaceWriter(mockManager);
+            
+            const response = {
+                text: 'Some preamble\n{"id": "msg-123", "type": "INFO", "message": "hello"}\nSome trailing text',
+                files: []
+            };
+
+            await writer.applyResponse(response, 'agentA', 'agentB', 'DEVELOPMENT');
+
+            expect(mockManager.appendInbox).toHaveBeenCalledWith(expect.objectContaining({
+                id: 'msg-123',
+                type: 'INFO',
+                message: 'hello'
+            }));
+        });
+
+        it('should extract valid JSON object from text with thoughts and UI garbage', async () => {
+            const mockManager = { appendInbox: vi.fn() } as any;
+            const writer = new WorkspaceWriter(mockManager);
+            
+            const response = {
+                text: `
+<thought>
+I need to do something
+</thought>
+{
+  "id": "msg-456",
+  "type": "REQUEST_CHANGE",
+  "message": "please fix this"
+}
+thumb_upthumb_downReview Changes
+`,
+                files: []
+            };
+
+            await writer.applyResponse(response, 'agentA', 'agentB', 'DEVELOPMENT');
+
+            expect(mockManager.appendInbox).toHaveBeenCalledWith(expect.objectContaining({
+                id: 'msg-456',
+                type: 'REQUEST_CHANGE',
+                message: 'please fix this'
+            }));
+        });
+
+        it('should throw an error if no valid JSON is found', async () => {
+            const mockManager = { appendInbox: vi.fn() } as any;
+            const writer = new WorkspaceWriter(mockManager);
+            
+            const response = {
+                text: 'Just some text, no JSON here { broken ',
+                files: []
+            };
+
+            await expect(writer.applyResponse(response, 'agentA', 'agentB', 'DEVELOPMENT')).rejects.toThrow('Failed to parse a valid AgencyMessage from response');
+            expect(mockManager.appendInbox).not.toHaveBeenCalled();
+        });
+    });
 });

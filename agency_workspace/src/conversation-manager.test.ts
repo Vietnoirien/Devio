@@ -13,16 +13,16 @@ describe('ConversationManager', () => {
             injectMessage: vi.fn(),
             clickButton: vi.fn()
         };
-        manager = new ConversationManager(bridge, 'New Chat');
+        manager = new ConversationManager(bridge, 'New Conversation');
     });
 
-    it('should click new chat button and wait for clear', async () => {
+    it('should click new conversation button and wait for clear', async () => {
         vi.mocked(bridge.captureSnapshot).mockResolvedValueOnce({ html: '<div class="message">msgs</div>', isGenerating: false })
                                         .mockResolvedValueOnce({ html: '<div></div>', isGenerating: false });
         
         await manager.openFreshChat();
         
-        expect(bridge.clickButton).toHaveBeenCalledWith('New Chat');
+        expect(bridge.clickButton).toHaveBeenCalledWith('New Conversation');
         expect(bridge.captureSnapshot).toHaveBeenCalledTimes(2);
     });
 

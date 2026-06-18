@@ -691,14 +691,18 @@ export async function clickElement(
                 if (!isCorrectTag) return false;
                 
                 const text = el.innerText || el.textContent || '';
-                return text.trim() === textToFind && isVisible(el);
+                const ariaLabel = el.getAttribute('aria-label') || '';
+                const title = el.getAttribute('title') || '';
+                return (text.trim() === textToFind || ariaLabel.trim() === textToFind || title.trim() === textToFind) && isVisible(el);
             }) || findInTree(document, (el) => {
                 const tag = el.tagName.toLowerCase();
                 const isCorrectTag = tagToFind === '*' || tag === tagToFind.toLowerCase();
                 if (!isCorrectTag) return false;
                 
                 const text = el.innerText || el.textContent || '';
-                return text.includes(textToFind) && isVisible(el);
+                const ariaLabel = el.getAttribute('aria-label') || '';
+                const title = el.getAttribute('title') || '';
+                return (text.includes(textToFind) || ariaLabel.includes(textToFind) || title.includes(textToFind)) && isVisible(el);
             });
             
             if (match) {

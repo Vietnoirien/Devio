@@ -3,9 +3,6 @@ import { formatPhaseName, isPhaseBlocked, getLatestMessages, createAgencyMessage
 import { AgencyState, AgencyMessage } from '../workspace-manager';
 import './App.css';
 
-// acquireVsCodeApi() must be called ONCE per webview lifetime.
-// We use a lazy getter so that test stubs set before first render are respected,
-// and so that the function is never called twice (which throws in VSCode).
 let _vscode: ReturnType<typeof acquireVsCodeApi> | null = null;
 let _vsCodeAcquired = false;
 
@@ -17,36 +14,59 @@ function getVsCodeApi() {
         _vscode = acquireVsCodeApi();
       }
     } catch {
-      // Already acquired — should not happen but guard against it
     }
   }
   return _vscode;
 }
 
-/** Exported for test isolation only — resets the singleton between test cases. */
 export function _resetVsCodeApiForTests() {
   _vscode = null;
   _vsCodeAcquired = false;
 }
 
 function App() {
-  // Call the lazy getter — safe to call multiple times, acquireVsCodeApi() only runs once
   const vscode = getVsCodeApi();
 
   const [state, setState] = useState<AgencyState | null>(null);
   const [messages, setMessages] = useState<AgencyMessage[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [healthError, setHealthError] = useState<string | null>(null);
+  const [geminiMdValid, setGeminiMdValid] = useState<boolean>(true);
+  
+  const [activeTab, setActiveTab] = useState<'chat' | 'devtools' | 'document' | 'settings'>('chat');
+  const [agencyPrompt, setAgencyPrompt] = useState('');
+  const [documentContent, setDocumentContent] = useState<string | null>(null);
+  const [documentFile, setDocumentFile] = useState<string | null>(null);
 
-  // Composer State
   const [composerFrom, setComposerFrom] = useState('client');
   const [composerTo, setComposerTo] = useState('agency-ceo');
   const [composerType, setComposerType] = useState<"SUBMIT" | "REQUEST_CHANGE" | "REVISION" | "APPROVE" | "ESCALATE" | "INFO">('INFO');
   const [composerRefDoc, setComposerRefDoc] = useState('');
   const [composerStatus, setComposerStatus] = useState<"OPEN" | "RESOLVED">('RESOLVED');
   const [composerMessage, setComposerMessage] = useState('');
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessagesLength = useRef(0);
+  const prevActiveTab = useRef(activeTab);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (e.currentTarget.scrollTop === 0 && visibleCount < messages.length) {
+      // Store current scroll height
+      const scrollHeight = e.currentTarget.scrollHeight;
+      setVisibleCount(prev => Math.min(prev + 50, messages.length));
+      
+      // We need to restore scroll position after render
+      setTimeout(() => {
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - scrollHeight;
+        }
+      }, 0);
+    }
+  };
+
+  const visibleMessages = messages.slice(Math.max(messages.length - visibleCount, 0));
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -61,6 +81,11 @@ function App() {
         } else {
           setHealthError(null);
         }
+        setGeminiMdValid(message.result.checks?.geminiMdValid ?? true);
+      } else if (message.type === 'documentContent') {
+        setDocumentContent(message.content);
+        setDocumentFile(message.file);
+        setActiveTab('document');
       }
     };
 
@@ -76,17 +101,16 @@ function App() {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleRefresh = () => {
-    setLoading(true);
-    if (vscode) {
-      vscode.postMessage({ command: 'refresh' });
-    } else {
-      setTimeout(() => setLoading(false), 500);
+    if (activeTab === 'chat') {
+      if (prevMessagesLength.current === 0 || prevActiveTab.current !== 'chat') {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+      } else if (messages.length > prevMessagesLength.current) {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  };
+    prevMessagesLength.current = messages.length;
+    prevActiveTab.current = activeTab;
+  }, [messages, activeTab]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,11 +135,47 @@ function App() {
     setComposerMessage('');
   };
 
+  const handleRunAgency = () => {
+    if (agencyPrompt.trim()) {
+      const newMsg = createAgencyMessage(
+        'client',
+        'agency-coordinator',
+        state?.phase || 'DEVELOPMENT',
+        'INFO',
+        '',
+        agencyPrompt,
+        'RESOLVED'
+      );
+      if (vscode) {
+        vscode.postMessage({ command: 'sendMessage', message: newMsg });
+      }
+      setAgencyPrompt('');
+    }
+    
+    if (vscode) {
+      setTimeout(() => {
+        vscode.postMessage({ command: 'runAgency' });
+      }, 100);
+    }
+  };
+
+  const openDocument = (docPath: string) => {
+    if (vscode) {
+      vscode.postMessage({ command: 'openDocument', file: docPath });
+    }
+  };
+
+  const handleFixGeminiMd = () => {
+    if (vscode) {
+      vscode.postMessage({ command: 'fixGeminiMd' });
+    }
+  };
+
   if (loading && !state) {
     return (
       <div className="loading-screen">
         <div className="loader"></div>
-        <h2>Initializing Devio...</h2>
+        <h2 className="loading-text">Initializing Devio...</h2>
       </div>
     );
   }
@@ -125,161 +185,261 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Sidebar for Context & Controls */}
-      <aside className="sidebar">
+      <header className="app-header">
         <div className="brand">
           <div className="logo-glow"></div>
-          <h1>DEVIO AI</h1>
-          <span className="badge">Orchestrator</span>
+          <h1>DEVIO</h1>
+          <span className="badge">AI Agency</span>
         </div>
-
-        <section className="glass-panel status-panel">
-          <h3>Current Status</h3>
+        <div className="status-badge-container">
           <div className={`status-indicator ${blocked ? 'status-blocked' : 'status-active'}`}>
             <span className="dot"></span>
             {blocked ? 'BLOCKED' : 'ACTIVE'}
           </div>
-          <div className="meta-item">
-            <span className="label">Phase</span>
-            <span className="value highlight">{formatPhaseName(activePhase)}</span>
-          </div>
-          <div className="meta-item">
-            <span className="label">Owner</span>
-            <span className="value">{state?.owner || 'None'}</span>
-          </div>
-        </section>
-
-        <section className="glass-panel project-panel">
-          <h3>Project Context</h3>
-          <div className="meta-item">
-            <span className="label">Project</span>
-            <span className="value">{state?.project || 'N/A'}</span>
-          </div>
-          <div className="meta-item">
-            <span className="label">Client</span>
-            <span className="value">{state?.client || 'N/A'}</span>
-          </div>
-          <button className="btn-refresh" onClick={handleRefresh} disabled={loading}>
-            {loading ? 'Syncing...' : 'Force Sync'}
+          <div className="phase-badge">{formatPhaseName(activePhase)}</div>
+        </div>
+        <div className="tabs">
+          <button 
+            className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
+            onClick={() => setActiveTab('chat')}
+          >
+            Messages
           </button>
-        </section>
+          <button 
+            className={`tab-btn ${activeTab === 'document' ? 'active' : ''}`}
+            onClick={() => setActiveTab('document')}
+          >
+            Document
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            Settings
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'devtools' ? 'active' : ''}`}
+            onClick={() => setActiveTab('devtools')}
+          >
+            Dev Tools
+          </button>
+        </div>
+      </header>
 
-        <section className="glass-panel dev-tools">
-          <h3>Agent Command</h3>
-          {healthError && (
-            <div className="health-error-banner" style={{ background: 'rgba(255,50,50,0.1)', color: '#ff6b6b', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '13px', border: '1px solid rgba(255,50,50,0.3)' }}>
-              ⚠️ {healthError}
-            </div>
-          )}
-          <form className="composer-form" onSubmit={handleSendMessage}>
-            <div className="form-group">
-              <label>From</label>
-              <select value={composerFrom} onChange={e => setComposerFrom(e.target.value)}>
-                <option value="client">client</option>
-                <option value="agency-coordinator">agency-coordinator</option>
-                <option value="agency-ceo">agency-ceo</option>
-                <option value="agency-architect">agency-architect</option>
-                <option value="agency-developer">agency-developer</option>
-                <option value="agency-qa">agency-qa</option>
-                <option value="agency-researcher">agency-researcher</option>
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>To Agent</label>
-              <select value={composerTo} onChange={e => setComposerTo(e.target.value)}>
-                <option value="agency-ceo">agency-ceo</option>
-                <option value="agency-architect">agency-architect</option>
-                <option value="agency-developer">agency-developer</option>
-                <option value="agency-qa">agency-qa</option>
-                <option value="agency-coordinator">agency-coordinator</option>
-              </select>
+      {healthError && (
+        <div className="health-error-banner">
+          ⚠️ {healthError}
+        </div>
+      )}
+
+      {!geminiMdValid && (
+        <div className="health-error-banner warning">
+          ⚠️ GEMINI.md persona override is missing or incorrect. Devio requires a strict persona configuration to function properly.
+          <button className="btn-fix-gemini" onClick={handleFixGeminiMd} style={{ marginLeft: '10px', padding: '4px 8px', borderRadius: '4px', background: 'var(--accent-primary)', border: 'none', color: 'white', cursor: 'pointer' }}>Apply Fix</button>
+        </div>
+      )}
+
+      <main className="main-content">
+        {activeTab === 'chat' && (
+          <div className="chat-layout">
+            <div className="messages-container" ref={messagesContainerRef} onScroll={handleScroll}>
+              {visibleMessages.length === 0 ? (
+                <div className="empty-state">No messages in the bus yet.</div>
+              ) : (
+                [...visibleMessages].map((msg) => (
+                  <div key={msg.id} className={`message-bubble ${msg.from === 'client' ? 'outgoing' : 'incoming'} type-${msg.type.toLowerCase()}`}>
+                    <div className="msg-header">
+                      <span className="msg-from">{msg.from}</span>
+                      <span className="msg-arrow">→</span>
+                      <span className="msg-to">{msg.to}</span>
+                      <span className="msg-time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                    
+                    <div className="msg-body">
+                      {msg.message.split(/(@[\w\-\.\/]+)/g).map((part, i) => {
+                        if (part.startsWith('@')) {
+                          const docPath = part.substring(1);
+                          return (
+                            <span 
+                              key={i} 
+                              className="msg-doc-link clickable" 
+                              onClick={() => openDocument(docPath)}
+                              style={{ color: 'var(--accent-primary)', cursor: 'pointer', textDecoration: 'underline' }}
+                              title={`Open ${docPath}`}
+                            >
+                              {part}
+                            </span>
+                          );
+                        }
+                        return <span key={i}>{part}</span>;
+                      })}
+                    </div>
+                    
+                    <div className="msg-footer">
+                      <span className="msg-type">{msg.type}</span>
+                      {msg.ref_doc && (
+                        <span 
+                          className="msg-doc clickable" 
+                          onClick={() => openDocument(msg.ref_doc!)}
+                          title="Open Document"
+                        >
+                          📄 {msg.ref_doc}
+                        </span>
+                      )}
+                      <span className={`msg-status ${msg.status.toLowerCase()}`}>
+                        {msg.status === 'OPEN' ? '⚠️ OPEN' : '✓ RESOLVED'}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+              <div ref={messagesEndRef} />
             </div>
 
-            <div className="form-row">
-              <div className="form-group half">
-                <label>Action Type</label>
-                <select value={composerType} onChange={e => setComposerType(e.target.value as any)}>
-                  <option value="INFO">INFO</option>
-                  <option value="REQUEST_CHANGE">REQUEST_CHANGE</option>
-                  <option value="SUBMIT">SUBMIT</option>
-                  <option value="APPROVE">APPROVE</option>
-                  <option value="ESCALATE">ESCALATE</option>
-                  <option value="REVISION">REVISION</option>
-                </select>
-              </div>
-              <div className="form-group half">
-                <label>Status</label>
-                <select value={composerStatus} onChange={e => setComposerStatus(e.target.value as any)}>
-                  <option value="RESOLVED">RESOLVED</option>
-                  <option value="OPEN">OPEN (Blocker)</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Ref Doc (Optional)</label>
+            <div className="chat-input-area glass-panel">
               <input 
                 type="text" 
-                placeholder="e.g. 03_architecture.md" 
-                value={composerRefDoc} 
-                onChange={e => setComposerRefDoc(e.target.value)} 
+                className="agency-prompt-input" 
+                placeholder="What should the agency do next? (Optional)" 
+                value={agencyPrompt}
+                onChange={e => setAgencyPrompt(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleRunAgency();
+                }}
               />
+              <button className="btn-run-agency" onClick={handleRunAgency}>
+                Run Agency
+                <span className="glow-effect"></span>
+              </button>
             </div>
+          </div>
+        )}
 
-            <div className="form-group">
-              <label>Message payload</label>
-              <textarea 
-                placeholder="Instruct the agent..." 
-                value={composerMessage}
-                onChange={e => setComposerMessage(e.target.value)}
-                rows={4}
-                required
-              />
-            </div>
-
-            <button type="submit" className="btn-send" disabled={!composerMessage.trim() || !!healthError}>
-              Invoke Agent
-            </button>
-          </form>
-        </section>
-      </aside>
-
-      {/* Main Chat Area */}
-      <main className="chat-area">
-        <header className="chat-header">
-          <h2>Message Bus Stream</h2>
-          <div className="msg-count">{messages.length} Events</div>
-        </header>
-
-        <div className="messages-container">
-          {messages.length === 0 ? (
-            <div className="empty-state">No messages in the bus yet.</div>
-          ) : (
-            messages.map((msg) => (
-              <div key={msg.id} className={`message-bubble ${msg.from === 'client' ? 'outgoing' : 'incoming'} type-${msg.type.toLowerCase()}`}>
-                <div className="msg-header">
-                  <span className="msg-from">{msg.from}</span>
-                  <span className="msg-arrow">→</span>
-                  <span className="msg-to">{msg.to}</span>
-                  <span className="msg-time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+        {activeTab === 'devtools' && (
+          <div className="devtools-layout">
+            <section className="glass-panel dev-tools">
+              <h3>Agent Command (Manual Message Bus Override)</h3>
+              <form className="composer-form" onSubmit={handleSendMessage}>
+                <div className="form-group">
+                  <label>From</label>
+                  <select value={composerFrom} onChange={e => setComposerFrom(e.target.value)}>
+                    <option value="client">client</option>
+                    <option value="agency-coordinator">agency-coordinator</option>
+                    <option value="agency-ceo">agency-ceo</option>
+                    <option value="agency-architect">agency-architect</option>
+                    <option value="agency-developer">agency-developer</option>
+                    <option value="agency-qa">agency-qa</option>
+                    <option value="agency-researcher">agency-researcher</option>
+                  </select>
                 </div>
                 
-                <div className="msg-body">{msg.message}</div>
-                
-                <div className="msg-footer">
-                  <span className="msg-type">{msg.type}</span>
-                  <span className="msg-phase">Phase: {formatPhaseName(msg.phase)}</span>
-                  {msg.ref_doc && <span className="msg-doc">📄 {msg.ref_doc}</span>}
-                  <span className={`msg-status ${msg.status.toLowerCase()}`}>
-                    {msg.status === 'OPEN' ? '⚠️ OPEN' : '✓ RESOLVED'}
-                  </span>
+                <div className="form-group">
+                  <label>To Agent</label>
+                  <select value={composerTo} onChange={e => setComposerTo(e.target.value)}>
+                    <option value="agency-ceo">agency-ceo</option>
+                    <option value="agency-architect">agency-architect</option>
+                    <option value="agency-developer">agency-developer</option>
+                    <option value="agency-qa">agency-qa</option>
+                    <option value="agency-coordinator">agency-coordinator</option>
+                  </select>
                 </div>
+
+                <div className="form-row">
+                  <div className="form-group half">
+                    <label>Action Type</label>
+                    <select value={composerType} onChange={e => setComposerType(e.target.value as any)}>
+                      <option value="INFO">INFO</option>
+                      <option value="REQUEST_CHANGE">REQUEST_CHANGE</option>
+                      <option value="SUBMIT">SUBMIT</option>
+                      <option value="APPROVE">APPROVE</option>
+                      <option value="ESCALATE">ESCALATE</option>
+                      <option value="REVISION">REVISION</option>
+                    </select>
+                  </div>
+                  <div className="form-group half">
+                    <label>Status</label>
+                    <select value={composerStatus} onChange={e => setComposerStatus(e.target.value as any)}>
+                      <option value="RESOLVED">RESOLVED</option>
+                      <option value="OPEN">OPEN (Blocker)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Ref Doc (Optional)</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. 03_architecture.md" 
+                    value={composerRefDoc} 
+                    onChange={e => setComposerRefDoc(e.target.value)} 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Message payload</label>
+                  <textarea 
+                    placeholder="Instruct the agent..." 
+                    value={composerMessage}
+                    onChange={e => setComposerMessage(e.target.value)}
+                    rows={4}
+                    required
+                  />
+                </div>
+
+                <button type="submit" className="btn-send" disabled={!composerMessage.trim() || !!healthError}>
+                  Dispatch Manual Event
+                </button>
+              </form>
+            </section>
+            
+            <section className="glass-panel project-panel">
+              <h3>Project Context & Information</h3>
+              <div className="meta-item">
+                <span className="label">Project</span>
+                <span className="value">{state?.project || 'N/A'}</span>
               </div>
-            ))
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+              <div className="meta-item">
+                <span className="label">Client</span>
+                <span className="value">{state?.client || 'N/A'}</span>
+              </div>
+              <div className="meta-item">
+                <span className="label">Owner Phase</span>
+                <span className="value">{state?.owner || 'None'}</span>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'document' && (
+          <div className="document-layout">
+            {documentFile ? (
+              <div className="glass-panel document-panel">
+                <h3>Viewing: {documentFile}</h3>
+                <pre className="document-content">{documentContent}</pre>
+              </div>
+            ) : (
+              <div className="empty-state">No document selected. Click a document tag in the chat to view it here.</div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
+          <div className="settings-layout glass-panel">
+            <h3>Agency Settings</h3>
+            <div className="form-group">
+              <label>Autonomy Mode</label>
+              <select disabled>
+                <option>Fully Autonomous</option>
+                <option>Step-by-step</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Antigravity Link Port</label>
+              <input type="text" value="9222" disabled />
+            </div>
+            <p className="help-text">Settings are managed via VS Code's settings.json (search for 'devio').</p>
+          </div>
+        )}
       </main>
     </div>
   );
