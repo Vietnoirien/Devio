@@ -52,12 +52,34 @@ export class NativeBridge implements INativeBridge {
         }
     }
 
-    async clickButton(text: string): Promise<void> {
+    async clickButton(textOrSelector: string): Promise<void> {
         if (!this.connection) {
             throw new Error('Not connected to CDP');
         }
-        // Use text_hit
-        const result = await clickElement(this.connection, text);
+        const isSelector = textOrSelector.startsWith('[') || textOrSelector.startsWith('.') || textOrSelector.startsWith('#');
+        
+        if (isSelector) {
+            // Direct native DOM click evaluation (matches scratch.ts success)
+            const evalResult = await this.connection.call("Runtime.evaluate", {
+                expression: `
+                    (() => {
+                        let el = document.querySelector('${textOrSelector.replace(/'/g, "\\'")}');
+                        if (!el) return false;
+                        el.click();
+                        return true;
+                    })()
+                `,
+                returnByValue: true
+            });
+            
+            if (!evalResult.result.value) {
+                throw new Error(`Failed to click button: selector ${textOrSelector} not found or click failed`);
+            }
+            return;
+        }
+
+        // Fallback to text-based matching if not a selector
+        const result = await clickElement(this.connection, textOrSelector, undefined, undefined, undefined, undefined);
         if (!result.success) {
             throw new Error('Failed to click button: ' + result.error);
         }

@@ -1,5 +1,4 @@
 import { discoverInstances, connectCDP } from './agency_workspace/src/services/cdp';
-import { captureSnapshot } from './agency_workspace/src/services/antigravity';
 
 async function main() {
     const instances = await discoverInstances();
@@ -9,32 +8,55 @@ async function main() {
         return;
     }
     const connection = await connectCDP(target.url, target.id, target.title);
-    const { Runtime } = connection;
     
-    // Evaluate a script in the browser to get all aria-labels
-    const evalResult = await Runtime.evaluate({
+    console.log("Checking button state...");
+    const stateResult = await connection.call("Runtime.evaluate", {
         expression: `
-            Array.from(document.querySelectorAll('[aria-label]'))
-                 .map(el => el.getAttribute('aria-label'))
-                 .filter(Boolean)
-                 .join('\\n');
+            (() => {
+                let el = document.querySelector('[data-tooltip-id="new-conversation-tooltip"]');
+                if (!el) return "Not found";
+                return {
+                    className: el.className,
+                    disabled: el.hasAttribute('disabled') || el.className.includes('cursor-not-allowed')
+                };
+            })()
         `,
         returnByValue: true
     });
-    console.log(evalResult.result.value);
-    
-    // Also try to find elements with title containing 'Chat' or 'New'
-    const titleResult = await Runtime.evaluate({
+    console.log("Button State:", stateResult.result.value);
+
+    console.log("Attempting to click via HTMLElement click()...");
+    const clickResult = await connection.call("Runtime.evaluate", {
         expression: `
-            Array.from(document.querySelectorAll('[title]'))
-                 .map(el => el.getAttribute('title'))
-                 .filter(Boolean)
-                 .join('\\n');
+            (() => {
+                let el = document.querySelector('[data-tooltip-id="new-conversation-tooltip"]');
+                if (!el) return false;
+                
+                let e = el; // HTMLElement cast
+                e.click();
+                return true;
+            })()
         `,
         returnByValue: true
     });
-    console.log("TITLES:");
-    console.log(titleResult.result.value);
+    console.log("Click executed:", clickResult.result.value);
+
+    // Wait 2 seconds
+    await new Promise(r => setTimeout(r, 2000));
+    
+    // Dump the DOM HTML to see what's inside
+    const htmlResult = await connection.call("Runtime.evaluate", {
+        expression: `
+            (() => {
+                let msgs = document.querySelectorAll('.message, [data-testid*="message" i], article');
+                let count = msgs.length;
+                let text = msgs.length > 0 ? msgs[0].textContent : '';
+                return { count, text };
+            })()
+        `,
+        returnByValue: true
+    });
+    console.log("Empty chat state:", htmlResult.result.value);
     
     process.exit(0);
 }

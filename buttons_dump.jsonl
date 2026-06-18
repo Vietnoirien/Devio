@@ -1,0 +1,268 @@
+Connected to target: ws://127.0.0.1:9222/devtools/page/E7B1D2EAC23DD108C14E04D51C58375C
+BUTTONS AND ACTIONABLE ELEMENTS:
+{"aria":null,"title":null,"text":"Open Agent Manager\n1","cls":"action-toolbar-container"}
+{"aria":null,"title":"Open Agent Manager (Ctrl+E)","text":"Open Agent Manager","cls":"open-agent-manager-button"}
+{"aria":null,"title":null,"text":"1","cls":"monaco-action-bar"}
+{"aria":"Title actions","title":null,"text":"1","cls":"actions-container"}
+{"aria":"Customize Layout...","title":null,"text":"","cls":"action-label codicon codicon-configure-layout-icon"}
+{"aria":"Toggle Primary Side Bar (Ctrl+B)","title":null,"text":"","cls":"action-label checked codicon codicon-panel-left"}
+{"aria":"Toggle Panel (Ctrl+J)","title":null,"text":"","cls":"action-label checked codicon codicon-panel-layout-icon"}
+{"aria":"Toggle Agent (Ctrl+Alt+B)","title":null,"text":"","cls":"action-label checked codicon codicon-layout-sidebar-right"}
+{"aria":"Open in Cider","title":null,"text":"","cls":"action-label disabled codicon codicon-code"}
+{"aria":"Reload Window","title":null,"text":"","cls":"action-label disabled codicon codicon-refresh"}
+{"aria":"Quick Open","title":null,"text":"","cls":"action-label codicon codicon-search"}
+{"aria":"Open Browser (Preview)","title":null,"text":"","cls":"action-label codicon codicon-chrome"}
+{"aria":"Editor-Specific Settings","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":"Profile - New Antigravity update available.","title":null,"text":"1","cls":"action-item icon antigravity-profile"}
+{"aria":"Profile - New Antigravity update available.","title":null,"text":"","cls":"action-label codicon codicon-chevron-down"}
+{"aria":null,"title":null,"text":"Log in","cls":"action-nudge-button actionable"}
+{"aria":null,"title":null,"text":"Update Available","cls":"action-nudge-button display"}
+{"aria":null,"title":null,"text":"View Changelog","cls":"action-nudge-button dismissible"}
+{"aria":null,"title":null,"text":"2","cls":"monaco-action-bar vertical"}
+{"aria":"Active View Switcher","title":null,"text":"2","cls":"actions-container"}
+{"aria":"Explorer (Ctrl+Shift+E)","title":null,"text":"","cls":"action-label codicon codicon-explorer-view-icon"}
+{"aria":"Code Search (Ctrl+Shift+F)","title":null,"text":"","cls":"action-label codicon codicon-search-view-icon"}
+{"aria":"Source Control (Ctrl+Shift+G) - 2 pending changes","title":null,"text":"2","cls":"action-item icon checked"}
+{"aria":"Source Control (Ctrl+Shift+G) - 2 pending changes","title":null,"text":"","cls":"action-label codicon codicon-source-control-view-icon"}
+{"aria":"Run and Debug (Ctrl+Shift+D)","title":null,"text":"","cls":"action-label codicon codicon-run-view-icon"}
+{"aria":"Remote Explorer","title":null,"text":"","cls":"action-label codicon codicon-remote-explorer-view-icon"}
+{"aria":"Extensions (Ctrl+Shift+X)","title":null,"text":"","cls":"action-item icon"}
+{"aria":"Extensions (Ctrl+Shift+X)","title":null,"text":"","cls":"action-label codicon codicon-extensions-view-icon"}
+{"aria":"Containers","title":null,"text":"","cls":"action-item icon"}
+{"aria":"Containers","title":null,"text":"","cls":"action-label activity-workbench-view-extension-containersView-5e2fb4ffcbde66710a100839d164f951e52c3691 uri-icon"}
+{"aria":null,"title":null,"text":"Source Control","cls":"composite title has-actions"}
+{"aria":"Source Control actions","title":null,"text":"","cls":"actions-container"}
+{"aria":"Views and More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":"Changes Section","title":null,"text":"Changes","cls":"pane-header expanded"}
+{"aria":"Changes actions","title":null,"text":"","cls":"actions-container"}
+{"aria":"Collapse All Repositories","title":null,"text":"","cls":"action-label codicon codicon-collapse-all"}
+{"aria":"More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":null,"title":null,"text":"Devio","cls":"label-name"}
+{"aria":null,"title":null,"text":"plugin*\n0↓ 1↑","cls":"actions"}
+{"aria":null,"title":null,"text":"plugin*\n0↓ 1↑","cls":"monaco-action-bar"}
+{"aria":null,"title":null,"text":"plugin*\n0↓ 1↑","cls":"actions-container"}
+{"aria":null,"title":null,"text":"plugin*","cls":"action-item scm-status-bar-action"}
+{"aria":"plugin*, Checkout Branch/Tag...","title":null,"text":"plugin*","cls":"action-label"}
+{"aria":null,"title":null,"text":"0↓ 1↑","cls":"action-item scm-status-bar-action"}
+{"aria":"Push 1 commits to origin/plugin","title":null,"text":"0↓ 1↑","cls":"action-label"}
+{"aria":"Commit","title":null,"text":"","cls":"action-label codicon codicon-check"}
+{"aria":"Refresh","title":null,"text":"","cls":"action-label codicon codicon-refresh"}
+{"aria":"More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":null,"title":null,"text":"Generate","cls":"monaco-action-bar"}
+{"aria":null,"title":null,"text":"Generate","cls":"actions-container"}
+{"aria":null,"title":null,"text":"Generate","cls":"action-item"}
+{"aria":"Commit Changes on \"plugin\"","title":null,"text":"Commit","cls":"monaco-button monaco-text-button"}
+{"aria":"More Actions...","title":null,"text":"","cls":"monaco-button monaco-dropdown-button codicon codicon-drop-down-button"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":"Discard All Changes","title":null,"text":"","cls":"action-label codicon codicon-discard"}
+{"aria":"Stage All Changes","title":null,"text":"","cls":"action-label codicon codicon-add"}
+{"aria":null,"title":null,"text":"buttons_dump.jsonl","cls":"label-name"}
+{"aria":"Open File","title":null,"text":"","cls":"action-label codicon codicon-go-to-file"}
+{"aria":"Discard Changes","title":null,"text":"","cls":"action-label codicon codicon-discard"}
+{"aria":"Stage Changes","title":null,"text":"","cls":"action-label codicon codicon-add"}
+{"aria":null,"title":null,"text":"scratch.ts","cls":"label-name"}
+{"aria":"Open File","title":null,"text":"","cls":"action-label codicon codicon-go-to-file"}
+{"aria":"Discard Changes","title":null,"text":"","cls":"action-label codicon codicon-discard"}
+{"aria":"Stage Changes","title":null,"text":"","cls":"action-label codicon codicon-add"}
+{"aria":null,"title":null,"text":"devio-antigravity-link-extensi","cls":"label-name"}
+{"aria":null,"title":null,"text":"main","cls":"actions"}
+{"aria":null,"title":null,"text":"main","cls":"monaco-action-bar"}
+{"aria":null,"title":null,"text":"main","cls":"actions-container"}
+{"aria":null,"title":null,"text":"main","cls":"action-item scm-status-bar-action"}
+{"aria":"main, Checkout Branch/Tag...","title":null,"text":"main","cls":"action-label"}
+{"aria":"Synchronize Changes","title":null,"text":"","cls":"action-label"}
+{"aria":"More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":null,"title":null,"text":"Generate","cls":"monaco-action-bar"}
+{"aria":null,"title":null,"text":"Generate","cls":"actions-container"}
+{"aria":null,"title":null,"text":"Generate","cls":"action-item"}
+{"aria":"Commit Changes on \"main\"","title":null,"text":"Commit","cls":"monaco-button disabled monaco-text-button"}
+{"aria":"More Actions...","title":null,"text":"","cls":"monaco-button monaco-dropdown-button codicon codicon-drop-down-button disabled"}
+{"aria":"Graph Section","title":null,"text":"Graph\nDevio\nAuto","cls":"pane-header expanded"}
+{"aria":null,"title":null,"text":"Devio\nAuto","cls":"actions show-expanded"}
+{"aria":null,"title":null,"text":"Devio\nAuto","cls":"monaco-action-bar"}
+{"aria":"Graph actions","title":null,"text":"Devio\nAuto","cls":"actions-container"}
+{"aria":null,"title":null,"text":"Devio","cls":"action-item"}
+{"aria":"Devio","title":null,"text":"Devio","cls":"action-label scm-graph-repository-picker"}
+{"aria":null,"title":null,"text":"Auto","cls":"action-item"}
+{"aria":"plugin, origin/plugin","title":null,"text":"Auto","cls":"action-label scm-graph-history-item-picker"}
+{"aria":"Go to Current History Item","title":null,"text":"","cls":"action-label codicon codicon-target"}
+{"aria":"Fetch From All Remotes","title":null,"text":"","cls":"action-label codicon codicon-git-fetch"}
+{"aria":"Pull","title":null,"text":"","cls":"action-label codicon codicon-repo-pull"}
+{"aria":"Push","title":null,"text":"","cls":"action-label codicon codicon-repo-push"}
+{"aria":"Refresh","title":null,"text":"","cls":"action-label codicon codicon-refresh"}
+{"aria":"More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":null,"title":null,"text":"Outgoing Changes","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":null,"title":null,"text":"feat: implement new IDE and la","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":null,"title":null,"text":"refactor: remove legacy port 3","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":null,"title":null,"text":"feat: implement native orchest","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":null,"title":null,"text":"feat: scaffold Devio project i","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":null,"title":null,"text":"docs: finalize architecture wi","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":null,"title":null,"text":"docs: add comprehensive README","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":null,"title":null,"text":"first commit","cls":"label-name"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-diff-multiple"}
+{"aria":"Empty editor group actions","title":null,"text":"","cls":"actions-container highlight-toggled"}
+{"aria":null,"title":null,"text":"Devio AI Agency\nscratch.ts\nant","cls":"tabs-and-actions-container tabs-border-bottom"}
+{"aria":"Devio AI Agency","title":null,"text":"Devio AI Agency","cls":"tab tab-actions-right sizing-fit has-icon tab-border-bottom"}
+{"aria":null,"title":null,"text":"Devio AI Agency","cls":"label-name"}
+{"aria":"Tab actions","title":null,"text":"","cls":"actions-container"}
+{"aria":"Close (Ctrl+W)","title":null,"text":"","cls":"action-label codicon codicon-close"}
+{"aria":"scratch.ts","title":null,"text":"scratch.ts","cls":"tab tab-actions-right sizing-fit has-icon tab-border-bottom active selected tab-border-top"}
+{"aria":null,"title":null,"text":"scratch.ts","cls":"label-name"}
+{"aria":"Tab actions","title":null,"text":"","cls":"actions-container"}
+{"aria":"Close (Ctrl+W)","title":null,"text":"","cls":"action-label codicon codicon-close"}
+{"aria":"antigravity.ts, preview","title":null,"text":"antigravity.ts","cls":"tab tab-actions-right sizing-fit has-icon"}
+{"aria":null,"title":null,"text":"antigravity.ts","cls":"label-name"}
+{"aria":"Tab actions","title":null,"text":"","cls":"actions-container"}
+{"aria":"Close (Ctrl+W)","title":null,"text":"","cls":"action-label codicon codicon-close"}
+{"aria":"Editor actions","title":null,"text":"","cls":"actions-container highlight-toggled"}
+{"aria":"Open Changes","title":null,"text":"","cls":"action-label codicon codicon-compare-changes"}
+{"aria":"Split Editor Right\n[Alt] Split Editor Down","title":null,"text":"","cls":"action-label codicon codicon-split-horizontal"}
+{"aria":"Go Back (BrowserBack)","title":null,"text":"","cls":"action-label codicon codicon-arrow-left"}
+{"aria":"Go Forward (Ctrl+Shift+-)","title":null,"text":"","cls":"action-label codicon codicon-arrow-right"}
+{"aria":"More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":null,"title":null,"text":"scratch.ts","cls":"label-name"}
+{"aria":null,"title":null,"text":"Accept Changes\nCtrl+⏎","cls":"keep-changes primary"}
+{"aria":null,"title":null,"text":"Reject\nCtrl+⌫","cls":"discard-changes secondary"}
+{"aria":null,"title":null,"text":"Alt+K","cls":"previous-hunk secondary"}
+{"aria":null,"title":null,"text":"Alt+J","cls":"next-hunk secondary"}
+{"aria":null,"title":null,"text":"Problems\n1\nOutput\nDebug Consol","cls":"composite title has-composite-bar has-actions"}
+{"aria":null,"title":null,"text":"Problems\n1\nOutput\nDebug Consol","cls":"monaco-action-bar"}
+{"aria":"Active View Switcher","title":null,"text":"Problems\n1\nOutput\nDebug Consol","cls":"actions-container"}
+{"aria":"Problems (Ctrl+Shift+M) - Total 1 Problems","title":null,"text":"Problems\n1","cls":"action-item"}
+{"aria":"Problems (Ctrl+Shift+M) - Total 1 Problems","title":null,"text":"Problems","cls":"action-label"}
+{"aria":"","title":null,"text":"Output","cls":"action-item checked"}
+{"aria":"Output (Ctrl+K Ctrl+H)","title":null,"text":"Output","cls":"action-label"}
+{"aria":"Debug Console (Ctrl+Shift+Y)","title":null,"text":"Debug Console","cls":"action-item"}
+{"aria":"Debug Console (Ctrl+Shift+Y)","title":null,"text":"Debug Console","cls":"action-label"}
+{"aria":"","title":null,"text":"Terminal","cls":"action-item"}
+{"aria":"Terminal","title":null,"text":"Terminal","cls":"action-label"}
+{"aria":"","title":null,"text":"Ports","cls":"action-item"}
+{"aria":"Ports","title":null,"text":"Ports","cls":"action-label"}
+{"aria":null,"title":null,"text":"Antigravity\nAntigravity Crash ","cls":"title-actions"}
+{"aria":null,"title":null,"text":"Antigravity\nAntigravity Crash ","cls":"monaco-action-bar"}
+{"aria":"Output actions","title":null,"text":"Antigravity\nAntigravity Crash ","cls":"actions-container"}
+{"aria":"More Filters...","title":null,"text":"","cls":"action-label codicon codicon-filter"}
+{"aria":null,"title":null,"text":"Antigravity\nAntigravity Crash ","cls":"action-item select-container"}
+{"aria":"Clear Output","title":null,"text":"","cls":"action-label codicon codicon-clear-all"}
+{"aria":"Turn Auto Scrolling Off","title":null,"text":"","cls":"action-label codicon codicon-lock"}
+{"aria":"Set Log Level...","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":"Views and More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":"Maximize Panel Size","title":null,"text":"","cls":"action-label codicon codicon-panel-maximize"}
+{"aria":"Hide Panel (Ctrl+J)","title":null,"text":"","cls":"action-label codicon codicon-panel-close"}
+{"aria":"Output Section","title":null,"text":"OutputAntigravityAntigravity C","cls":"pane-header expanded hidden"}
+{"aria":null,"title":null,"text":"AntigravityAntigravity Crash L","cls":"actions"}
+{"aria":null,"title":null,"text":"AntigravityAntigravity Crash L","cls":"monaco-action-bar"}
+{"aria":"Output actions","title":null,"text":"AntigravityAntigravity Crash L","cls":"actions-container"}
+{"aria":null,"title":null,"text":"AntigravityAntigravity Crash L","cls":"action-item select-container"}
+{"aria":"Clear Output","title":null,"text":"","cls":"action-label codicon codicon-clear-all"}
+{"aria":"Turn Auto Scrolling Off","title":null,"text":"","cls":"action-label codicon codicon-lock"}
+{"aria":"Set Log Level...","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":"More Actions...","title":null,"text":"","cls":"action-label codicon codicon-toolbar-more"}
+{"aria":"Agent actions","title":null,"text":"","cls":"actions-container"}
+{"aria":"Maximize Secondary Side Bar Size","title":null,"text":"","cls":"action-label codicon codicon-auxiliarybar-maximize"}
+{"aria":"Hide Secondary Side Bar","title":null,"text":"","cls":"action-label codicon codicon-auxiliarybar-close"}
+{"aria":"Agent Section","title":null,"text":"Agent","cls":"pane-header expanded hidden"}
+{"aria":"Agent actions","title":null,"text":"","cls":"actions-container"}
+{"aria":"remote","title":null,"text":"","cls":"statusbar-item-label"}
+{"aria":"Devio (Git)","title":null,"text":"Devio","cls":"statusbar-item-label"}
+{"aria":"Devio (Git) - plugin*, Checkout Branch/Tag...","title":null,"text":"plugin*","cls":"statusbar-item-label"}
+{"aria":"Devio (Git) - Push 1 commits to origin/plugin","title":null,"text":"0↓ 1↑","cls":"statusbar-item-label"}
+{"aria":"Warnings: 1","title":null,"text":"0 \n 1","cls":"statusbar-item-label"}
+{"aria":"Notifications","title":null,"text":"","cls":"statusbar-item-label"}
+{"aria":"Antigravity - Settings, Autocomplete Speed: Fast","title":null,"text":"Antigravity - Settings","cls":"statusbar-item-label"}
+{"aria":"TypeScript","title":null,"text":"TypeScript","cls":"statusbar-item-label"}
+{"aria":"Editor Language Status: No tsconfig, next: 5.9.3, TypeScript version, next: $(copilot) No inline suggestion available, Inline suggestions","title":null,"text":"","cls":"statusbar-item-label"}
+{"aria":"LF","title":null,"text":"LF","cls":"statusbar-item-label"}
+{"aria":"UTF-8","title":null,"text":"UTF-8","cls":"statusbar-item-label"}
+{"aria":"Spaces: 4","title":null,"text":"Spaces: 4","cls":"statusbar-item-label"}
+{"aria":"Ln 1, Col 1","title":null,"text":"Ln 1, Col 1","cls":"statusbar-item-label"}
+{"aria":null,"title":null,"text":"undo","cls":"cursor-pointer opacity-50 hover:opacity-100 transition-opacity"}
+{"aria":null,"title":null,"text":"Worked for 29s","cls":"group flex items-center gap-1 w-full text-left text-sm px-2 min-h-8 py-1 rounded-lg tabular-nums select-none text-ide-text-color hover:bg-gray-500/10 transition-[opacity,background-color]"}
+{"aria":"Copy","title":null,"text":"content_copy","cls":"flex items-center gap-1 cursor-pointer transition-[opacity,transform] duration-100 mr-1 opacity-70 hover:opacity-100"}
+{"aria":"Good response","title":null,"text":"thumb_up","cls":"flex items-center gap-1 transition-[opacity,transform] duration-100 cursor-pointer opacity-70 hover:opacity-100 opacity-30"}
+{"aria":"Bad response","title":null,"text":"thumb_down","cls":"flex items-center gap-1 transition-[opacity,transform] duration-100 cursor-pointer opacity-70 hover:opacity-100 opacity-30"}
+{"aria":null,"title":null,"text":"undo","cls":"cursor-pointer opacity-50 hover:opacity-100 transition-opacity"}
+{"aria":null,"title":null,"text":"Worked for 47s","cls":"group flex items-center gap-1 w-full text-left text-sm px-2 min-h-8 py-1 rounded-lg tabular-nums select-none text-ide-text-color hover:bg-gray-500/10 transition-[opacity,background-color]"}
+{"aria":"Copy","title":null,"text":"content_copy","cls":"flex items-center gap-1 cursor-pointer transition-[opacity,transform] duration-100 mr-1 opacity-70 hover:opacity-100"}
+{"aria":"Good response","title":null,"text":"thumb_up","cls":"flex items-center gap-1 transition-[opacity,transform] duration-100 cursor-pointer opacity-70 hover:opacity-100 opacity-30"}
+{"aria":"Bad response","title":null,"text":"thumb_down","cls":"flex items-center gap-1 transition-[opacity,transform] duration-100 cursor-pointer opacity-70 hover:opacity-100 opacity-30"}
+{"aria":null,"title":null,"text":"undo","cls":"cursor-pointer opacity-50 hover:opacity-100 transition-opacity"}
+{"aria":null,"title":null,"text":"Worked for 15s","cls":"group flex items-center gap-1 w-full text-left text-sm px-2 min-h-8 py-1 rounded-lg tabular-nums select-none text-ide-text-color hover:bg-gray-500/10 transition-[opacity,background-color] hidden"}
+{"aria":null,"title":null,"text":"Thought for 1s\nchevron_right","cls":"group flex w-full items-center gap-1.5 px-2 min-h-8 text-left text-sm rounded-lg text-ide-text-color opacity-70 hover:bg-gray-500/10 transition-[background-color] tabular-nums select-none"}
+{"aria":null,"title":null,"text":"content_copy","cls":"flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm p-1 opacity-50 hover:opacity-100"}
+{"aria":null,"title":null,"text":"Thought for 1s\nchevron_right","cls":"group flex w-full items-center gap-1.5 px-2 min-h-8 text-left text-sm rounded-lg text-ide-text-color opacity-70 hover:bg-gray-500/10 transition-[background-color] tabular-nums select-none"}
+{"aria":"Add context","title":null,"text":"","cls":"p-1.5 rounded-full hover:bg-gray-500/20 cursor-pointer"}
+{"aria":null,"title":null,"text":"Gemini 3.1 Pro (High)","cls":""}
+{"aria":"Select model, current: Gemini 3.1 Pro (High)","title":null,"text":"Gemini 3.1 Pro (High)","cls":"flex min-w-0 max-w-full cursor-pointer items-center h-7 gap-1 rounded-lg pr-1 pl-2 text-xs outline-none hover:bg-gray-500/20 focus-visible:ring-1 focus-visible:ring-gray-500/70"}
+{"aria":"Cancel","title":null,"text":"","cls":"bg-gray-500/20 hover:bg-gray-500/30 w-6 h-6 rounded-full cursor-pointer flex items-center justify-center transition-colors"}
+{"aria":null,"title":null,"text":"CustomizationMCP ServersExport","cls":"w-max border-gray-500/20 bg-ide-chat-background bg-editor-background text-editor-foreground origin-bottom outline-hidden z-50 w-72 rounded-lg border shadow-md transition-[opacity,transform] duration-100 opacity-0 pointer-events-none -translate-y-3"}
+{"aria":null,"title":null,"text":"PlanMediaMentionsWorkflows","cls":"border-gray-500/20 bg-ide-chat-background w-max bg-editor-background text-editor-foreground origin-bottom outline-hidden z-50 w-72 rounded-lg border shadow-md transition-[opacity,transform] duration-100 opacity-0 pointer-events-none translate-y-3"}
+{"aria":null,"title":null,"text":"ModelGemini 3.5 Flash (Medium)","cls":"flex flex-col max-h-80 border border-solid border-gray-500/20 rounded-2xl overflow-hidden outline-none bg-ide-chat-background"}
+{"aria":null,"title":null,"text":"Gemini 3.5 Flash (Medium)Fasti","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer hover:bg-gray-500/10"}
+{"aria":null,"title":null,"text":"Gemini 3.5 Flash (High)Fastinf","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer hover:bg-gray-500/10"}
+{"aria":null,"title":null,"text":"Gemini 3.5 Flash (Low)Fastinfo","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer hover:bg-gray-500/10"}
+{"aria":null,"title":null,"text":"Gemini 3.1 Pro (Low)","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer hover:bg-gray-500/10"}
+{"aria":null,"title":null,"text":"Gemini 3.1 Pro (High)","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer bg-gray-500/20"}
+{"aria":null,"title":null,"text":"Claude Sonnet 4.6 (Thinking)wa","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer hover:bg-gray-500/10"}
+{"aria":null,"title":null,"text":"Claude Opus 4.6 (Thinking)warn","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer hover:bg-gray-500/10"}
+{"aria":null,"title":null,"text":"GPT-OSS 120B (Medium)warning","cls":"px-2 py-1 flex w-full items-center justify-between transition-shadow cursor-pointer hover:bg-gray-500/10"}
+{"aria":null,"title":null,"text":"OK","cls":"quick-input-action"}
+{"aria":null,"title":null,"text":"OK","cls":"monaco-button monaco-text-button"}
+{"aria":null,"title":null,"text":"Devio: Start AI Agencyrecently","cls":"quick-input-list-entry quick-input-list-separator-border has-actions"}
+{"aria":null,"title":null,"text":"Devio: Start AI Agency","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":"Remove from Recently Used","title":null,"text":"","cls":"action-label codicon codicon-close"}
+{"aria":null,"title":null,"text":"Developer: Open Webview Develo","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Developer: Open Webview Develo","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":"Remove from Recently Used","title":null,"text":"","cls":"action-label codicon codicon-close"}
+{"aria":null,"title":null,"text":"Local History: Find Entry to R","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Local History: Find Entry to R","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":"Remove from Recently Used","title":null,"text":"","cls":"action-label codicon codicon-close"}
+{"aria":null,"title":null,"text":"[Beta] End Demo Modeother comm","cls":"quick-input-list-entry has-actions quick-input-list-separator-border"}
+{"aria":null,"title":null,"text":"[Beta] End Demo Mode","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"[Beta] Start Demo Mode","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"[Beta] Start Demo Mode","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Accounts: Manage Accounts","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Accounts: Manage Accounts","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Accounts: Manage Extension Acc","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Accounts: Manage Extension Acc","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Accounts: Manage Trusted Exten","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Accounts: Manage Trusted Exten","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Add Data Breakpoint at Address","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Add Data Breakpoint at Address","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Add Function Breakpoint","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Add Function Breakpoint","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Add XHR/fetch Breakpoint","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Add XHR/fetch Breakpoint","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Agent: Focus on Agent View","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Agent: Focus on Agent View","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Antigravity: Create New Global","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Antigravity: Create New Global","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Antigravity: Create New Rule","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Antigravity: Create New Rule","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Antigravity: Create New Workfl","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Antigravity: Create New Workfl","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}
+{"aria":null,"title":null,"text":"Antigravity: Customizations Ta","cls":"quick-input-list-entry has-actions"}
+{"aria":null,"title":null,"text":"Antigravity: Customizations Ta","cls":"label-name"}
+{"aria":"Configure Keybinding","title":null,"text":"","cls":"action-label codicon codicon-gear"}

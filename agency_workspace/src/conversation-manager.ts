@@ -1,57 +1,43 @@
 import { INativeBridge } from './native-bridge';
+import * as cheerio from 'cheerio';
 
 export class ConversationManager {
     private TIMEOUT_MS = 10000;
     private POLL_INTERVAL_MS = 500;
 
-    constructor(private bridge: INativeBridge, private newChatSelector: string, private commands?: any) {}
+    constructor(private bridge: INativeBridge, private newChatSelector: string, private commands?: any, private responseSelector?: string) {}
 
     async openFreshChat(): Promise<void> {
+        console.log(`Clicking new chat button: ${this.newChatSelector}`);
+        
+        let targetSelector = this.newChatSelector;
+        if (targetSelector === 'New Chat') {
+            targetSelector = '[data-tooltip-id="new-conversation-tooltip"]';
+            console.log(`Overriding deprecated 'New Chat' setting with '${targetSelector}'`);
+        }
+
         try {
-            console.log(`Attempting to clear chat via IDE commands...`);
-            let commandExecuted = false;
-            if (this.commands) {
-                const commandsList = await this.commands.getCommands(true);
-                const possibleCommands = [
-                    'workbench.action.chat.clear',
-                    'workbench.action.chat.newChat',
-                    'antigravity.chat.clear',
-                    'antigravity.newChat',
-                    'antigravity.clearChat',
-                    'devio.chat.clear'
-                ];
-                for (const cmd of possibleCommands) {
-                    if (commandsList.includes(cmd)) {
-                        console.log(`Executing command: ${cmd}`);
-                        await this.commands.executeCommand(cmd);
-                        commandExecuted = true;
-                        break;
-                    }
-                }
-            }
+            await this.bridge.clickButton(targetSelector);
+        } catch (err: any) {
+            throw new Error(`CRITICAL: Failed to clear conversation. Halting agency. Reason: ${err.message}`);
+        }
+        
+        const deadline = Date.now() + this.TIMEOUT_MS;
+        while (Date.now() < deadline) {
+            const snapshot = await this.bridge.captureSnapshot();
             
-            if (!commandExecuted) {
-                console.warn(`WARN: No clear command found, trying to click fallback selector ${this.newChatSelector}...`);
-                try {
-                    await this.bridge.clickButton(this.newChatSelector);
-                } catch (err) {
-                    console.warn(`WARN: Failed to click ${this.newChatSelector}`);
-                }
-            }
-            
-            const deadline = Date.now() + this.TIMEOUT_MS;
-            while (Date.now() < deadline) {
-                const snapshot = await this.bridge.captureSnapshot();
-                // A fresh chat might just have empty html or no messages
-                if (!snapshot.html || snapshot.html.trim() === '' || !snapshot.html.includes('message')) {
+            if (!snapshot.isGenerating && snapshot.html) {
+                const $ = cheerio.load(snapshot.html);
+                const selector = this.responseSelector || '.message, [data-testid*="message" i], article';
+                const msgs = $(selector);
+                
+                // If there are no messages, the chat is empty
+                if (msgs.length === 0) {
                     return;
                 }
-                await new Promise(r => setTimeout(r, this.POLL_INTERVAL_MS));
             }
-            throw new Error(`ConversationManager.openFreshChat timed out after ${this.TIMEOUT_MS}ms`);
-        } catch (e: any) {
-            console.warn(`WARN: ${e.message}`);
-            // Architecture: emit a WARN to the webview — it must NOT propagate the error to OrchestrationEngine.
+            await new Promise(r => setTimeout(r, this.POLL_INTERVAL_MS));
         }
+        throw new Error(`CRITICAL: Timed out waiting for fresh chat to be empty. Halting agency.`);
     }
 }

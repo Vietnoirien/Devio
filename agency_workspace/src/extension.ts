@@ -26,15 +26,17 @@ export function activate(context: vscode.ExtensionContext) {
     const workspaceManager = new WorkspaceManager(workspaceRoot);
 
     const config = vscode.workspace.getConfiguration('devio');
-    const port = 9222;
+    const port = config.get<number>('antigravityLinkPort', 9222);
     const nativeBridge = new NativeBridge();
-    const newChatSelector = config.get<string>('newChatSelector', 'Add context');
+    const newChatSelector = config.get<string>('newChatSelector', '[data-tooltip-id="new-conversation-tooltip"]');
     const healthChecker = new HealthChecker(nativeBridge, port, workspaceRoot, newChatSelector, vscode.commands);
 
-    const convMgr = new ConversationManager(nativeBridge, newChatSelector, vscode.commands);
+    const responseSelector = config.get<string>('responseSelector', '.message, [data-testid*="message" i], article');
+
+    const convMgr = new ConversationManager(nativeBridge, newChatSelector, vscode.commands, responseSelector);
     const promptBuilder = new PromptBuilder(workspaceRoot);
     const writer = new WorkspaceWriter(workspaceManager);
-    const orchestrationEngine = new OrchestrationEngine(nativeBridge, convMgr, promptBuilder, writer);
+    const orchestrationEngine = new OrchestrationEngine(nativeBridge, convMgr, promptBuilder, writer, responseSelector);
 
     // Create the Webview Panel
     const panel = vscode.window.createWebviewPanel(
