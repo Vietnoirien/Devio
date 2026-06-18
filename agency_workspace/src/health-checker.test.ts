@@ -1,9 +1,9 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, type Mocked } from 'vitest';
 import { HealthChecker } from './health-checker';
 import { AgLinkClient } from './ag-link-client';
 
 describe('HealthChecker', () => {
-  let mockClient: vi.Mocked<AgLinkClient>;
+  let mockClient: Mocked<AgLinkClient>;
 
   beforeEach(() => {
     mockClient = {

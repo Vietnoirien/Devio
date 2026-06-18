@@ -26,6 +26,11 @@ describe('Extension Manifest & Build', () => {
     expect(props['devio.freshConversationPerTurn']).toBeDefined();
     expect(props['devio.newChatSelector']).toBeDefined();
     expect(props['devio.responseSelector']).toBeDefined();
+
+    expect(manifest.dependencies).toBeDefined();
+    expect(manifest.dependencies['ws']).toBeDefined();
+    expect(manifest.dependencies['cheerio']).toBeDefined();
+    expect(manifest.dependencies['@modelcontextprotocol/sdk']).toBeDefined();
   });
 
   it('should build successfully and produce dist/extension.js', () => {

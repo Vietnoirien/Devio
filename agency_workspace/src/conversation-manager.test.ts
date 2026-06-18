@@ -1,46 +1,40 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { ConversationManager, ConversationResetError } from './conversation-manager';
-import { AgLinkClient } from './ag-link-client';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { ConversationManager } from './conversation-manager';
+import { INativeBridge } from './native-bridge';
 
 describe('ConversationManager', () => {
-  let mockClient: vi.Mocked<AgLinkClient>;
+    let bridge: INativeBridge;
+    let manager: ConversationManager;
 
-  beforeEach(() => {
-    mockClient = {
-      click: vi.fn(),
-      snapshot: vi.fn(),
-    } as any;
-  });
+    beforeEach(() => {
+        bridge = {
+            connectCDP: vi.fn(),
+            captureSnapshot: vi.fn(),
+            injectMessage: vi.fn(),
+            clickButton: vi.fn()
+        };
+        manager = new ConversationManager(bridge, 'New Chat');
+    });
 
-  const config = {
-    newChatSelector: 'New Chat',
-    timeoutMs: 10000,
-    pollIntervalMs: 10
-  };
+    it('should click new chat button and wait for clear', async () => {
+        vi.mocked(bridge.captureSnapshot).mockResolvedValueOnce({ html: '<div class="message">msgs</div>', isGenerating: false })
+                                        .mockResolvedValueOnce({ html: '<div></div>', isGenerating: false });
+        
+        await manager.openFreshChat();
+        
+        expect(bridge.clickButton).toHaveBeenCalledWith('New Chat');
+        expect(bridge.captureSnapshot).toHaveBeenCalledTimes(2);
+    });
 
-  it('openFreshChat() should click New Chat and wait until html is empty', async () => {
-    mockClient.click.mockResolvedValue({ success: true });
-    
-    mockClient.snapshot
-      .mockResolvedValueOnce({ html: 'not empty', controlsHtml: '', isGenerating: false, controlsMeta: {} as any })
-      .mockResolvedValueOnce({ html: 'not empty', controlsHtml: '', isGenerating: false, controlsMeta: {} as any })
-      .mockResolvedValueOnce({ html: '   ', controlsHtml: '', isGenerating: false, controlsMeta: {} as any });
+    it('should catch timeout and emit warning without throwing', async () => {
+        // Mock captureSnapshot to always return html with messages so it loops until timeout
+        vi.mocked(bridge.captureSnapshot).mockResolvedValue({ html: '<div class="message">msgs</div>', isGenerating: false });
+        
+        // Temporarily reduce timeout for test
+        (manager as any).TIMEOUT_MS = 100;
+        const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    const manager = new ConversationManager(mockClient, config);
-    await manager.openFreshChat();
-
-    expect(mockClient.click).toHaveBeenCalledWith({ text: 'New Chat' });
-    expect(mockClient.snapshot).toHaveBeenCalledTimes(3);
-  });
-
-  it('openFreshChat() should throw ConversationResetError if it times out', async () => {
-    mockClient.click.mockResolvedValue({ success: true });
-    mockClient.snapshot.mockResolvedValue({ html: 'still here', controlsHtml: '', isGenerating: false, controlsMeta: {} as any });
-
-    const manager = new ConversationManager(mockClient, { ...config, timeoutMs: 50 });
-    
-    const start = Date.now();
-    await expect(manager.openFreshChat()).rejects.toThrow(ConversationResetError);
-    expect(Date.now() - start).toBeGreaterThanOrEqual(50);
-  });
+        await expect(manager.openFreshChat()).resolves.not.toThrow();
+        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('WARN: ConversationManager.openFreshChat timed out'));
+    });
 });

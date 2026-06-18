@@ -1,35 +1,28 @@
-import { AgLinkClient } from './ag-link-client';
-
-export interface ConversationConfig {
-  newChatSelector: string;
-  timeoutMs: number;
-  pollIntervalMs: number;
-}
-
-export class ConversationResetError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'ConversationResetError';
-  }
-}
+import { INativeBridge } from './native-bridge';
 
 export class ConversationManager {
-  constructor(private client: AgLinkClient, private config: ConversationConfig) {}
+    private TIMEOUT_MS = 10000;
+    private POLL_INTERVAL_MS = 500;
 
-  async openFreshChat(): Promise<void> {
-    await this.client.click({ text: this.config.newChatSelector });
+    constructor(private bridge: INativeBridge, private newChatSelector: string) {}
 
-    const timeout = Math.min(this.config.timeoutMs, 10000);
-    const deadline = Date.now() + timeout;
-
-    while (Date.now() < deadline) {
-      const snap = await this.client.snapshot();
-      if (snap.html.trim() === '') {
-        return;
-      }
-      await new Promise(resolve => setTimeout(resolve, this.config.pollIntervalMs));
+    async openFreshChat(): Promise<void> {
+        try {
+            await this.bridge.clickButton(this.newChatSelector);
+            
+            const deadline = Date.now() + this.TIMEOUT_MS;
+            while (Date.now() < deadline) {
+                const snapshot = await this.bridge.captureSnapshot();
+                // A fresh chat might just have empty html or no messages
+                if (!snapshot.html || snapshot.html.trim() === '' || !snapshot.html.includes('message')) {
+                    return;
+                }
+                await new Promise(r => setTimeout(r, this.POLL_INTERVAL_MS));
+            }
+            throw new Error(`ConversationManager.openFreshChat timed out after ${this.TIMEOUT_MS}ms`);
+        } catch (e: any) {
+            console.warn(`WARN: ${e.message}`);
+            // Architecture: emit a WARN to the webview — it must NOT propagate the error to OrchestrationEngine.
+        }
     }
-
-    throw new ConversationResetError(`Timed out waiting for blank conversation after ${timeout}ms`);
-  }
 }

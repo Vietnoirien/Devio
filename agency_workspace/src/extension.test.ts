@@ -255,10 +255,10 @@ describe('Extension Activation', () => {
 
     activate(mockContext);
 
-    const tokenCommandCall = mockRegisterCommand.mock.calls.find(call => call[0] === 'devio.setAntigravityLinkToken');
+    const tokenCommandCall = mockRegisterCommand.mock.calls.find((call: any[]) => call[0] === 'devio.setAntigravityLinkToken');
     expect(tokenCommandCall).toBeDefined();
 
-    await tokenCommandCall[1]();
+    await tokenCommandCall![1]();
 
     expect(vscodeMock.window.showInputBox).toHaveBeenCalledWith(expect.objectContaining({
       prompt: expect.any(String),
