@@ -107,6 +107,17 @@ export function activate(context: vscode.ExtensionContext) {
               vscode.window.showErrorMessage(`Failed to clear chat: ${err.message}`);
             }
             break;
+          case 'deleteMessage':
+            try {
+              const messageId = message.messageId;
+              if (messageId) {
+                await workspaceManager.deleteMessage(messageId);
+                await syncWorkspaceData();
+              }
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to delete message: ${err.message}`);
+            }
+            break;
           case 'runAgency':
             try {
               let isRunning = true;

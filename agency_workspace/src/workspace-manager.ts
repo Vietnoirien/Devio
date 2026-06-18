@@ -154,6 +154,39 @@ export class WorkspaceManager {
     }
   }
 
+  /**
+   * Deletes a specific message from inbox.jsonl by ID.
+   */
+  async deleteMessage(messageId: string): Promise<void> {
+    await this.acquireLock();
+    try {
+      const inboxPath = this.getInboxPath();
+      if (!(await this.fileExists(inboxPath))) {
+        return;
+      }
+      const data = await fs.readFile(inboxPath, 'utf8');
+      const lines = data.split('\n');
+      const updatedLines = lines.filter(line => {
+        if (line.trim() === '') return false;
+        try {
+          const msg = JSON.parse(line);
+          return msg.id !== messageId;
+        } catch {
+          return true;
+        }
+      });
+      let newContent = updatedLines.join('\n');
+      if (newContent.length > 0) {
+          newContent += '\n';
+      }
+      await fs.writeFile(inboxPath, newContent, 'utf8');
+    } catch (err: any) {
+      throw new Error(`Failed to delete message from inbox.jsonl at ${this.getInboxPath()}: ${err.message}`);
+    } finally {
+      await this.releaseLock();
+    }
+  }
+
   private async fileExists(filePath: string): Promise<boolean> {
     try {
       await fs.access(filePath);
