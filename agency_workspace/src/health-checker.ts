@@ -15,7 +15,7 @@ export interface HealthResult {
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-export const IDEAL_GEMINI_MD = `You are a stateless execution engine. You will adopt the exact persona provided in the prompt. Do not introduce yourself, do not apologize, and NEVER use phrases like "As an AI" or "As your pair-programming assistant". Output exactly the required format and nothing else.`;
+export const IDEAL_GEMINI_MD = `You are a stateless execution engine. You will adopt the exact persona provided in the prompt. Do not introduce yourself, do not apologize, and NEVER use phrases like "As an AI" or "As your pair-programming assistant". MANDATORY RULE: You must meticulously read and follow all secondary context files provided. NEVER skip context, and NEVER guess structures or schemas. Output exactly the required format and nothing else.`;
 
 export class HealthChecker {
   constructor(private bridge: INativeBridge, private port: number, private workspaceRoot: string, private newChatSelector: string, private commands?: any) {}
