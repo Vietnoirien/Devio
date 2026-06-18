@@ -1,8 +1,8 @@
-# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.44)
+# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.46)
 
 Cher Client,
 
-Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.44) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome et un déploiement indépendant de l'espace de travail.
+Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.46) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome et un déploiement indépendant de l'espace de travail.
 
 ## Ce qui a été construit
 
@@ -25,7 +25,7 @@ Les fonctionnalités clés incluent :
 ## Comment y accéder et l'exécuter
 
 1. **Installation** :
-   - Le fichier `.vsix` pour la version `0.6.44` est disponible dans le répertoire de votre projet.
+   - Le fichier `.vsix` pour la version `0.6.46` est disponible dans le répertoire de votre projet.
    - Installez l'extension dans Antigravity IDE via la commande : `Extensions: Install from VSIX...`
 2. **Exécution** :
    - Cliquez sur la nouvelle icône 'D' dans la barre latérale gauche ou droite pour ouvrir la vue Devio.
@@ -40,7 +40,7 @@ Les fonctionnalités clés incluent :
 
 ## Garantie et support
 
-L'implémentation de l'empaquetage global (Global Agency Packaging), ainsi que la correction des défauts de l'interface et l'ajout des nouvelles fonctionnalités (saisie multi-lignes, intégration dans la barre latérale, rétention d'état, refonte UI et correction de la Topbar) ont été validés rigoureusement. Cette version v0.6.44 a passé 100% de nos 71 tests unitaires et vérifications de typage strict (incluant la résolution d'une erreur TS1117 récente), garantissant une architecture stable et sécurisée. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
+L'implémentation de l'empaquetage global (Global Agency Packaging), ainsi que la correction des défauts de l'interface et l'ajout des nouvelles fonctionnalités (saisie multi-lignes, intégration dans la barre latérale, rétention d'état, refonte UI et correction de la Topbar) ont été validés rigoureusement. Cette version v0.6.46 a passé 100% de nos 71 tests unitaires et vérifications de typage strict (incluant la résolution d'une erreur TS1117 récente), garantissant une architecture stable et sécurisée. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
 
 Nous vous remercions de votre confiance.
 

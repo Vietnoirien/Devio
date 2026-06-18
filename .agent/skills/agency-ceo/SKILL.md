@@ -108,7 +108,7 @@ Use the template at `assets/proposal_template.md`. Your proposal must include:
    - How to access / run it
    - Known limitations or future recommendations
    - Warranty / support terms (if applicable)
-4. **DELIVER TO CLIENT:** Post a `SUBMIT` message with `"to": "client"`. This is mandatory. You must explicitly deliver the package to the client and wait for their response. Do not just loop internally.
+4. **DELIVER TO CLIENT:** Post a `SUBMIT` message with `"to": "client"`. This is mandatory. You must explicitly deliver the package directly to the client, NEVER to the coordinator or other agents. You must wait for their response. Do not just loop internally.
 5. Once the client approves, post `APPROVE` to `agency-coordinator` to close the engagement.
 
 ---
