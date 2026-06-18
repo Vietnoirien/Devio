@@ -1,0 +1,6 @@
+node_modules/
+dist/
+dist-webview/
+*.vsix
+devio-antigravity-link-extension/
+.DS_Store

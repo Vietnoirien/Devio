@@ -1,99 +1,135 @@
-# Devio Client — Proposition Commerciale : Antigravity IDE Plugin
+# Project Proposal — Devio Autonomous Agency Engine V3 (Native Merge)
 
-**Préparé par :** Devio AI Development Agency (Morpheus)
-**Date :** 2026-06-17
-**Version :** 1.0
-
----
-
-## Synthèse Exécutive
-
-L'agence Devio propose de concevoir et de développer une intégration native (plugin) pour l'environnement de développement Antigravity IDE. Ce plugin offrira aux développeurs une interface graphique complète pour piloter les personas de l'agence Devio (CEO, Architect, Developer, QA) directement depuis leur IDE. L'objectif est d'éliminer le besoin d'éditer manuellement les fichiers de configuration, d'unifier l'expérience développeur et de maximiser la productivité grâce à une intégration fluide avec l'API Antigravity.
+**Prepared for:** Devio Client
+**Prepared by:** Morpheus, Senior Client Partner — Devio
+**Date:** 2026-06-18
+**Version:** 3.0
+**Engagement:** Antigravity IDE Plugin — Autonomous Orchestration Engine
 
 ---
 
-## Périmètre du Projet (Scope of Work)
+## Executive Summary
 
-### Inclus (MVP)
-- **Tableau de bord de projet** : Visualisation en temps réel de la phase en cours, des tâches et des bloqueurs.
-- **Message Bus / Inbox** : Interface de lecture et d'écriture pour le système de messages inter-agents (`inbox.jsonl`).
-- **Chat avec les agents** : Panneau latéral interactif pour déclencher et communiquer avec les personas.
-- **Éditeur de brief** : Formulaire guidé remplaçant l'édition manuelle de `01_brief.md`.
-- **Visionneuse de livrables** : Interface de lecture pour les rapports d'architecture, propositions, etc.
-- **Intégration API / Fichiers** : Lecture/écriture sur le système de fichiers (`agency_workspace/`) et communication directe avec l'API ou le SDK Antigravity.
-- **Distribution** : Fourniture du package compilé (format .vsix ou équivalent) pour une installation manuelle.
+Following your strategic decision to choose Option B, this proposal outlines the plan to natively merge the capabilities of the Antigravity Link extension directly into the Devio plugin. 
 
-### Exclu du périmètre
-> [!IMPORTANT]
-> Les éléments suivants ne sont explicitement **pas** inclus dans cet engagement. Toute modification du périmètre nécessitera un avenant écrit.
-
-- Publication sur un Marketplace public.
-- Support d'autres IDE (ex: VS Code classique, IntelliJ) — l'intégration est exclusive à Antigravity IDE.
-- Outils d'analyse de code ou de télémétrie complexes hors du périmètre MVP.
+Instead of relying on a fragile HTTP bridge to a separate extension, Devio will integrate the underlying Chrome DevTools Protocol (CDP) services. This gives the Devio orchestration engine native, programmatic control over the Antigravity IDE chat interface, robust multi-window management, and its own built-in MCP server. The result is a premium, single-plugin experience that drives the agency loop autonomously without any setup friction (no network ports, no authentication tokens).
 
 ---
 
-## Feuille de Route (Roadmap)
+## Scope of Work
 
-### Phase 1 — Fondation & Intégration Antigravity
-**Durée :** 2 semaines
-**Objectif :** Établir la base du plugin et la connexion avec l'environnement Antigravity (API/Workspace).
+### What is included
 
-| Livrable | Description | Critères d'acceptation |
-|:---|:---|:---|
-| Socle de l'extension | Boilerplate du plugin Antigravity (.vsix) | L'extension s'installe manuellement et s'active. |
-| Gestionnaire de Workspace | Module de lecture/écriture pour `state.json`, `01_brief.md` et `inbox.jsonl` | Les modifications via l'UI sont reflétées dans les fichiers. |
-| Connexion API | Pont de communication direct avec l'API Antigravity | Le plugin peut envoyer une commande à un agent Antigravity. |
+- **Native Orchestration Engine** — a loop runner embedded in the VS Code extension host that manages the full phase lifecycle: BRIEF → RESEARCH → PROPOSAL → ARCHITECTURE → DEVELOPMENT → REVIEW → DELIVERY → DONE.
+- **Native CDP Integration** — direct integration of the forked `cdp.ts` and related services. The engine communicates directly with the IDE's UI layer, eliminating HTTP polling.
+- **Window Management** — intelligent scoring and targeting to handle multiple running Antigravity IDE instances seamlessly.
+- **Prompt Builder & Workspace Writer** — assembles system context, agent tasks, and applies agent outputs atomically to the workspace files.
+- **ConversationManager** — ensures each agent turn runs in a clean context to prevent cross-contamination between roles (e.g., Researcher context vs. Developer context).
+- **Two User Settings** (VS Code Settings):
+  - `devio.autonomyMode` — `"full"` (headless to DONE) or `"supervised"` (pauses at each phase transition for your approval).
+  - `devio.freshConversationPerTurn` — boolean (default: `true`). Disabling this accumulates all turns in a single session.
+- **Embedded MCP Server** — the Devio plugin will bundle and expose `mcp-server.mjs` natively.
+- **Live webview updates** — the existing dashboard reflects engine progress in real time.
 
----
+### What is NOT included
 
-### Phase 2 — Interfaces Graphiques (MVP)
-**Durée :** 3 semaines
-**Objectif :** Développer les vues UI interactives pour le pilotage de l'agence.
-
-| Livrable | Description | Critères d'acceptation |
-|:---|:---|:---|
-| Tableau de bord | Vue principale affichant le statut du projet | Affichage correct de la phase courante et des bloqueurs. |
-| Éditeur de Brief & Visionneuse | Interfaces dédiées pour la saisie et la lecture de livrables | Possibilité de modifier le brief via des formulaires. |
-| Panneau de Chat / Inbox | Interface de messagerie latérale | Les messages sont envoyés aux bons agents et stockés. |
+- A new webview UI redesign (the existing dashboard is retained and extended).
+- Integration with external LLM APIs (OpenAI, Anthropic, etc.) — the engine drives your active Antigravity session only.
+- Model selection automation — the model used is whichever is active in your Antigravity session.
 
 ---
 
-## Hypothèses
+## Phased Roadmap
 
-Les hypothèses suivantes sous-tendent cette proposition. Si l'une d'entre elles s'avère inexacte, le périmètre et les délais pourraient être révisés.
+### Phase 1 — Foundation: Native CDP Integration
 
-1. L'API ou le SDK d'Antigravity IDE permet bien les déclenchements de hooks et la communication bidirectionnelle comme identifié lors de notre phase de recherche.
-2. Le client dispose des droits d'installation d'extensions personnalisées sur son instance d'Antigravity IDE.
+**Objective:** Merge the forked CDP services into Devio and establish reliable, native communication with the IDE chat window.
 
----
+**Duration:** 1 week
 
-## Risques
+**Key Deliverables:**
+- Merge `src/services/` and `src/server/` from the fork into Devio's architecture.
+- `NativeBridge` class exposing `captureSnapshot()`, `injectMessage()`, and `connectCDP()` directly to the engine.
+- `ConversationManager` implemented via native CDP commands (e.g., clicking "New Chat").
+- Settings registration: `devio.autonomyMode`, `devio.freshConversationPerTurn`.
 
-| Risque | Probabilité | Impact | Atténuation |
-|:---|:---|:---|:---|
-| API Antigravity non documentée / instable | Moyenne | Élevé | Utilisation d'un pont MCP ou de la manipulation directe du système de fichiers comme fallback robuste. |
-| Limitations des Webviews dans l'IDE | Faible | Moyen | Conception d'UI minimalistes et éprouvées (similaires aux standards VS Code). |
-
----
-
-## Résumé de l'Investissement
-
-Veuillez consulter le fichier `02_quote.md` pour le devis détaillé. Le budget étant illimité pour garantir une réussite totale du MVP, nous avons provisionné une équipe senior dédiée.
-
-| Phase | Durée | Coût Estimé |
-|:---|:---|:---|
-| Phase 1 — Fondation & Intégration | 2 semaines | 40 000 € |
-| Phase 2 — Interfaces Graphiques | 3 semaines | 60 000 € |
-| **Total** | **5 semaines** | **100 000 € HT** |
-
-> Conditions de paiement : 30 % à la signature, 40 % à la livraison de la Phase 1, 30 % à la livraison finale.
+**Acceptance Criteria:**
+- The plugin can natively read and write to the active Antigravity session without an external HTTP server.
+- Window management correctly identifies and targets the active chat surface.
 
 ---
 
-## Prochaines Étapes
+### Phase 2 — Core: Prompt Builder & Workspace Writer
 
-1. Validation et approbation de la proposition par le client.
-2. Émission de la facture d'acompte.
-3. Réunion de lancement (Kick-off).
-4. Début de la Phase 1 (Architecture technique par l'agence).
+**Objective:** Build the intelligence components that assemble prompts and apply agent outputs.
+
+**Duration:** 1 week
+
+**Key Deliverables:**
+- `PromptBuilder` — reads SKILL.md and workspace files.
+- `WorkspaceWriter` — parses tagged blocks in agent responses and atomically updates files and `inbox.jsonl`.
+- Integration tests simulating CDP responses.
+
+**Acceptance Criteria:**
+- Given a phase and a set of workspace files, `PromptBuilder` produces a complete context prompt.
+- `WorkspaceWriter` correctly applies file creations, modifications, and message appends.
+
+---
+
+### Phase 3 — Orchestrator: The Loop
+
+**Objective:** Assemble the engine loop that chains phases together autonomously.
+
+**Duration:** 1 week
+
+**Key Deliverables:**
+- `OrchestrationEngine` — reads `state.json`, activates the correct phase, drives the `NativeBridge`, and advances the state.
+- Supervised mode approval UI in the webview.
+- Error handling and escalation pathways.
+
+**Acceptance Criteria:**
+- In `full` mode: the agency runs end-to-end without human input.
+- In `supervised` mode: pauses at phase boundaries for approval.
+
+---
+
+### Phase 4 — Polish, MCP & Delivery
+
+**Objective:** Harden the engine, expose the MCP server, and package the final plugin.
+
+**Duration:** 1 week
+
+**Key Deliverables:**
+- Integrate and bundle `mcp-server.mjs`.
+- Comprehensive unit and integration tests.
+- Deliverable `.vsix` package.
+
+**Acceptance Criteria:**
+- QA audit passes with no CRITICAL or HIGH findings.
+- The built-in MCP server is accessible and functional.
+- The `.vsix` installs cleanly and operates as a standalone solution.
+
+---
+
+## Assumptions & Risks
+
+| # | Item | Type | Mitigation |
+|:--|:-----|:-----|:-----------|
+| 1 | Antigravity IDE is launched with `--remote-debugging-port` | Assumption | Plugin health check detects this and surfaces clear launch instructions if missing. |
+| 2 | CDP DOM Selectors may change in future IDE updates | **RISK — Medium** | The Architect will design a resilient selector mapping configuration that can be updated without core engine changes. |
+| 3 | Model selection is outside plugin control | **RISK — Low** | Documented as a known limitation; the user manually selects the model before execution. |
+
+---
+
+## Investment Summary
+
+| Phase | Scope | Duration | Effort |
+|:------|:------|:---------|:-------|
+| 1 — Native CDP Integration | Merge services, Window Management, NativeBridge | 1 week | High |
+| 2 — Prompt & Workspace Core | PromptBuilder, WorkspaceWriter | 1 week | High |
+| 3 — Orchestrator Loop | State Machine, Supervised UI | 1 week | High |
+| 4 — Polish & MCP Delivery | Testing, MCP Integration, Packaging | 1 week | Medium |
+| **Total** | | **4 weeks** | |
+
+**Budget:** Unlimited (per client confirmation).
+**Timeline:** 4 weeks from Architecture approval.
