@@ -111,6 +111,7 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
             }
             break;
           case 'runAgency':
+            webviewView.webview.postMessage({ type: 'agencyRunning', isRunning: true });
             try {
               let isRunning = true;
               while (isRunning) {
@@ -149,6 +150,8 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               }
             } catch (err: any) {
               vscode.window.showErrorMessage(`Failed to run Agency: ${err.message}`);
+            } finally {
+              webviewView.webview.postMessage({ type: 'agencyRunning', isRunning: false });
             }
             break;
           case 'openDocument':
@@ -224,7 +227,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const provider = new DevioSidebarProvider(context.extensionUri, context.globalStorageUri);
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(DevioSidebarProvider.viewType, provider)
+    vscode.window.registerWebviewViewProvider(DevioSidebarProvider.viewType, provider, {
+      webviewOptions: {
+        retainContextWhenHidden: true
+      }
+    })
   );
 
   const startCommandDisposable = vscode.commands.registerCommand('devio.start', () => {

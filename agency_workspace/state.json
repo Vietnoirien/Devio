@@ -150,6 +150,22 @@
         "agency-qa"
       ],
       "note": "Global Agency Packaging QA APPROVED"
+    },
+    {
+      "phase": "REVIEW",
+      "completed_at": "2026-06-18T21:55:00+02:00",
+      "approved_by": [
+        "agency-qa"
+      ],
+      "note": "State retention QA APPROVED"
+    },
+    {
+      "phase": "REVIEW",
+      "completed_at": "2026-06-18T22:11:00+02:00",
+      "approved_by": [
+        "agency-qa"
+      ],
+      "note": "UI updates QA APPROVED"
     }
   ]
 }

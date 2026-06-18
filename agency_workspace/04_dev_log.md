@@ -639,3 +639,32 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - `agency_workspace/src/prompt-builder.ts` — modified (using globalStorageUri path)
 - `agency_workspace/src/prompt-builder.test.ts` — modified (updated assertions)
 - `package.json` — modified (bumped version to 0.6.39)
+
+---
+
+## Task: State Retention (retainContextWhenHidden)
+
+**TDD cycle:**
+- 🔴 RED: Client reported that the webview reloads when switching panels because `retainContextWhenHidden` was not set.
+- 🟢 GREEN: Added `{ webviewOptions: { retainContextWhenHidden: true } }` to `registerWebviewViewProvider` in `extension.ts`. Rebuilt the package (`0.6.41`) and tests pass (71 total).
+- 🔵 REFACTOR: None needed.
+
+**Files created/modified:**
+- `agency_workspace/src/extension.ts` — modified (enabled state retention)
+- `package.json` — modified (bumped version to 0.6.41)
+
+---
+
+## Task: UI Enhancements (Clear Chat, Run Agency Button)
+
+**TDD cycle:**
+- 🔴 RED: Client requested moving the Clear Chat button to the Dev Tools tab, adding a loading animation during agency execution, and replacing the "Run Agency" text with a "Send" SVG icon.
+- 🟢 GREEN: Modified `App.tsx` to move the Clear Chat button into `devtools-layout`, introduced `isAgencyRunning` state via IPC messages from `extension.ts`, and updated the "Run Agency" button to display a loader or an SVG icon conditionally. Updated `App.css` to add the `.loader-small` animation. Fixed tests in `App.test.tsx` to handle the relocated button and SVG UI changes. All 71 tests passed.
+- 🔵 REFACTOR: None needed.
+
+**Files created/modified:**
+- `agency_workspace/src/webview/App.tsx` — modified (UI changes, new IPC event)
+- `agency_workspace/src/webview/App.css` — modified (added .loader-small)
+- `agency_workspace/src/extension.ts` — modified (dispatch agencyRunning event)
+- `agency_workspace/src/webview/App.test.tsx` — modified (updated UI tests)
+- `package.json` — modified (bumped version to 0.6.42)

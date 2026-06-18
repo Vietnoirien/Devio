@@ -32,6 +32,7 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [healthError, setHealthError] = useState<string | null>(null);
   const [geminiMdValid, setGeminiMdValid] = useState<boolean>(true);
+  const [isAgencyRunning, setIsAgencyRunning] = useState<boolean>(false);
   
   const [activeTab, setActiveTab] = useState<'chat' | 'devtools' | 'document' | 'settings'>('chat');
   const [agencyPrompt, setAgencyPrompt] = useState('');
@@ -86,6 +87,8 @@ function App() {
         setDocumentContent(message.content);
         setDocumentFile(message.file);
         setActiveTab('document');
+      } else if (message.type === 'agencyRunning') {
+        setIsAgencyRunning(message.isRunning);
       }
     };
 
@@ -315,14 +318,15 @@ function App() {
                 }}
                 rows={3}
               />
-              <button className="btn-clear-chat" onClick={() => {
-                if (vscode) vscode.postMessage({ command: 'clearChat' });
-                else setMessages([]);
-              }} style={{ marginRight: '10px', padding: '8px 16px', borderRadius: '4px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer' }}>
-                Clear Chat
-              </button>
-              <button className="btn-run-agency" onClick={handleRunAgency}>
-                Run Agency
+              <button className="btn-run-agency" onClick={handleRunAgency} disabled={isAgencyRunning} aria-label="Run Agency" title="Run Agency">
+                {isAgencyRunning ? (
+                  <div className="loader-small"></div>
+                ) : (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
                 <span className="glow-effect"></span>
               </button>
             </div>
@@ -332,7 +336,15 @@ function App() {
         {activeTab === 'devtools' && (
           <div className="devtools-layout">
             <section className="glass-panel dev-tools">
-              <h3>Agent Command (Manual Message Bus Override)</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h3 style={{ margin: 0 }}>Agent Command (Manual Message Bus Override)</h3>
+                <button className="btn-clear-chat" onClick={() => {
+                  if (vscode) vscode.postMessage({ command: 'clearChat' });
+                  else setMessages([]);
+                }} style={{ padding: '6px 12px', borderRadius: '4px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '12px' }}>
+                  Clear Chat
+                </button>
+              </div>
               <form className="composer-form" onSubmit={handleSendMessage}>
                 <div className="form-group">
                   <label>From</label>

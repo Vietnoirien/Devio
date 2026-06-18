@@ -272,8 +272,8 @@ describe('App Webview Component', () => {
     render(<App />);
     initState();
     
-    const messagesTab = screen.getByRole('button', { name: /Messages/i });
-    fireEvent.click(messagesTab);
+    const devToolsTab = screen.getByRole('button', { name: /Dev Tools/i });
+    fireEvent.click(devToolsTab);
     
     const clearBtn = screen.getByRole('button', { name: /Clear Chat/i });
     fireEvent.click(clearBtn);
