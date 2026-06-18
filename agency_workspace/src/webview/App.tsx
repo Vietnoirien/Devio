@@ -253,6 +253,11 @@ function App() {
                       <span className="msg-arrow">→</span>
                       <span className="msg-to">{msg.to}</span>
                       <span className="msg-time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                      <button 
+                        className="btn-delete-msg" 
+                        onClick={() => vscode ? vscode.postMessage({ command: 'deleteMessage', messageId: msg.id }) : null}
+                        title="Delete Message"
+                      >×</button>
                     </div>
                     
                     <div className="msg-body">

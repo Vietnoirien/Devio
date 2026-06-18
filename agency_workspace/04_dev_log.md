@@ -551,3 +551,17 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - `agency_workspace/src/extension.test.ts`
 - `agency_workspace/src/webview/App.tsx`
 - `agency_workspace/src/webview/App.test.tsx`
+
+---
+
+## Task: Specific Message Deletion Feature
+
+**TDD cycle:**
+- 🔴 RED: Added test to `App.test.tsx` verifying that a close cross is rendered on messages and clicking it dispatches the `deleteMessage` IPC command with the message ID. Tests failed.
+- 🟢 GREEN: Modified `App.tsx` to render a close cross button `×` on each message header. Added `deleteMessage` IPC payload when clicked. Added styling `.btn-delete-msg` in `App.css`. All tests pass (71 total).
+- 🔵 REFACTOR: None needed.
+
+**Files created/modified:**
+- `agency_workspace/src/webview/App.tsx`
+- `agency_workspace/src/webview/App.css`
+- `agency_workspace/src/webview/App.test.tsx`

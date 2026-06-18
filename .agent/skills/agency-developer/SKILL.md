@@ -44,8 +44,9 @@ For each task, follow the **strict TDD cycle** defined in `references/coding_sta
 2. **🟢 GREEN** — Write the minimum implementation to make the test pass. Run the full suite. All tests must pass.
 3. **🔵 REFACTOR** — Clean up the code without adding behaviour. Run the full suite again.
 4. Repeat for the next acceptance criterion.
-5. Log all three states in `agency_workspace/04_dev_log.md` (see dev log format in Section 7 of coding standards).
-6. Place files in `agency_workspace/src/` (or the path specified in the architecture).
+5. Log all three states in `agency_workspace/04_dev_log.md` (see dev log format in Section 7 of coding standards). **CRITICAL:** Always APPEND to the dev log. NEVER overwrite or erase previous entries.
+6. When releasing a build or modifying a project file like package.json, strictly follow Semantic Versioning (SemVer) rules. Ensure you bump the version correctly and NEVER downgrade or erase previous version numbers.
+7. Place files in `agency_workspace/src/` (or the path specified in the architecture).
 
 > **Hard rule:** If you cannot show a `🔴 RED` entry in the dev log for a task, that task is considered unverified. QA will reject it as a `HIGH` finding.
 

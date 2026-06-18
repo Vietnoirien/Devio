@@ -303,4 +303,27 @@ describe('App Webview Component', () => {
     fireEvent.click(docLink);
     expect(mockPostMessage).toHaveBeenCalledWith({ command: 'openDocument', file: '03_architecture.md' });
   });
+
+  it('should dispatch deleteMessage command when close cross is clicked', () => {
+    render(<App />);
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'update',
+            state: { phase: 'DEVELOPMENT', owner: 'agency-developer' },
+            messages: [
+              { id: '12345', timestamp: '2026-06-18T10:00:00Z', from: 'client', to: 'agency-ceo', message: 'First', type: 'INFO', status: 'RESOLVED', phase: 'BRIEF' }
+            ]
+          }
+        })
+      );
+    });
+
+    const deleteBtns = screen.getAllByTitle('Delete Message');
+    expect(deleteBtns.length).toBe(1);
+    
+    fireEvent.click(deleteBtns[0]);
+    expect(mockPostMessage).toHaveBeenCalledWith({ command: 'deleteMessage', messageId: '12345' });
+  });
 });
