@@ -28,9 +28,7 @@ export class OrchestrationEngine {
         let finalParsed: any = null;
         let lastError: any = null;
         
-        const finishDeadline = Date.now() + 600000; // 600s (10m) max to generate a response and run tools
-        
-        while (!isDone && Date.now() < finishDeadline) {
+        while (!isDone) {
             const snap = await this.bridge.captureSnapshot();
             
             if (snap.html) {
