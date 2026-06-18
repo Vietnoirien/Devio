@@ -307,6 +307,12 @@ function App() {
                   if (e.key === 'Enter') handleRunAgency();
                 }}
               />
+              <button className="btn-clear-chat" onClick={() => {
+                if (vscode) vscode.postMessage({ command: 'clearChat' });
+                else setMessages([]);
+              }} style={{ marginRight: '10px', padding: '8px 16px', borderRadius: '4px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer' }}>
+                Clear Chat
+              </button>
               <button className="btn-run-agency" onClick={handleRunAgency}>
                 Run Agency
                 <span className="glow-effect"></span>

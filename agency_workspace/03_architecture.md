@@ -91,6 +91,11 @@ interface INativeBridge {
   injectMessage(text: string): Promise<void>;
   clickButton(text: string): Promise<void>;
 }
+
+// Webview IPC Contract extensions
+interface IWebviewIPC {
+  command: 'clearChat'; // triggers deletion of inbox.jsonl contents and resets conversation state
+}
 ```
 
 ---
@@ -129,8 +134,9 @@ The primary data structures remain unchanged from V2, persisting via file I/O:
 | **T-05** | **Orchestrator Loop** | 8h | T-02, T-03, T-04 | The engine runs headless through a mocked full lifecycle (BRIEF to DONE), correctly updating `state.json` and `inbox.jsonl`. |
 | **T-06** | **Embedded MCP Integration** | 2h | T-02 | `mcp-server.mjs` is bundled and responding to local JSON-RPC requests on the standard transport. |
 | **T-07** | **Final Tests & QA** | 5h | All above | Extension builds into a `.vsix` with zero QA severity (CRITICAL/HIGH) defects. |
+| **T-08** | **Clear Chat Feature** | 2h | T-07 | Webview UI has a 'Clear Chat' button that sends `clearChat` IPC command. Extension host listens to it, truncates `inbox.jsonl`, and updates the UI state. |
 
-**Total Estimated Hours:** 30h
+**Total Estimated Hours:** 32h
 
 ---
 

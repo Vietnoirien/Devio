@@ -99,6 +99,14 @@ export function activate(context: vscode.ExtensionContext) {
             await workspaceManager.appendInbox(msg);
             await syncWorkspaceData();
             break;
+          case 'clearChat':
+            try {
+              await workspaceManager.clearInbox();
+              await syncWorkspaceData();
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to clear chat: ${err.message}`);
+            }
+            break;
           case 'runAgency':
             try {
               let isRunning = true;

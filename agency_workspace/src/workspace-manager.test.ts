@@ -100,6 +100,13 @@ describe('WorkspaceManager', () => {
     expect(messages[1].message).toBe('Submitting development work.');
   });
 
+  it('should clear inbox.jsonl correctly', async () => {
+    const manager = new WorkspaceManager(tempDir);
+    await manager.clearInbox();
+    const messages = await manager.readInbox();
+    expect(messages.length).toBe(0);
+  });
+
   it('should timeout when lock file is already present', async () => {
     const manager = new WorkspaceManager(tempDir);
     const lockPath = path.join(tempDir, 'agency_workspace', 'workspace.lock');

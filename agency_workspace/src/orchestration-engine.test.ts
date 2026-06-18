@@ -20,8 +20,12 @@ describe('OrchestrationEngine', () => {
             clickButton: vi.fn()
         };
         convMgr = { openFreshChat: vi.fn() } as any;
-        promptBldr = { buildPrompt: vi.fn().mockResolvedValue('the prompt') } as any;
-        writer = { parseHtml: vi.fn().mockReturnValue({ text: 'res', files: [] }), applyResponse: vi.fn() } as any;
+        promptBldr = { buildPrompt: vi.fn().mockResolvedValue({ prompt: 'the prompt', validationKey: 'key123' }) } as any;
+        writer = { 
+            parseHtml: vi.fn().mockReturnValue({ text: 'res', files: [] }), 
+            extractMessage: vi.fn(),
+            applyResponse: vi.fn() 
+        } as any;
 
         engine = new OrchestrationEngine(bridge, convMgr, promptBldr, writer, '.custom-message');
     });
@@ -36,6 +40,11 @@ describe('OrchestrationEngine', () => {
             .mockResolvedValueOnce({ html: 'gen', isGenerating: true })
             .mockResolvedValueOnce({ html: 'done html', isGenerating: false });
 
+        vi.mocked(writer.extractMessage)
+            .mockReturnValueOnce(null)
+            .mockReturnValueOnce({ id: '1', type: 'INFO', message: 'test', timestamp: '', from: '', to: '', phase: '', ref_doc: null, in_reply_to: null, status: 'OPEN' } as any)
+            .mockReturnValueOnce({ id: '1', type: 'INFO', message: 'test', timestamp: '', from: '', to: '', phase: '', ref_doc: null, in_reply_to: null, status: 'OPEN' } as any);
+
         // Temporarily reduce timeout for test
         (engine as any).POLL_INTERVAL_MS = 10;
         (engine as any).START_TIMEOUT_MS = 100;
@@ -47,16 +56,22 @@ describe('OrchestrationEngine', () => {
         expect(bridge.injectMessage).toHaveBeenCalledWith('the prompt');
         expect(bridge.captureSnapshot).toHaveBeenCalledTimes(3);
         expect(writer.parseHtml).toHaveBeenCalledWith('done html', '.custom-message');
-        expect(writer.applyResponse).toHaveBeenCalledWith({ text: 'res', files: [] }, 'agency-developer', 'agency-coordinator', 'DEVELOPMENT');
+        // Extract message should have been called
+        expect(writer.extractMessage).toHaveBeenCalledWith({ text: 'res', files: [] }, 'key123');
+        // Because extractMessage succeeded, applyResponse should be called with the parsed response AND the extracted message
+        expect(writer.applyResponse).toHaveBeenCalledWith({ text: 'res', files: [] }, { id: '1', type: 'INFO', message: 'test', timestamp: '', from: '', to: '', phase: '', ref_doc: null, in_reply_to: null, status: 'OPEN' } as any, 'agency-developer', 'agency-coordinator', 'DEVELOPMENT');
     });
 
     it('should proceed if generation never starts but timeout is reached', async () => {
         // Mock to always return false
         vi.mocked(bridge.captureSnapshot).mockResolvedValue({ html: 'done html', isGenerating: false });
+        vi.mocked(writer.extractMessage).mockReturnValue({ id: '1', type: 'INFO', message: 'test', timestamp: '', from: '', to: '', phase: '', ref_doc: null, in_reply_to: null, status: 'OPEN' } as any);
 
         (engine as any).POLL_INTERVAL_MS = 10;
         (engine as any).START_TIMEOUT_MS = 50;
 
+        // Temporarily reduce finishDeadline by overriding Date.now or just mocking the loop condition?
+        // Actually, since extractMessage returns a valid message and isGenerating is false, it will finish on the very first iteration!
         await engine.runTurn('agency-developer', 'DEVELOPMENT', false);
 
         expect(convMgr.openFreshChat).not.toHaveBeenCalled();

@@ -297,6 +297,47 @@ describe('Extension Activation', () => {
     }
   });
 
+  it('should handle clearChat command and clear inbox', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    activate(mockContext);
+    const commandCallback = mockRegisterCommand.mock.calls[0][1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockPanel = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: vi.fn()
+      },
+      onDidDispose: vi.fn()
+    };
+    mockCreateWebviewPanel.mockReturnValue(mockPanel);
+
+    // Provide the clearInbox mock
+    const { WorkspaceManager } = await import('./workspace-manager');
+    const mockClearInbox = vi.fn().mockResolvedValue(undefined);
+    (WorkspaceManager as any).prototype.clearInbox = mockClearInbox;
+
+    await commandCallback();
+
+    if (messageListener) {
+      const mockMessage = { command: 'clearChat' };
+      await (messageListener as Function)(mockMessage);
+      
+      expect(mockClearInbox).toHaveBeenCalled();
+    }
+  });
+
   it('should run HealthChecker and post health_result to Webview when ready message is received', async () => {
     const mockContext = {
       subscriptions: [],

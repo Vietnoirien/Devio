@@ -140,6 +140,20 @@ export class WorkspaceManager {
     }
   }
 
+  /**
+   * Clears all messages from inbox.jsonl.
+   */
+  async clearInbox(): Promise<void> {
+    await this.acquireLock();
+    try {
+      await fs.writeFile(this.getInboxPath(), '', 'utf8');
+    } catch (err: any) {
+      throw new Error(`Failed to clear inbox.jsonl at ${this.getInboxPath()}: ${err.message}`);
+    } finally {
+      await this.releaseLock();
+    }
+  }
+
   private async fileExists(filePath: string): Promise<boolean> {
     try {
       await fs.access(filePath);

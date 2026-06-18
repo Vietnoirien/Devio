@@ -65,14 +65,14 @@ export class WorkspaceWriter {
         return { text, files };
     }
 
-    async applyResponse(response: ParsedResponse, from: string, to: string, phase: string): Promise<void> {
-        // Apply files atomically
-        for (const file of response.files) {
-            const dir = path.dirname(file.path);
-            await fs.mkdir(dir, { recursive: true });
-            await fs.writeFile(file.path, file.content, 'utf8');
-        }
+    private repairMalformedJson(jsonString: string): string {
+        return jsonString.replace(/"message"\s*:\s*"(.*?)"\s*,\s*"(in_reply_to|status|devio_validation_key|timestamp|from|to|phase|type|ref_doc|id)"\s*:/gs, (match, p1, p2) => {
+            const escaped = p1.replace(/(?<!\\)"/g, '\\"');
+            return `"message": "${escaped}", "${p2}":`;
+        });
+    }
 
+    extractMessage(response: ParsedResponse, validationKey: string): AgencyMessage | null {
         let msg: AgencyMessage | null = null;
 
         // Strategy 1: Find the last line that is a valid JSON object (JSONL format)
@@ -82,12 +82,21 @@ export class WorkspaceWriter {
             if (line.startsWith('{') && line.endsWith('}')) {
                 try {
                     const parsed = JSON.parse(line);
-                    if (parsed && parsed.id && parsed.type) {
+                    if (parsed && parsed.id && parsed.type && parsed.devio_validation_key === validationKey) {
                         msg = parsed as AgencyMessage;
                         break;
                     }
                 } catch (e) {
-                    // ignore
+                    try {
+                        const repaired = this.repairMalformedJson(line);
+                        const parsed = JSON.parse(repaired);
+                        if (parsed && parsed.id && parsed.type && parsed.devio_validation_key === validationKey) {
+                            msg = parsed as AgencyMessage;
+                            break;
+                        }
+                    } catch (e2) {
+                        // ignore
+                    }
                 }
             }
         }
@@ -107,15 +116,24 @@ export class WorkspaceWriter {
                         }
                     }
                     if (startIndex !== -1) {
+                        const candidate = response.text.substring(startIndex, i + 1);
                         try {
-                            const candidate = response.text.substring(startIndex, i + 1);
                             const parsed = JSON.parse(candidate);
-                            if (parsed && parsed.id && parsed.type) {
+                            if (parsed && parsed.id && parsed.type && parsed.devio_validation_key === validationKey) {
                                 msg = parsed as AgencyMessage;
                                 break;
                             }
                         } catch (e) {
-                            // ignore
+                            try {
+                                const repaired = this.repairMalformedJson(candidate);
+                                const parsed = JSON.parse(repaired);
+                                if (parsed && parsed.id && parsed.type && parsed.devio_validation_key === validationKey) {
+                                    msg = parsed as AgencyMessage;
+                                    break;
+                                }
+                            } catch (e2) {
+                                // ignore
+                            }
                         }
                         i = startIndex; // Skip to before this block
                     }
@@ -123,8 +141,15 @@ export class WorkspaceWriter {
             }
         }
 
-        if (!msg) {
-            throw new Error(`Failed to parse a valid AgencyMessage from response. Extracted text: ${response.text.substring(0, 100)}...`);
+        return msg;
+    }
+
+    async applyResponse(response: ParsedResponse, msg: AgencyMessage, from: string, to: string, phase: string): Promise<void> {
+        // Apply files atomically
+        for (const file of response.files) {
+            const dir = path.dirname(file.path);
+            await fs.mkdir(dir, { recursive: true });
+            await fs.writeFile(file.path, file.content, 'utf8');
         }
 
         await this.manager.appendInbox(msg);

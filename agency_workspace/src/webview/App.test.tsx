@@ -268,6 +268,19 @@ describe('App Webview Component', () => {
     vi.useRealTimers();
   });
 
+  it('should dispatch clearChat command when Clear Chat button is clicked', () => {
+    render(<App />);
+    initState();
+    
+    const messagesTab = screen.getByRole('button', { name: /Messages/i });
+    fireEvent.click(messagesTab);
+    
+    const clearBtn = screen.getByRole('button', { name: /Clear Chat/i });
+    fireEvent.click(clearBtn);
+    
+    expect(mockPostMessage).toHaveBeenCalledWith({ command: 'clearChat' });
+  });
+
   it('should render ref_doc as a clickable link that dispatches openDocument command', () => {
     render(<App />);
     act(() => {

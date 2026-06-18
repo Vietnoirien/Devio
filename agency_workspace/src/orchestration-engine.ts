@@ -20,40 +20,44 @@ export class OrchestrationEngine {
             await this.convMgr.openFreshChat();
         }
 
-        const prompt = await this.promptBuilder.buildPrompt(persona, phase);
+        const { prompt, validationKey } = await this.promptBuilder.buildPrompt(persona, phase);
         await this.bridge.injectMessage(prompt);
 
-        // Wait for generation to start (isGenerating becomes true)
-        const startDeadline = Date.now() + this.START_TIMEOUT_MS;
-        let started = false;
-        while (Date.now() < startDeadline) {
+        let isDone = false;
+        let finalMessage: any = null;
+        let finalParsed: any = null;
+        let lastError: any = null;
+        
+        const finishDeadline = Date.now() + 120000; // 120s max to generate a response
+        
+        while (!isDone && Date.now() < finishDeadline) {
             const snap = await this.bridge.captureSnapshot();
-            if (snap.isGenerating) {
-                started = true;
-                break;
+            
+            if (snap.html) {
+                const parsed = this.writer.parseHtml(snap.html, this.responseSelector);
+                try {
+                    const msg = this.writer.extractMessage(parsed, validationKey);
+                    if (msg) {
+                        // Valid message found! Ensure generation has stopped to avoid truncations
+                        if (!snap.isGenerating) {
+                            finalMessage = msg;
+                            finalParsed = parsed;
+                            isDone = true;
+                            break;
+                        }
+                    }
+                } catch(e) {
+                    lastError = e;
+                }
             }
+            
             await new Promise(r => setTimeout(r, this.POLL_INTERVAL_MS));
         }
 
-        if (!started) {
-            console.warn('WARN: Timed out waiting for generation to start. Proceeding anyway.');
+        if (!finalMessage) {
+            throw new Error(`CRITICAL: Timed out or failed to extract a valid AgencyMessage. Last error: ${lastError?.message}`);
         }
 
-        // Wait for generation to finish (isGenerating becomes false)
-        let isDone = false;
-        let finalHtml = '';
-        
-        while (!isDone) {
-            const snap = await this.bridge.captureSnapshot();
-            if (!snap.isGenerating && snap.html) {
-                finalHtml = snap.html;
-                isDone = true;
-            } else {
-                await new Promise(r => setTimeout(r, this.POLL_INTERVAL_MS));
-            }
-        }
-
-        const parsed = this.writer.parseHtml(finalHtml, this.responseSelector);
-        await this.writer.applyResponse(parsed, persona, 'agency-coordinator', phase);
+        await this.writer.applyResponse(finalParsed, finalMessage, persona, 'agency-coordinator', phase);
     }
 }

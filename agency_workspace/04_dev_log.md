@@ -534,3 +534,20 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 **Files modified:**
 - `agency_workspace/src/conversation-manager.ts`
 - `agency_workspace/src/conversation-manager.test.ts`
+
+---
+
+## Task: T-08 Clear Chat Feature
+
+**TDD cycle:**
+- 🔴 RED: Added tests to `workspace-manager.test.ts` (clearInbox), `extension.test.ts` (IPC clearChat handler), and `App.test.tsx` (Clear Chat button dispatch). Tests failed.
+- 🟢 GREEN: Implemented `clearInbox` in `WorkspaceManager`, handled `clearChat` IPC in `extension.ts` (calls `clearInbox` then `syncWorkspaceData`), and added 'Clear Chat' button in `App.tsx` chat area. All 70 tests pass.
+- 🔵 REFACTOR: None needed.
+
+**Files created/modified:**
+- `agency_workspace/src/workspace-manager.ts`
+- `agency_workspace/src/workspace-manager.test.ts`
+- `agency_workspace/src/extension.ts`
+- `agency_workspace/src/extension.test.ts`
+- `agency_workspace/src/webview/App.tsx`
+- `agency_workspace/src/webview/App.test.tsx`
