@@ -9,7 +9,7 @@ The `agency-coordinator` skill uses this reference to interpret and route messag
 
 ### `SUBMIT`
 **Sender:** Any agent completing a deliverable.
-**Purpose:** Signals that a document or artifact is ready for peer review. Opens the review window for the current phase.
+**Purpose:** Signals that a document or artifact is ready for peer review (or client delivery). Opens the review window for the current phase. To deliver to the client, use `"to": "client"`.
 **Status on creation:** `OPEN`
 **Required fields:** `ref_doc` pointing to the deliverable file.
 **Resolves when:** At least one `APPROVE` is posted in response by a qualified reviewer for that phase.
@@ -23,6 +23,26 @@ The `agency-coordinator` skill uses this reference to interpret and route messag
   "type": "SUBMIT",
   "ref_doc": "02_proposal.md",
   "message": "Proposal v1 is ready for your technical review. Pay attention to Phase 2 timeline.",
+  "status": "OPEN"
+}
+```
+
+---
+
+### `CLIENT_DELIVERY` (Example of SUBMIT to Client)
+**Sender:** `agency-ceo`
+**Purpose:** Delivers the final package to the client and stops the loop.
+**Required fields:** `"to": "client"`.
+
+```json
+{
+  "id": "msg-005",
+  "from": "agency-ceo",
+  "to": "client",
+  "phase": "DELIVERY",
+  "type": "SUBMIT",
+  "ref_doc": "06_delivery_summary.md",
+  "message": "The project is complete. Please review the delivery summary and provide your final approval.",
   "status": "OPEN"
 }
 ```
@@ -102,7 +122,7 @@ The `agency-coordinator` skill uses this reference to interpret and route messag
 {
   "id": "msg-012",
   "from": "agency-qa",
-  "to": "agency-architect",
+  "to": "client",
   "phase": "REVIEW",
   "type": "ESCALATE",
   "ref_doc": "03_architecture.md",

@@ -108,7 +108,7 @@ Every inter-agent communication is appended to `agency_workspace/inbox.jsonl` as
   "id": "msg-NNN",
   "timestamp": "ISO-8601",
   "from": "agency-<persona>",
-  "to": "agency-<persona>",
+  "to": "agency-<persona>|client",
   "phase": "CURRENT_PHASE",
   "type": "SUBMIT|REQUEST_CHANGE|REVISION|APPROVE|ESCALATE|INFO",
   "ref_doc": "filename or null",
