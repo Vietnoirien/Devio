@@ -3,15 +3,15 @@
 **Phase:** REVIEW
 **Reviewer:** M. Smith (agency-qa)
 **Date:** 2026-06-18
-**Build Version:** V3 Native Merge (v0.6.42 UI Updates)
+**Build Version:** V3 Native Merge (v0.6.44 Package Agency Skills)
 **Verdict:** PASS
 
 ## Summary
-The Developer successfully implemented the requested UI updates. The "Clear Chat" button was successfully relocated to the Dev Tools tab. The "Run Agency" text button was replaced with a Send SVG icon, and a `.loader-small` animation correctly appears while the agency is active, governed by the new `isAgencyRunning` state which is properly synchronized via IPC events from `extension.ts`. The package version was correctly bumped to 0.6.42. All 71 unit tests pass, and strict TypeScript compilation (`tsc --noEmit`) is clean.
+The Developer successfully resolved the TS1117 TypeScript compilation error in `src/extension.test.ts` by removing the duplicate `globalStorageUri` property. Additionally, the Developer investigated and resolved the critical message gathering issue (missing `msg-v11-003`) by rewriting the `WorkspaceWriter` JSON repair utility to correctly handle literal newlines and trailing fields. All 71 tests pass cleanly and `tsc --noEmit` yields 0 errors. The submission is approved.
 
 ## Architecture Alignment
 - **Architecture Spec:** `03_architecture.md` (V3 Native Merge)
-- **Status:** Fully aligned. The UI updates correctly reflect the desired state and provide clear visual feedback to the user.
+- **Status:** Aligned. All required fixes are implemented and verified.
 
 ## Findings Table
 
@@ -28,6 +28,9 @@ The Developer successfully implemented the requested UI updates. The "Clear Chat
 | QA-V9-001 | HIGH | `package.json`, `src/extension.ts`, `.vscodeignore`, `src/prompt-builder.ts` | Lack of implementation details for Global Agency Packaging (directory creation, explicit copy flags, path logic) | Verified explicit inclusion of `.agent` in `.vscodeignore`, `{ overwrite: true }` in `fs.copy`, and correctly routed context storage | **RESOLVED** |
 | QA-V9-002 | HIGH | `src/extension.ts` | Webview reloaded every time the user switched panels in the sidebar | Verified addition of `retainContextWhenHidden: true` in `registerWebviewViewProvider` | **RESOLVED** |
 | QA-V9-003 | HIGH | `src/webview/App.tsx`, `src/extension.ts` | UI missing clear visual indication of active agency, and "Clear Chat" improperly located | Verified relocation of "Clear Chat" and addition of SVG/loading animation governed by `isAgencyRunning` | **RESOLVED** |
+| QA-V9-004 | HIGH | `src/webview/App.tsx`, `App.css` | Topbar UI layout conflict: title and tabs on the same level pushed elements out of view | Verified `App.tsx` and `App.css` update using `flex-direction: column` and `header-top` wrapper | **RESOLVED** |
+| QA-V11-001 | HIGH | `src/extension.test.ts` | TypeScript compilation fails: TS1117 duplicate property `globalStorageUri` | Remove the duplicate `globalStorageUri` property on line 123 in the mockContext. | **RESOLVED** |
+| QA-V11-002 | CRITICAL | `src/workspace-writer.ts` | WorkspaceWriter JSON repair utility fails to parse literal newlines causing missed messages | Rewrite `repairMalformedJson` regex to correctly handle literal newlines and trailing fields | **RESOLVED** |
 
 ## Security Audit
 - **TLS Scoping:** PASS (CDP ws connection does not use TLS, operates on localhost).
@@ -35,4 +38,4 @@ The Developer successfully implemented the requested UI updates. The "Clear Chat
 - **Dependencies:** PASS (`npm audit` implicitly clean, no known vulnerabilities).
 
 ## Sign-off
-**PASS.** All code quality, typing, and functional requirements are met. The plugin (v0.6.42) correctly implements the UI updates, providing real-time visual feedback for the agency status and relocating the clear chat button appropriately. I issue the final `APPROVE` signal.
+**PASS.** The TS1117 duplicate property issue in `src/extension.test.ts` has been resolved. The missing QA message issue has been verified as fixed via the updated JSON repair regex in `WorkspaceWriter`. All 71 tests pass successfully and `tsc --noEmit` exits with 0 errors. I issue a final **APPROVE** for delivery to `agency-coordinator`.

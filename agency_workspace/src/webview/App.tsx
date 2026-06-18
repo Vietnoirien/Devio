@@ -189,17 +189,19 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <div className="brand">
-          <div className="logo-glow"></div>
-          <h1>DEVIO</h1>
-          <span className="badge">AI Agency</span>
-        </div>
-        <div className="status-badge-container">
-          <div className={`status-indicator ${blocked ? 'status-blocked' : 'status-active'}`}>
-            <span className="dot"></span>
-            {blocked ? 'BLOCKED' : 'ACTIVE'}
+        <div className="header-top">
+          <div className="brand">
+            <div className="logo-glow"></div>
+            <h1>DEVIO</h1>
+            <span className="badge">AI Agency</span>
           </div>
-          <div className="phase-badge">{formatPhaseName(activePhase)}</div>
+          <div className="status-badge-container">
+            <div className={`status-indicator ${blocked ? 'status-blocked' : 'status-active'}`}>
+              <span className="dot"></span>
+              {blocked ? 'BLOCKED' : 'ACTIVE'}
+            </div>
+            <div className="phase-badge">{formatPhaseName(activePhase)}</div>
+          </div>
         </div>
         <div className="tabs">
           <button 

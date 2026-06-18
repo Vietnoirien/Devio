@@ -668,3 +668,18 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - `agency_workspace/src/extension.ts` — modified (dispatch agencyRunning event)
 - `agency_workspace/src/webview/App.test.tsx` — modified (updated UI tests)
 - `package.json` — modified (bumped version to 0.6.42)
+
+## [RED] V0.6.43 - Fix Topbar UI Layout
+- **Task**: Fix Topbar UI Layout conflict
+- **Context**: The client reported a UI layout issue where the topbar title and tabs were on the same level, pushing elements out of view.
+- **Change**: Updated `App.css` and `App.tsx` header structure to use flex-direction column with `header-top` wrapping the brand and status badge container, placing the tabs gracefully beneath the title to prevent layout overflow. Bumped version to 0.6.43 and packaged.
+- **Tests**: Ran all 71 unit tests successfully.
+
+## [RED] V0.6.44 - Package Agency Skills
+- **Task**: Package the latest agent and skill updates and bump version
+- **Context**: The client requested to package the changes to the agent skill in the next version bump and commit the changes.
+- **Change**: Bumped version to 0.6.44 in `package.json`, generated `.vsix` package via `npm run package`, and committed the changes.
+- **Tests**: Ran package script successfully.
+
+## msg-v11-006
+**RED**: Fixed duplicate `globalStorageUri` in `extension.test.ts` and rewrote `WorkspaceWriter` JSON repair logic to correctly escape literal newlines and handle trailing fields.

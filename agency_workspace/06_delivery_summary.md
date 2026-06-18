@@ -1,8 +1,8 @@
-# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.42)
+# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.6.44)
 
 Cher Client,
 
-Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.42) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome et un déploiement indépendant de l'espace de travail.
+Nous avons le plaisir de vous annoncer la livraison de la version finale (v0.6.44) du plugin Devio pour Antigravity IDE, intégrant l'architecture V3 Native Merge avec un moteur d'orchestration autonome et un déploiement indépendant de l'espace de travail.
 
 ## Ce qui a été construit
 
@@ -17,12 +17,15 @@ Les fonctionnalités clés incluent :
 - **Déploiement Autonome et Portable (Global Packaging)** : L'extension intègre et installe désormais tous les agents et compétences (dossier `.agent`) directement dans le stockage global de l'éditeur (globalStorageUri), garantissant un environnement totalement autonome et indépendant du répertoire de projet ouvert.
 - **Rétention d'état du panneau (State Retention)** : Le plugin conserve désormais son état en mémoire lorsque vous changez de panneau dans la barre latérale. L'interface ne se recharge plus à chaque affichage, garantissant une navigation fluide.
 - **Mises à jour de l'Interface Utilisateur (UI)** : Le bouton de nettoyage du chat (Clear Chat) a été déplacé dans l'onglet des outils développeur (Dev Tools). Le bouton d'exécution de l'agence a été remplacé par une icône d'envoi (SVG) et est désormais doté d'une animation de chargement lorsqu'il est actif, offrant un retour visuel en temps réel sur l'état de l'orchestration.
+- **Correction de la mise en page (Topbar)** : Résolution d'un conflit de mise en page dans la barre supérieure où le titre et les onglets étaient positionnés au même niveau, provoquant un débordement des éléments. Les onglets et le titre sont désormais correctement séparés sur des niveaux distincts.
+- **Correction du recueil de messages** : Amélioration majeure de l'utilitaire de réparation JSON pour traiter correctement les sauts de ligne littéraux, garantissant ainsi qu'aucun message n'est ignoré par le plugin.
+- **Révision des protocoles du Coordinateur** : Le rôle du coordinateur a été strictement limité à l'orchestration, lui interdisant formellement l'accès et la modification non autorisée de code.
 - **Documentation à jour** : Le fichier `README.md` a été entièrement révisé pour refléter avec précision l'état actuel du projet, incluant les nouvelles fonctionnalités comme l'empaquetage global, l'intégration à la barre latérale et le compositeur avancé.
 
 ## Comment y accéder et l'exécuter
 
 1. **Installation** :
-   - Le fichier `.vsix` pour la version `0.6.42` est disponible dans le répertoire de votre projet.
+   - Le fichier `.vsix` pour la version `0.6.44` est disponible dans le répertoire de votre projet.
    - Installez l'extension dans Antigravity IDE via la commande : `Extensions: Install from VSIX...`
 2. **Exécution** :
    - Cliquez sur la nouvelle icône 'D' dans la barre latérale gauche ou droite pour ouvrir la vue Devio.
@@ -37,7 +40,7 @@ Les fonctionnalités clés incluent :
 
 ## Garantie et support
 
-L'implémentation de l'empaquetage global (Global Agency Packaging), ainsi que la correction des défauts de l'interface et l'ajout des nouvelles fonctionnalités (saisie multi-lignes, intégration dans la barre latérale, rétention d'état et refonte UI) ont été validés rigoureusement. Cette version v0.6.42 a passé 100% de nos 71 tests unitaires et vérifications de typage strict, garantissant une architecture stable et sécurisée. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
+L'implémentation de l'empaquetage global (Global Agency Packaging), ainsi que la correction des défauts de l'interface et l'ajout des nouvelles fonctionnalités (saisie multi-lignes, intégration dans la barre latérale, rétention d'état, refonte UI et correction de la Topbar) ont été validés rigoureusement. Cette version v0.6.44 a passé 100% de nos 71 tests unitaires et vérifications de typage strict (incluant la résolution d'une erreur TS1117 récente), garantissant une architecture stable et sécurisée. Vous bénéficiez de notre support continu sur les fonctionnalités livrées conformément à notre accord initial.
 
 Nous vous remercions de votre confiance.
 

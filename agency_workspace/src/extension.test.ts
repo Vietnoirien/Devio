@@ -120,7 +120,6 @@ describe('Extension Activation', () => {
       subscriptions: [],
       extensionUri: { path: '/mock-extension' },
       globalStorageUri: { path: '/mock-global-storage' },
-      globalStorageUri: { path: '/mock-global-storage' },
       secrets: { get: vi.fn().mockResolvedValue('token') }
     } as any;
 

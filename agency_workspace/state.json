@@ -1,10 +1,10 @@
 {
-  "phase": "DELIVERY",
+  "phase": "DEVELOPMENT",
   "owner": "agency-coordinator",
   "project": "Antigravity IDE Plugin — V2 Autonomous Engine",
   "client": "Devio Client",
   "started_at": "2026-06-18T01:08:00Z",
-  "updated_at": "2026-06-18T21:39:00+02:00",
+  "updated_at": "2026-06-18T23:26:00+02:00",
   "blocked_by": [],
   "history": [
     {
@@ -166,6 +166,30 @@
         "agency-qa"
       ],
       "note": "UI updates QA APPROVED"
+    },
+    {
+      "phase": "REVIEW",
+      "completed_at": "2026-06-18T22:25:45+02:00",
+      "approved_by": [
+        "agency-qa"
+      ],
+      "note": "UI topbar layout QA APPROVED"
+    },
+    {
+      "phase": "REVIEW",
+      "completed_at": "2026-06-18T23:25:00+02:00",
+      "approved_by": [
+        "agency-qa"
+      ],
+      "note": "TS1117 and Message gathering QA APPROVED"
+    },
+    {
+      "phase": "DELIVERY",
+      "completed_at": "2026-06-18T23:26:30+02:00",
+      "approved_by": [
+        "agency-ceo"
+      ],
+      "note": "Final package v0.6.44 compiled and approved"
     }
   ]
 }
