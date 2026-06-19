@@ -290,7 +290,7 @@ function App() {
                     </div>
                     
                     <div className="msg-body">
-                      {msg.message.split(/(@[\w\-\.\/]+)/g).map((part, i) => {
+                      {(msg.message || '').split(/(@[\w\-\.\/]+)/g).map((part, i) => {
                         if (part.startsWith('@')) {
                           const docPath = part.substring(1);
                           return (
@@ -320,8 +320,8 @@ function App() {
                           📄 {msg.ref_doc}
                         </span>
                       )}
-                      <span className={`msg-status ${msg.status.toLowerCase()}`}>
-                        {msg.status === 'OPEN' ? '⚠️ OPEN' : '✓ RESOLVED'}
+                      <span className={`msg-status ${(msg.status || 'OPEN').toLowerCase()}`}>
+                        {(msg.status || 'OPEN') === 'OPEN' ? '⚠️ OPEN' : '✓ RESOLVED'}
                       </span>
                     </div>
                   </div>

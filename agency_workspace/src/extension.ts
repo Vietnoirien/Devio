@@ -258,8 +258,29 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const insightsUri = vscode.Uri.joinPath(globalAgentUri, 'insights');
     await vscode.workspace.fs.createDirectory(insightsUri);
+
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (workspaceFolders && workspaceFolders.length > 0) {
+      const workspaceRoot = workspaceFolders[0].uri;
+      const localInsightsUri = vscode.Uri.joinPath(workspaceRoot, '.agent', 'insights');
+      try {
+        const stat = await vscode.workspace.fs.stat(localInsightsUri);
+        if (stat.type === vscode.FileType.Directory) {
+          const files = await vscode.workspace.fs.readDirectory(localInsightsUri);
+          for (const [file, type] of files) {
+            if (type === vscode.FileType.File && file.endsWith('_performance.md')) {
+              const srcUri = vscode.Uri.joinPath(localInsightsUri, file);
+              const destUri = vscode.Uri.joinPath(insightsUri, file);
+              await vscode.workspace.fs.copy(srcUri, destUri, { overwrite: true });
+            }
+          }
+        }
+      } catch (err) {
+        // Ignore if local insights folder doesn't exist
+      }
+    }
   } catch (err) {
-    console.error('Failed to copy .agent to globalStorageUri', err);
+    console.error('Failed to setup .agent and insights directories in globalStorageUri', err);
   }
 
   const provider = new DevioSidebarProvider(context.extensionUri, context.globalStorageUri);

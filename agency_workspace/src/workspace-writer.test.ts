@@ -35,20 +35,22 @@ describe('WorkspaceWriter', () => {
     });
 
     describe('extractMessage', () => {
-        it('should extract valid JSONL format from response text requiring devio_validation_key', () => {
-            const writer = new WorkspaceWriter(null as any);
+        it('should extract valid JSONL format from response text requiring devio_validation_key', async () => {
+            const mockManager = { readInbox: vi.fn().mockResolvedValue([]) } as any;
+            const writer = new WorkspaceWriter(mockManager);
             
             const response = {
                 text: 'Some preamble\n{"id": "msg-123", "type": "INFO", "devio_validation_key": "key123"}\nSome trailing text',
                 files: []
             };
 
-            const msg = writer.extractMessage(response, 'key123');
+            const msg = await writer.extractMessage(response, 'key123');
             expect(msg).toMatchObject({ id: 'msg-123', type: 'INFO', devio_validation_key: 'key123' });
         });
 
-        it('should extract valid JSON object from text with thoughts and UI garbage requiring devio_validation_key', () => {
-            const writer = new WorkspaceWriter(null as any);
+        it('should extract valid JSON object from text with thoughts and UI garbage requiring devio_validation_key', async () => {
+            const mockManager = { readInbox: vi.fn().mockResolvedValue([]) } as any;
+            const writer = new WorkspaceWriter(mockManager);
             
             const response = {
                 text: `
@@ -66,38 +68,89 @@ thumb_upthumb_downReview Changes
                 files: []
             };
 
-            const msg = writer.extractMessage(response, 'key456');
+            const msg = await writer.extractMessage(response, 'key456');
             expect(msg).toMatchObject({ id: 'msg-456', type: 'REQUEST_CHANGE', message: 'Type \'"test"\' is not assignable', devio_validation_key: 'key456' });
         });
 
-        it('should return null if valid JSON exists but validation key does not match', () => {
-            const writer = new WorkspaceWriter(null as any);
+        it('should extract and repair JSON with unescaped inner double quotes', async () => {
+            const mockManager = { readInbox: vi.fn().mockResolvedValue([]) } as any;
+            const writer = new WorkspaceWriter(mockManager);
+            
+            const response = {
+                text: `{"id": "msg-999", "type": "INFO", "message": "The client said "hello" to me and it was "cool"", "devio_validation_key": "key999"}`,
+                files: []
+            };
+
+            const msg = await writer.extractMessage(response, 'key999');
+            expect(msg).toMatchObject({ 
+                id: 'msg-999', 
+                type: 'INFO', 
+                message: 'The client said "hello" to me and it was "cool"', 
+                devio_validation_key: 'key999' 
+            });
+        });
+
+        it('should extract and repair JSON with unescaped newlines', async () => {
+            const mockManager = { readInbox: vi.fn().mockResolvedValue([]) } as any;
+            const writer = new WorkspaceWriter(mockManager);
+            
+            const response = {
+                text: `{"id": "msg-888", "type": "INFO", "message": "Line 1\nLine 2", "devio_validation_key": "key888"}`,
+                files: []
+            };
+
+            const msg = await writer.extractMessage(response, 'key888');
+            expect(msg).toMatchObject({ 
+                id: 'msg-888', 
+                type: 'INFO', 
+                message: 'Line 1\nLine 2', 
+                devio_validation_key: 'key888' 
+            });
+        });
+
+        it('should fallback and return message if validation key does not match but ID is new', async () => {
+            const mockManager = { readInbox: vi.fn().mockResolvedValue([]) } as any;
+            const writer = new WorkspaceWriter(mockManager);
             
             const response = {
                 text: '{"id": "msg-123", "type": "INFO", "devio_validation_key": "wrong_key"}',
                 files: []
             };
 
-            const msg = writer.extractMessage(response, 'key123');
+            const msg = await writer.extractMessage(response, 'key123');
+            expect(msg).toMatchObject({ id: 'msg-123' });
+        });
+
+        it('should return null if validation key does not match and ID is already in inbox', async () => {
+            const mockManager = { readInbox: vi.fn().mockResolvedValue([{ id: 'msg-123' }]) } as any;
+            const writer = new WorkspaceWriter(mockManager);
+            
+            const response = {
+                text: '{"id": "msg-123", "type": "INFO", "devio_validation_key": "wrong_key"}',
+                files: []
+            };
+
+            const msg = await writer.extractMessage(response, 'key123');
             expect(msg).toBeNull();
         });
 
-        it('should return null if no valid JSON is found', () => {
-            const writer = new WorkspaceWriter(null as any);
+        it('should return null if no valid JSON is found', async () => {
+            const mockManager = { readInbox: vi.fn().mockResolvedValue([]) } as any;
+            const writer = new WorkspaceWriter(mockManager);
             
             const response = {
                 text: 'Just some text, no JSON here { broken ',
                 files: []
             };
 
-            const msg = writer.extractMessage(response, 'key123');
+            const msg = await writer.extractMessage(response, 'key123');
             expect(msg).toBeNull();
         });
     });
 
     describe('applyResponse', () => {
         it('should apply extracted message and save files', async () => {
-            const mockManager = { appendInbox: vi.fn() } as any;
+            const mockManager = { appendInbox: vi.fn(), readInbox: vi.fn().mockResolvedValue([]) } as any;
             const writer = new WorkspaceWriter(mockManager);
             
             // Mock fs to not actually write

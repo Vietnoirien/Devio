@@ -27,8 +27,17 @@ describe('PromptBuilder', () => {
         expect(result.prompt).toContain('@/mock-global-storage/.agent/skills/agency-developer/SKILL.md');
         expect(result.prompt).toContain('@agency_workspace/inbox.jsonl');
         expect(result.prompt).toContain('CRITICAL INSTRUCTION: You are agency-developer.');
+        expect(result.prompt).toContain('@/mock-global-storage/.agent/insights/agency-developer_performance.md');
         expect(result.validationKey).toBeDefined();
         expect(result.prompt).toContain(`"devio_validation_key": "${result.validationKey}"`);
+    });
+
+    it('should include company insight for coordinator and ceo', async () => {
+        const resultCoord = await builder.buildPrompt('agency-coordinator', 'DEVELOPMENT');
+        expect(resultCoord.prompt).toContain('@/mock-global-storage/.agent/insights/agency_performance.md');
+
+        const resultCeo = await builder.buildPrompt('agency-ceo', 'DEVELOPMENT');
+        expect(resultCeo.prompt).toContain('@/mock-global-storage/.agent/insights/agency_performance.md');
     });
 
     it('should include special mandate for agency-trinity', async () => {

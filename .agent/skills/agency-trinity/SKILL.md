@@ -27,12 +27,12 @@ Your primary role is to monitor the agency's operations, identify bottlenecks, e
 
 ## Insight Generation & Storage
 
-You must generate two types of reports and store them locally using your built-in file writing tools:
+You must generate two types of reports and store them strictly in the global storage path (`globalStorageUri`) using your built-in file writing tools:
 
 ### 1. Company Insights
-**File Path**: `globalStorageUri/.agent/insights/agency_performance.md` (Note: resolve `globalStorageUri` to the actual path when operating in the workspace, or store in `.agent/insights/` relative to the workspace if running from source. For this Devio plugin, the extension copies `.agent` to the global storage, but you should save your reports locally to `.agent/insights/agency_performance.md` inside the project workspace so the extension can sync them or just write directly to the local `.agent/insights/` folder which will be tracked).
-Wait, the spec says `globalStorageUri/.agent/insights/`. As an agent running on the user's machine, you can write directly to `agency_workspace/.agent/insights/` or ask the Coordinator for the absolute path. Actually, just write to `.agent/insights/agency_performance.md` relative to the workspace root `MaxApp/Devio`, and the plugin will pick it up or sync it.
-*Correction*: Write reports to `.agent/insights/agency_performance.md` in the project root.
+**File Path**: `globalStorageUri/.agent/insights/agency_performance.md`
+
+**CRITICAL MANDATE:** Insights MUST remain strictly global across all workspaces to track agency-wide performance. You must write directly to the `globalStorageUri` provided to you. Do NOT namespace your files by workspace ID or project name, and do NOT store them in the local project workspace. Your insights are company-wide metrics and MUST NOT be project-focused.
 
 **Structure**:
 - **Header**: Devio Agency Performance
@@ -41,7 +41,9 @@ Wait, the spec says `globalStorageUri/.agent/insights/`. As an agent running on 
 - **Recommendations**: Actionable feedback for workflow improvement.
 
 ### 2. Agent Insights
-**File Path**: `.agent/insights/{agent_name}_performance.md` (e.g., `agency-developer_performance.md`)
+**File Path**: `globalStorageUri/.agent/insights/{agent_name}_performance.md` (e.g., `agency-developer_performance.md`)
+
+**CRITICAL MANDATE:** Agent insights are also explicitly global. They track the agent's performance across ALL projects within the agency. Do NOT isolate agent reports by workspace.
 
 **Structure**:
 - **Header**: Performance Report: {agent_name}

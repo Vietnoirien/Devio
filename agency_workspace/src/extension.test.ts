@@ -24,20 +24,30 @@ vi.mock('vscode', () => {
     ViewColumn: {
       One: 1
     },
+    FileType: {
+      Unknown: 0,
+      File: 1,
+      Directory: 2,
+      SymbolicLink: 64
+    },
     RelativePattern: class {
       constructor(public base: string, public pattern: string) {}
     },
     Uri: {
       joinPath: (baseUri: any, ...pathSegments: string[]) => {
+        const basePath = baseUri.path || baseUri.fsPath;
         return {
-          path: `${baseUri.path}/${pathSegments.join('/')}`
+          path: `${basePath}/${pathSegments.join('/')}`,
+          fsPath: `${basePath}/${pathSegments.join('/')}`
         };
       }
     },
     workspace: {
       fs: {
         createDirectory: vi.fn().mockResolvedValue(undefined),
-        copy: vi.fn().mockResolvedValue(undefined)
+        copy: vi.fn().mockResolvedValue(undefined),
+        stat: vi.fn().mockRejectedValue(new Error('File not found')),
+        readDirectory: vi.fn().mockResolvedValue([])
       },
       workspaceFolders: [
         {
@@ -426,6 +436,34 @@ describe('Extension Activation', () => {
 
     expect(vscodeMock.workspace.fs.createDirectory).toHaveBeenCalledWith(
       expect.objectContaining({ path: '/mock-global-storage/.agent/insights' })
+    );
+  });
+
+  it('should migrate existing local workspace insights to globalStorageUri on activation', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    const vscodeMock = await import('vscode');
+    (vscodeMock.workspace.fs.stat as any).mockResolvedValueOnce({ type: 2 });
+    (vscodeMock.workspace.fs.readDirectory as any).mockResolvedValueOnce([['test_performance.md', 1], ['ignore.txt', 1]]);
+
+    await activate(mockContext);
+
+    expect(vscodeMock.workspace.fs.copy).toHaveBeenCalledWith(
+      expect.objectContaining({ path: '/mock-workspace-root/.agent/insights/test_performance.md' }),
+      expect.objectContaining({ path: '/mock-global-storage/.agent/insights/test_performance.md' }),
+      { overwrite: true }
+    );
+    
+    // ignore.txt should not be copied
+    expect(vscodeMock.workspace.fs.copy).not.toHaveBeenCalledWith(
+      expect.objectContaining({ path: '/mock-workspace-root/.agent/insights/ignore.txt' }),
+      expect.anything(),
+      expect.anything()
     );
   });
 

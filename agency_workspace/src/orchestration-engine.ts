@@ -34,7 +34,7 @@ export class OrchestrationEngine {
             if (snap.html) {
                 const parsed = this.writer.parseHtml(snap.html, this.responseSelector);
                 try {
-                    const msg = this.writer.extractMessage(parsed, validationKey);
+                    const msg = await this.writer.extractMessage(parsed, validationKey);
                     if (msg) {
                         // Valid message found! Ensure generation has stopped to avoid truncations
                         if (!snap.isGenerating) {
