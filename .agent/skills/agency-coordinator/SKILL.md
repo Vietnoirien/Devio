@@ -5,7 +5,7 @@ description: >
   wants to run the agency, start a new client project, or when you need to manage
   the state of an active agency engagement. This skill teaches you how to read the
   shared Blackboard, manage the message bus, and route between the CEO, Researcher,
-  Architect, Developer, and QA personas. Always load this skill first before any
+  Architect, Lead Developer, Developer, and QA personas. Always load this skill first before any
   other agency-* skill.
 metadata:
   version: "1.1"
@@ -56,8 +56,8 @@ BRIEF → RESEARCH → PROPOSAL → ARCHITECTURE → DEVELOPMENT → REVIEW → 
 |:---|:---|:---|
 | `BRIEF` | `agency-ceo` | User has populated `01_brief.md` |
 | `RESEARCH` | `agency-researcher` | Researcher has written `00_client_intel.md` and posted `INFO` to `agency-ceo` |
-| `PROPOSAL` | `agency-ceo` | Architect has posted `APPROVE` for this phase in `inbox.jsonl` |
-| `ARCHITECTURE` | `agency-architect` | CEO **and** QA have both posted `APPROVE` for this phase |
+| `PROPOSAL` | `agency-ceo` | Architect **and** Lead Developer have both posted `APPROVE` for this phase in `inbox.jsonl` |
+| `ARCHITECTURE` | `agency-architect` | CEO, QA, **and** Lead Developer have all posted `APPROVE` for this phase |
 | `DEVELOPMENT` | `agency-developer` | Developer has posted `SUBMIT` |
 | `REVIEW` | `agency-qa` | QA has posted `APPROVE` for this phase (no open issues) |
 | `DELIVERY` | `agency-ceo` | CEO has compiled the client package |

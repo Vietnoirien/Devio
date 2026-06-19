@@ -50,6 +50,8 @@ Run these checks on your own `03_architecture.md` before posting `SUBMIT`.
 - [ ] **Tasks are atomic** — Each task should be completable in 1–8 hours. Larger tasks must be split.
 - [ ] **Dependencies are explicit** — Every task states which tasks must complete before it can start.
 - [ ] **Acceptance criteria are testable** — Each task has at least one concrete, binary pass/fail criterion.
+- [ ] **Step-by-Step Breakdown** — The task list must be structured step-by-step to facilitate task-by-task validation by the Lead Developer.
+- [ ] **Explicit Research Cross-Referencing** — Each task must explicitly cross-reference the verified research findings to ensure no assumptions are made.
 
 ---
 

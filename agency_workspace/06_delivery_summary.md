@@ -1,31 +1,35 @@
-# Résumé de Livraison Client - Devio Antigravity IDE Plugin (v0.7.6)
+# Résumé de Livraison Client — V0.8.0 (Lead Developer "Le Merovingien")
 
-Cher Client,
+**Date :** 2026-06-19
+**Version :** 0.8.0
 
-Nous avons le plaisir de vous annoncer la livraison de la version (v0.7.6) du plugin Devio pour Antigravity IDE. Cette mise à jour corrige le système de validation des messages et renforce considérablement la robustesse de l'orchestrateur.
+---
 
 ## Ce qui a été construit
 
-- **Correction de la Validation des Messages (v0.7.6)** : Le moteur d'orchestration a été mis à jour pour traiter de manière asynchrone l'extraction des messages (`WorkspaceWriter.extractMessage`). Il inclut désormais un mécanisme de repli (fallback) robuste qui accepte le dernier objet JSON structurellement valide même si la clé `devio_validation_key` est incorrecte ou hallucinée par l'agent, tout en empêchant l'ingestion de doublons en vérifiant l'ID du message.
-- **Conformité TDD et Tests Renforcés** : L'implémentation de cette correction a été réalisée en respectant strictement le cycle RED-GREEN-REFACTOR. Notre suite de tests a été étendue à 81 tests unitaires réussis, avec une couverture de 100% sur la logique métier.
-- **Routage de Stockage Global** : Les rapports de performances et le stockage de l'agent Trinity ont été correctement routés vers le stockage global de l'éditeur (`globalStorageUri`) indépendamment de l'espace de travail.
-- **Interfaces Utilisateur Améliorées (Webview)** : Interfaces stabilisées avec la correction des interactions et affichages de statut en phase finale.
+Conformément à la proposition validée, nous avons intégré avec succès le nouveau profil de Lead Developer, "Le Merovingien", au sein de l'agence Devio. Cette livraison comprend :
+- **Profil Lead Developer :** Création de la compétence spécifique (`.agent/skills/agency-lead-developer/SKILL.md`) définissant ses rôles d'Architecte Pragmatique, d'Agent de Liaison Technique et de Facilitateur de Livraison.
+- **Validation étape par étape :** Mise à jour des protocoles du coordinateur et de l'architecte pour imposer une validation systématique et détaillée (tâche par tâche) de l'architecture, avec une vérification croisée de la recherche.
+- **Nouveaux Types de Messages :** Suite à votre demande, les types de messages `REQUEST_RESEARCH` et `CHALLENGE_SPEC` ont été officiellement intégrés au protocole de l'agence (`message_types.md`) pour permettre une meilleure collaboration et investigation technique.
+- **Package d'extension :** Le package `devio-antigravity-plugin-0.8.0.vsix` a été généré avec succès (100% de couverture de code) et est joint à cette livraison.
 
-## Comment y accéder et l'exécuter
+## Comment y accéder / l'exécuter
 
-1. **Installation** :
-   - Le fichier `.vsix` pour la version `0.7.6` est disponible à la racine de votre projet.
-   - Installez l'extension dans Antigravity IDE via la commande : `Extensions: Install from VSIX...`
-2. **Utilisation** :
-   - Ouvrez la vue Devio via l'icône 'D' dans la barre latérale.
-   - Profitez d'une orchestration nettement plus résiliente face aux erreurs potentielles de formatage JSON.
+Les modifications sont désormais intégrées directement dans les fichiers de configuration et les protocoles de l'agence :
+- La nouvelle compétence est disponible dans `.agent/skills/agency-lead-developer/SKILL.md`.
+- Les règles mises à jour de routage sont dans `.agent/skills/agency-coordinator/SKILL.md`.
+- Le bus de messages prend désormais en charge nativement les nouvelles requêtes via `.agent/skills/agency-coordinator/references/message_types.md`.
+L'agence Devio utilisera automatiquement ces nouveaux protocoles lors de votre prochain lancement.
 
-## Garantie et support
+## Limitations connues et recommandations futures
 
-La correction a été validée rigoureusement par nos équipes QA. Cette version v0.7.6 a passé avec succès l'intégralité de nos 81 tests unitaires (couverture 100%) et vérifications de typage strict (zéro erreur TypeScript). Vous bénéficiez de notre support continu sur les fonctionnalités livrées.
+- **Surveillance des blocages :** L'ajout de nouveaux types de messages (`REQUEST_RESEARCH` et `CHALLENGE_SPEC`) peut rallonger la durée des phases de définition. Nous recommandons de surveiller les premiers cycles pour s'assurer qu'aucun interblocage (deadlock) ne se produit lors d'investigations trop complexes.
+- **Évolution du rôle :** Si les interventions du Lead Developer deviennent trop fréquentes lors de la phase de proposition, il pourrait être utile d'ajuster les règles de routage pour fluidifier les validations futures.
 
-Nous vous remercions de votre confiance.
+## Conditions de garantie et support
 
-Cordialement,
-**Morpheus**
-Senior Client Partner & Business Lead, Devio Agency
+- **Garantie de 30 jours :** Ce déploiement est couvert par notre garantie standard de 30 jours. Tout défaut lié à l'intégration du Lead Developer ou au non-respect du protocole de messagerie sera corrigé gratuitement.
+- **Support :** En cas d'anomalie, n'hésitez pas à nous soumettre un retour direct ou à déclencher le cycle de révision (QA).
+
+---
+*L'équipe Devio vous remercie pour votre confiance.*

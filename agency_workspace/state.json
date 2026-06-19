@@ -1,10 +1,10 @@
 {
-  "phase": "DONE",
-  "owner": "agency-coordinator",
-  "project": "RH Team Trinity Integration",
+  "phase": "DELIVERY",
+  "owner": "agency-ceo",
+  "project": "Devio 0.8.0 - Lead Developer Integration",
   "client": "Devio Client",
   "started_at": "2026-06-19T07:49:14Z",
-  "updated_at": "2026-06-19T14:15:00+02:00",
+  "updated_at": "2026-06-19T15:28:30+02:00",
   "blocked_by": [],
   "history": [
     {
@@ -303,6 +303,40 @@
         "client"
       ],
       "note": "v0.7.6 Delivery finalized"
+    },
+    {
+      "phase": "DONE",
+      "completed_at": "2026-06-19T12:38:18.897Z",
+      "approved_by": [
+        "client"
+      ],
+      "note": "Transition to 0.8.0"
+    },
+    {
+      "phase": "PROPOSAL",
+      "completed_at": "2026-06-19T14:58:18+02:00",
+      "approved_by": [
+        "agency-architect",
+        "client"
+      ],
+      "note": "v0.8.0 Proposal APPROVED"
+    },
+    {
+      "phase": "ARCHITECTURE",
+      "completed_at": "2026-06-19T15:06:31+02:00",
+      "approved_by": [
+        "agency-ceo",
+        "agency-qa"
+      ],
+      "note": "v0.8.0 Architecture APPROVED"
+    },
+    {
+      "phase": "REVIEW",
+      "completed_at": "2026-06-19T15:20:59+02:00",
+      "approved_by": [
+        "agency-qa"
+      ],
+      "note": "v0.8.0 QA APPROVED"
     }
   ]
 }

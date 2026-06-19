@@ -355,3 +355,65 @@ The `agency_performance.md` document contains macro-level metrics, protocol adhe
 - **Why Coordinator:** The Coordinator manages phase transitions, routing, and escalation. Having macro-level insights allows it to enforce protocols and identify deadlocks globally.
 - **Why CEO:** The CEO is responsible for proposing roadmaps and communicating with the client. It needs high-level performance data to adjust project scopes and timelines.
 **Implementation Strategy:** In `prompt-builder.ts`, add a condition to inject the Company Insight path (`vscode.Uri.joinPath(globalStorageUri, '.agent', 'insights', 'agency_performance.md').fsPath`) specifically when `persona === 'agency-coordinator'` or `persona === 'agency-ceo'`.
+
+---
+
+## Addendum — Lead Developer Integration & Agency Workflows
+*Triggered by client request, Phase RESEARCH*
+
+**Finding:** The client requested deep research into development agency workflows, best practices, and the integration of a new "Lead Developer" role ("Le Merovingien") to coordinate between the researcher and architect and ensure professional delivery.
+
+### 1. The Lead Developer Role ("Le Merovingien")
+In a professional agency, the Lead Developer acts as the bridge between high-level business goals and technical execution. Their core responsibilities include:
+- **Pragmatic Architect:** Translating vague client requests into concrete technical requirements, ensuring the architectural spec produced by the Architect translates directly into an actionable roadmap.
+- **Delivery Facilitator:** Removing bottlenecks, guarding against scope creep, and ensuring the development lifecycle moves smoothly from proposal to development.
+- **Technical Liaison:** Communicating actively with the CEO to relay project scope changes, request client clarifications, and ensure the business proposition aligns with technical realities.
+
+### 2. Best Practices for Agency Workflows
+Successful development agencies adopt specific workflows to maximize communication and quality:
+- **Standardization & Documentation:** Establishing a "Single Source of Truth." All project context, coding standards, and architectural decisions must be centralized and accessible to all agents.
+- **Radical Transparency:** Proactive communication between agents to avoid "gotcha" moments. The Lead Developer must verify research is thorough before allowing the Architect to finalize the roadmap.
+- **Iterative Sprints:** Blending Agile flexibility with structured milestones to keep the project on track while adapting to client feedback.
+
+### 3. Workflow Integration for Devio
+To properly integrate "Le Merovingien" into the Devio workflow:
+- **Phase PROPOSAL:** The Lead Developer must review the Researcher's findings and collaborate with the CEO to ensure the proposed roadmap is technically feasible and well-scoped.
+- **Phase ARCHITECTURE:** The Lead Developer works alongside the Architect to validate the `03_architecture.md` specification before it is handed off to QA and Development.
+- **Communication Protocol:** The Lead Developer is authorized to query the CEO directly if the client's brief lacks clarity, ensuring that no assumptions are made during technical planning.
+
+**Next Steps for Proposal:**
+- Update the agency phase protocols to include mandatory review steps by the Lead Developer during PROPOSAL and ARCHITECTURE phases.
+- Detail the exact communication channels between Le Merovingien, the CEO, and the Architect.
+
+### 4. Step-by-Step and Research Validation Protocols
+To ensure that no essential components (like UI designs) are overlooked, the Devio workflow must enforce strict validation protocols driven by the Lead Developer:
+- **Active Research Request:** Before the architecture is finalized, the Lead Developer must actively request the Researcher to perform deep-dives on every functional component of the brief. This guarantees that all UI, data, and logic elements are thoroughly investigated.
+- **Task-by-Task Architecture Specification:** The Architect must structure `03_architecture.md` explicitly step-by-step and task-by-task.
+- **Lead Developer Validation:** The Lead Developer must validate each individual task in the architecture, cross-referencing it against the research findings and client requirements to guarantee comprehensive, end-to-end coverage.
+
+---
+
+## Addendum — Message Bus Protocol Updates (REQUEST_RESEARCH & CHALLENGE_SPEC)
+*Triggered by client request, Phase DEVELOPMENT*
+
+**Finding:** The client explicitly requested the addition of `REQUEST_RESEARCH` and `CHALLENGE_SPEC` message types to support the Lead Developer's workflow.
+
+### Protocol Definitions for new Message Types:
+
+**`REQUEST_RESEARCH`**
+- **Sender:** Lead Developer (`agency-lead-developer`) or any agent needing deep-dive research.
+- **Purpose:** Proactively requests a targeted research deep-dive on specific functional components (e.g., UI design) before architecture finalization or development.
+- **Routing Rule:** Routed to `agency-researcher`.
+- **Status on creation:** `OPEN`
+- **Resolves when:** The Researcher posts an `INFO` message with findings, with `in_reply_to` referencing this message's ID.
+
+**`CHALLENGE_SPEC`**
+- **Sender:** Lead Developer (`agency-lead-developer`) or Developer (`agency-developer`).
+- **Purpose:** Flags a structural flaw, ambiguity, or a missing essential component in the architectural specification, forcing a task-by-task re-evaluation.
+- **Routing Rule:** Routed to `agency-architect`.
+- **Status on creation:** `OPEN`
+- **Resolves when:** The Architect posts a `REVISION` updating the spec, and the challenger subsequently posts `APPROVE`.
+
+**Next Steps for Developer:**
+- Update `message_types.md` to officially include the `REQUEST_RESEARCH` and `CHALLENGE_SPEC` message types using the definitions above.
+- Update `05_qa_report.md` to reflect that the QA finding (QA-V22-001) is resolved via this protocol expansion.

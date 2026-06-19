@@ -1,121 +1,96 @@
-# Devio Client — HR Agent Trinity Architecture Spec
+# 03 Architecture Specification — Devio v0.8.0 (Lead Developer Integration)
 
-**Prepared by:** agency-architect
+**Prepared by:** agency-architect (Neo)
 **Date:** 2026-06-19
-**Status:** DRAFT
+**Status:** DRAFT (Pending Validation)
 
 ---
 
 ## 1. System Overview
 
-This architecture document specifies the technical design for integrating the "Trinity" HR agent persona into the Devio AI Development Agency workflow.
-The solution utilizes native built-in tools (`view_file`, `grep_search`) for Trinity to autonomously read and query `inbox.jsonl`, eliminating the need for a custom parser script. Trinity will generate structured Company-level and Agent-level performance insights, stored globally in `globalStorageUri/.agent/insights/`. The React Webview UI will be expanded to include "Company Insights" and "Insights Manager" tabs to natively view and manage these reports. Strict file size constraints will be enforced to mitigate LLM context window exhaustion. Coordinator routing will be updated to trigger Trinity at explicit points to establish a State-of-the-Art (SOTA) Reflection & Critic Loop without bottlenecking the main workflow.
-
----
-
-## 2. Architecture Diagram
+This architecture integrates the new "Lead Developer" (`agency-lead-developer`) persona into the Devio multi-agent workflow. The Lead Developer ("Le Merovingien") acts as a pragmatic architect, delivery facilitator, and technical liaison, ensuring that high-level client requirements are translated into rigorously researched, task-by-task execution plans.
 
 ```mermaid
-flowchart TD
-    A[inbox.jsonl] -->|Read via native tools| B{Trinity HR Persona}
-    B -->|Generate| C[agency_performance.md]
-    B -->|Generate| D[agent_performance.md]
-    C -->|Store| E[globalStorageUri/.agent/insights/]
-    D -->|Store| E
-    E -->|Read/Write IPC| F[React Webview UI Tabs]
-    G[Agency Coordinator] -->|Route explicit triggers| B
+graph TD
+    Client[Client] -->|Brief| CEO[CEO]
+    CEO -->|Proposal| Res[Researcher]
+    CEO -->|Proposal| LD[Lead Developer]
+    Res -->|Intel| LD
+    LD -->|Validation/Refinement| Arch[Architect]
+    Arch -->|Architecture| LD
+    LD -->|Task-by-Task Validation| Dev[Developer]
+    Dev -->|Code| QA[QA]
+    QA -->|Approval| CEO
+    Coord[Coordinator] -.->|State Transitions & Routing| CEO
+    Coord -.->|State Transitions & Routing| Res
+    Coord -.->|State Transitions & Routing| Arch
+    Coord -.->|State Transitions & Routing| LD
+    Coord -.->|State Transitions & Routing| Dev
+    Coord -.->|State Transitions & Routing| QA
 ```
 
----
+## 2. Component Breakdown
 
-## 3. Component Breakdown
+### 2.1 Lead Developer Agent Profile (`agency-lead-developer/SKILL.md`)
+- **Purpose:** Defines the persona "Le Merovingien", providing instructions on how to act as the Pragmatic Architect, Technical Liaison, and Delivery Facilitator.
+- **Technology Choice:** Markdown with YAML frontmatter (standard Devio skill format).
+- **Rationale:** Aligns with existing Devio agent profile structure for seamless integration into the prompt builder and workflow.
 
-### 3.1 Trinity HR Persona
-**Purpose:** To act as the Human Resources and Performance Analyst for the Devio agency, identifying workflow inefficiencies and generating structured performance reports using native tools.
-**Technology Choice:** Markdown (`.agent/skills/agency-trinity/SKILL.md`).
-**Rationale:** Standard Devio agent persona definition, enabling seamless orchestration by the Coordinator and full utilization of built-in file/search tools.
+### 2.2 Phase Protocol Updates (`PROPOSAL` & `ARCHITECTURE`)
+- **Purpose:** Updates the routing and state machine logic managed by `agency-coordinator` to enforce the Lead Developer's mandatory review and sign-off.
+- **Technology Choice:** TypeScript (in `orchestrator.ts` or `prompt-builder.ts` where phase logic resides).
+- **Rationale:** The Coordinator handles phase transitions. Adding a required review step by `agency-lead-developer` ensures the new protocols are strictly enforced.
 
-### 3.2 Insights Local Storage
-**Purpose:** To provide persistent storage for generated performance insights.
-**Technology Choice:** File system storage within `globalStorageUri/.agent/insights/`.
-**Rationale:** Leverages the native VS Code extension global storage mechanism for true global, cross-workspace access. This allows Trinity to track agency-wide performance trends over time, avoiding project-myopic metrics.
+### 2.3 Task-by-Task Validation Schema
+- **Purpose:** Standardizes the format of `03_architecture.md` (this very document style) to require discrete, atomic tasks that the Lead Developer can individually validate against research.
+- **Technology Choice:** Markdown standard operating procedure (SOP).
+- **Rationale:** Ensures no vague requirements pass through to the Developer.
 
-### 3.3 Webview UI Integration
-**Purpose:** To allow users to view and manage company and agent insights natively.
-**Technology Choice:** React Webview components ("Company Insights" and "Agent/Company Insights Manager" tabs) with Node.js IPC backing.
-**Rationale:** Seamless integration into the existing Devio Antigravity Plugin UI for a consolidated user experience.
+## 3. API Contract
 
-### 3.4 Coordinator Routing Updates
-**Purpose:** To securely orchestrate Trinity's execution within the agency lifecycle under specific triggers.
-**Technology Choice:** Markdown (`.agent/skills/agency-coordinator/SKILL.md`).
-**Rationale:** Routing logic must be updated natively within the Coordinator's skill definition to invoke Trinity during Post-Mortem, Escalation/Deadlock Intervention, and Periodic Background Audits to maximize inter-agent communication without blocking the critical path.
+No new external API endpoints are introduced. The internal message bus (`inbox.jsonl`) will handle new routing message types:
+- `REQUEST_RESEARCH` (from Lead Developer to Researcher)
+- `VALIDATE_TASK` (from Lead Developer to Architect)
+- `CHALLENGE_SPEC` (from Developer/Lead Developer to Architect)
 
-### 3.5 Dynamic Insight Integration
-**Purpose:** To resolve agent-specific and company-wide insights dynamically without overloading context limits.
-**Technology Choice:** Path injection via `prompt-builder.ts` leveraging `globalStorageUri`.
-**Rationale:** Passing the absolute file path (instead of the full content) prevents context window exhaustion. Agents are mandated via Critical Rule 1 to actively read their assigned insight file. The Company Insight (`agency_performance.md`) is specifically routed only to `agency-coordinator` and `agency-ceo`.
+## 4. Data Model
 
----
+The existing `state.json` and `inbox.jsonl` models remain, with the addition of the new persona.
 
-## 4. API Contract
+```mermaid
+erDiagram
+    STATE {
+        string phase
+        string owner
+        string[] blocked_by
+    }
+    INBOX_MESSAGE {
+        string id
+        string from
+        string to
+        string phase
+        string type
+        string message
+        string status
+    }
+    STATE ||--o{ INBOX_MESSAGE : "contains"
+```
 
-The communication and data storage rely on a file-based contract mediated by the Extension Host IPC.
+## 5. Infrastructure & Deployment
 
-**Company Insights (`globalStorageUri/.agent/insights/agency_performance.md`):**
-A structured markdown file detailing global bottlenecks, team velocity, and overall protocol adherence across all projects.
+- **Deployment:** The `agency-lead-developer` skill directory and associated files will be packaged into the VSIX extension and deployed to the `globalStorageUri`, following the v0.7.6 packaging protocols.
+- **Cost:** Negligible; handled locally or via standard LLM API interactions.
 
-**Agent Insights (`globalStorageUri/.agent/insights/{agent_name}_performance.md`):**
-Structured markdown files detailing individual protocol violations, recurring feedback, and individual strengths/weaknesses across all projects.
+## 6. Implementation Task List
 
----
+This task list is formatted for step-by-step validation by the Lead Developer.
 
-## 5. Data Model
+| Task ID | Task Name | Description | Est. Hours | Dependencies | Acceptance Criteria |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **DEV-01** | Create `agency-lead-developer` skill file | Write `SKILL.md` for "Le Merovingien" encompassing Pragmatic Architect, Technical Liaison, and Delivery Facilitator roles. | 2 | None | `SKILL.md` exists globally and strictly defines communication protocols with CEO, Researcher, and Architect. |
+| **DEV-02** | Update `agency-coordinator` routing logic | Modify coordinator scripts/rules to inject the Lead Developer into the `PROPOSAL` and `ARCHITECTURE` phases as a mandatory reviewer. | 4 | DEV-01 | Coordinator blocks phase transition to DEVELOPMENT until the Lead Developer issues an `APPROVE` message. |
+| **DEV-03** | Update Architecture Checklist | Modify `references/architecture_checklist.md` to mandate step-by-step task breakdowns and explicit research cross-referencing. | 1 | None | Checklist includes explicit validation instructions for the Lead Developer. |
 
-**Insight Documents Structure:**
-- **Header:** Agent or Company Name
-- **Summary:** High-level performance metrics
-- **Key Findings:** Detailed insights and diagnostic events
-- **Recommendations:** Actionable feedback for improvement
-- **Size Constraint:** Enforced rolling log or truncation (Max 500 lines)
+## 7. Open Technical Decisions
 
----
-
-## 6. Infrastructure & Deployment
-
-- **Runtime:** Node.js >= 22 (Active LTS). The actual runtime version is controlled by the host VS Code/Antigravity IDE Electron version.
-- **Dependencies:** 0 new npm runtime dependencies.
-- **Deployment:** Insights stored securely via the VS Code extension `globalStorageUri` mechanism.
-- **Data Handling:** Insight documents are strictly capped (e.g., max 500 lines) to prevent LLM context window exhaustion. All analytics are inherently cross-workspace (global) to track the overall health and performance of the Devio agency across all client engagements.
-
----
-
-## 7. Implementation Task List
-
-1. **T-01: Develop Insights Storage & Webview UI**
-   - **Estimated Hours:** 2 hours
-   - **Dependencies:** None
-   - **Acceptance Criteria:** Global storage mechanism established at `globalStorageUri/.agent/insights/`. React Webview UI updated with a "Company Insights" tab and an "Insights Manager" for viewing and editing data. IPC routes established. Implement a migration routine to move the existing local workspace insight folder to the new `globalStorageUri` path.
-
-2. **T-02: Define Trinity HR Persona & Reporting**
-   - **Estimated Hours:** 1 hour
-   - **Dependencies:** T-01
-   - **Acceptance Criteria:** `.agent/skills/agency-trinity/SKILL.md` is created, defining instructions to use native tools to read `inbox.jsonl`, generate Company and Agent reports, and strictly enforce the 500-line max file size constraint via rolling logs or truncation.
-
-3. **T-03: Update Coordinator Routing Rules**
-   - **Estimated Hours:** 1 hour
-   - **Dependencies:** T-02
-   - **Acceptance Criteria:** `.agent/skills/agency-coordinator/SKILL.md` is updated to invoke Trinity at explicit triggers:
-     - Post-Mortem Analysis (end of cycle)
-     - Escalation/Deadlock Intervention (>3 consecutive REQUEST_CHANGE messages)
-     - Periodic Background Audit (e.g., every 50 messages)
-
-4. **T-04: Dynamic Insight Injection & Prompt Builder Update**
-   - **Estimated Hours:** 2 hours
-   - **Dependencies:** T-02
-   - **Acceptance Criteria:** `prompt-builder.ts` is updated to inject the dynamic absolute file path of the agent's specific insight into their context (instead of passing the raw content). The prompt builder must edit Critical Rule 1 to explicitly mandate that the agent reads their assigned insight file. The Company Insight (`agency_performance.md`) must be dynamically routed and injected exclusively for `agency-coordinator` and `agency-ceo`.
-
----
-
-## 8. Open Technical Decisions
-
-- **Truncation Strategy:** The specific mechanism for file truncation (e.g., discarding oldest log entries vs summarization into a meta-insight) is deferred to Trinity's skill implementation, provided the 500-line limit is strictly and deterministically adhered to.
+- **Handling Deadlocks:** If the Lead Developer and CEO fundamentally disagree on scope during the `PROPOSAL` phase, we may need the Coordinator (or Trinity) to resolve the deadlock. For now, the Coordinator's existing escalation mechanism will be used.

@@ -744,3 +744,42 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - `agency_workspace/src/workspace-writer.ts`
 - `agency_workspace/src/prompt-builder.ts`
 - `package.json`
+
+---
+
+## Task: Lead Developer Protocol Implementation (DEV-01, DEV-02, DEV-03)
+
+**TDD cycle:**
+- 🔴 RED: Verified that `agency-lead-developer` skill does not exist and `agency-coordinator` does not include validation protocols. Architecture checklist does not enforce step-by-step breakdown.
+- 🟢 GREEN: Implemented `agency-lead-developer/SKILL.md` (DEV-01). Updated `agency-coordinator/SKILL.md` to include Lead Developer in PROPOSAL and ARCHITECTURE phase requirements (DEV-02). Updated `architecture_checklist.md` to enforce step-by-step tasks and explicit research cross-referencing (DEV-03).
+- 🔵 REFACTOR: Ensured no implementation code was affected as this is protocol documentation.
+
+**Files created/modified:**
+- `.agent/skills/agency-lead-developer/SKILL.md` — new
+- `.agent/skills/agency-coordinator/SKILL.md` — modified
+- `.agent/skills/agency-architect/references/architecture_checklist.md` — modified
+
+---
+
+## Task: Expand Message Types Protocol (REQUEST_RESEARCH & CHALLENGE_SPEC)
+
+**TDD cycle:**
+- 🔴 RED: QA flagged `REQUEST_RESEARCH` and `CHALLENGE_SPEC` as invalid message types since they were missing from `message_types.md`.
+- 🟢 GREEN: Added definitions for `REQUEST_RESEARCH` and `CHALLENGE_SPEC` to `message_types.md` as mandated by client. Updated `05_qa_report.md` to resolve QA-V22-001.
+- 🔵 REFACTOR: None needed.
+
+**Files created/modified:**
+- `.agent/skills/agency-coordinator/references/message_types.md` — modified
+- `agency_workspace/05_qa_report.md` — modified
+
+---
+
+## Task: Bump Version to 0.8.0
+
+**TDD cycle:**
+- 🔴 RED: Client reported that the 0.8.0 package is missing.
+- 🟢 GREEN: Bumped version to `0.8.0` in `package.json` per client requirement and rebuilt the `.vsix` package.
+- 🔵 REFACTOR: None needed.
+
+**Files modified:**
+- `package.json`

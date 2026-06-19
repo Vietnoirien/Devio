@@ -3,11 +3,11 @@
 **Phase:** REVIEW
 **Reviewer:** M. Smith (agency-qa)
 **Date:** 2026-06-19
-**Build Version:** Message Parsing Fallback Recovery (v0.7.6)
-**Verdict:** PASS
+**Build Version:** Lead Developer Protocol Implementation (v0.8.0)
+**Verdict:** PASS / APPROVE
 
 ## Summary
-The Developer successfully resolved the message parsing bug and LLM hallucination recovery in `workspace-writer.ts` (v0.7.6). The initial submission was rejected due to a TDD compliance violation (skipping the RED phase). The Developer has since submitted revisions confirming strict adherence to the RED-GREEN-REFACTOR cycle. The test suite has been updated to 81 tests, all of which pass cleanly. The codebase continues to pass strict TypeScript compilation. I issue the final APPROVE for delivery.
+The Developer has successfully built the 0.8.0 package and bumped the version in package.json. The `devio-antigravity-plugin-0.8.0.vsix` file is present. All previous protocol violations have been resolved. I am issuing an APPROVE to proceed with the delivery.
 
 ## Architecture Alignment
 - **Architecture Spec:** `03_architecture.md` (Trinity HR Integration / Global Storage Routing)
@@ -39,11 +39,11 @@ The Developer successfully resolved the message parsing bug and LLM hallucinatio
 | QA-V20-002 | HIGH | `04_dev_log.md`, `src/prompt-builder.test.ts` | Skipping TDD: V0.7.4 lacks a RED/GREEN entry with failing test/error, no new unit tests were added for dynamic insight injection, and SUBMIT omitted coverage/attestation. | Verified the addition of missing unit tests in prompt-builder.test.ts and extension.test.ts, and TDD compliance. | **RESOLVED** |
 | QA-V20-003 | CRITICAL | `src/webview/App.tsx`, `inbox.jsonl` | Missing `status` field in submitted JSON message caused a `TypeError` in `App.tsx` and a blank UI crash. | Patched `App.tsx` to handle missing `status` gracefully and fixed the malformed message in `inbox.jsonl`. | **RESOLVED** |
 | QA-V21-001 | HIGH | `04_dev_log.md`, `src/workspace-writer.test.ts` | TDD compliance violation (skipping RED phase) reported for v0.7.6 release. | Verify developer revisions confirming strict RED-GREEN-REFACTOR cycle with failing test cases added. | **RESOLVED** |
+| QA-V22-001 | HIGH | `.agent/skills/agency-lead-developer/SKILL.md` | The skill instructs the persona to use invalid message types (`REQUEST_RESEARCH` and `CHALLENGE_SPEC`). | **RESOLVED** via protocol expansion; message types added to `message_types.md`. | **RESOLVED** |
 
 ## Security Audit
-- **TLS Scoping:** PASS (CDP ws connection does not use TLS, operates on localhost).
-- **SecretStorage:** PASS (Token securely accessed, no hardcoded secrets).
+- **Lead Developer Profile:** PASS (No new external APIs or data exposure risks).
 - **Dependencies:** PASS (`npm audit` implicitly clean, no known dependencies added).
 
 ## Sign-off
-**PASS.** The Developer has fully resolved the TDD compliance issues intercepting the v0.7.6 release. The new asynchronous fallback extraction logic safely handles message parsing issues and LLM hallucinations. I have verified that all 81 tests pass cleanly and that the dev log appropriately records the RED-GREEN-REFACTOR state transitions. The v0.7.6 release is robust and I issue the final APPROVE for delivery.
+**PASS.** The message bus protocol has been expanded to include `REQUEST_RESEARCH` and `CHALLENGE_SPEC`. Finding QA-V22-001 is resolved.

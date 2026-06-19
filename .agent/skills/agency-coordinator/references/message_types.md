@@ -154,6 +154,50 @@ The `agency-coordinator` skill uses this reference to interpret and route messag
 
 ---
 
+### `REQUEST_RESEARCH`
+**Sender:** Lead Developer (`agency-lead-developer`) or any agent needing deep-dive research.
+**Purpose:** Proactively requests a targeted research deep-dive on specific functional components (e.g., UI design) before architecture finalization or development.
+**Routing Rule:** Routed to `agency-researcher`.
+**Status on creation:** `OPEN`
+**Resolves when:** The Researcher posts an `INFO` message with findings, with `in_reply_to` referencing this message's ID.
+
+```json
+{
+  "id": "msg-015",
+  "from": "agency-lead-developer",
+  "to": "agency-researcher",
+  "phase": "PROPOSAL",
+  "type": "REQUEST_RESEARCH",
+  "ref_doc": "02_proposal.md",
+  "message": "Please research the UI design constraints for the new dashboard.",
+  "status": "OPEN"
+}
+```
+
+---
+
+### `CHALLENGE_SPEC`
+**Sender:** Lead Developer (`agency-lead-developer`) or Developer (`agency-developer`).
+**Purpose:** Flags a structural flaw, ambiguity, or a missing essential component in the architectural specification, forcing a task-by-task re-evaluation.
+**Routing Rule:** Routed to `agency-architect`.
+**Status on creation:** `OPEN`
+**Resolves when:** The Architect posts a `REVISION` updating the spec, and the challenger subsequently posts `APPROVE`.
+
+```json
+{
+  "id": "msg-016",
+  "from": "agency-lead-developer",
+  "to": "agency-architect",
+  "phase": "ARCHITECTURE",
+  "type": "CHALLENGE_SPEC",
+  "ref_doc": "03_architecture.md",
+  "message": "Task 4 is ambiguous regarding the data source. Please clarify the integration points.",
+  "status": "OPEN"
+}
+```
+
+---
+
 ## Message Lifecycle Summary
 
 ```
