@@ -9,7 +9,7 @@ export class PromptBuilder {
         const skillPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'skills', persona, 'SKILL.md').fsPath;
         const typesPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'skills', 'agency-coordinator', 'references', 'message_types.md').fsPath;
 
-        const prompt = `Phase: ${phase}
+        let prompt = `Phase: ${phase}
 Context: @${skillPath}
 Context: @${typesPath}
 History: @agency_workspace/inbox.jsonl
@@ -21,6 +21,10 @@ CRITICAL INSTRUCTION: You are ${persona}.
 4. Your JSON MUST contain the exact key-value pair: "devio_validation_key": "${validationKey}"
 5. Your JSON MUST strictly follow the Message Bus Protocol schema defined in message_types.md. Ensure all required fields (id, timestamp, from, to, phase, type, ref_doc, message, in_reply_to, status) are present with your dynamic data.
 6. CRITICAL: You must properly escape all internal double quotes inside your JSON string values (e.g. use \\" for internal quotes).`;
+
+        if (persona === 'agency-trinity') {
+            prompt += `\n7. [SPECIAL MANDATE]: You MUST write all your reports and output files to the IDE global storage directory located at: ${this.globalStorageUri.fsPath} . Do not use local workspace folders for your reporting output.`;
+        }
 
         return { prompt, validationKey };
     }

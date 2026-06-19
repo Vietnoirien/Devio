@@ -713,3 +713,9 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - **Context**: The client edited `prompt-builder.ts` to solve an immediate issue and required verification by dev before creating the 0.7.2 release.
 - **Change**: Verified the `prompt-builder.ts` edits by successfully running the unit tests and TypeScript compiler. Bumped version to 0.7.2 in `package.json`.
 - **Tests**: Ran all 77 unit tests successfully. 0 compilation errors. Packaged the extension.
+
+## [RED/GREEN] V0.7.3 - Fix Trinity Global Storage Routing
+- **Task**: Provide Trinity with globalStorageUri dynamically in prompt.
+- **Context**: The client reported Trinity writing files to the local workspace instead of the global storage.
+- **Change**: Added a special mandate for `agency-trinity` in `prompt-builder.ts` instructing it to write all reports to `globalStorageUri`. Added a corresponding test in `prompt-builder.test.ts`. Bumped version to 0.7.3 in `package.json`.
+- **Tests**: Ran all 78 unit tests successfully. Packaged the extension.

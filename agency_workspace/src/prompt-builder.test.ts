@@ -30,4 +30,11 @@ describe('PromptBuilder', () => {
         expect(result.validationKey).toBeDefined();
         expect(result.prompt).toContain(`"devio_validation_key": "${result.validationKey}"`);
     });
+
+    it('should include special mandate for agency-trinity', async () => {
+        const result = await builder.buildPrompt('agency-trinity', 'DONE');
+        expect(result.prompt).toContain('[SPECIAL MANDATE]');
+        expect(result.prompt).toContain('/mock-global-storage');
+        expect(result.prompt).toContain('write all your reports and output files to the IDE global storage directory');
+    });
 });

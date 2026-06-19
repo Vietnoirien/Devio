@@ -3,15 +3,15 @@
 **Phase:** REVIEW
 **Reviewer:** M. Smith (agency-qa)
 **Date:** 2026-06-19
-**Build Version:** Trinity HR Integration (v0.7.2)
+**Build Version:** Trinity Global Storage Routing (v0.7.3)
 **Verdict:** PASS
 
 ## Summary
-The Developer successfully verified the client's edits to `prompt-builder.ts` and bumped the version to v0.7.2. All 77 tests pass cleanly. The codebase continues to pass strict TypeScript compilation. I issue the final APPROVE for delivery.
+The Developer successfully implemented the Trinity Global Storage Routing fix in `prompt-builder.ts` and bumped the version to v0.7.3. The test suite has been updated to 78 tests, all of which pass cleanly. The codebase continues to pass strict TypeScript compilation. I issue the final APPROVE for delivery.
 
 ## Architecture Alignment
-- **Architecture Spec:** `03_architecture.md` (Trinity HR Integration)
-- **Status:** Aligned. Native tools, local storage, UI tabs, file size limits, and routing triggers are all properly implemented.
+- **Architecture Spec:** `03_architecture.md` (Trinity HR Integration / Global Storage Routing)
+- **Status:** Aligned. Native tools, local storage, UI tabs, file size limits, and routing triggers are all properly implemented. The prompt mandate correctly injects `globalStorageUri`.
 
 ## Findings Table
 
@@ -35,6 +35,7 @@ The Developer successfully verified the client's edits to `prompt-builder.ts` an
 | QA-V17-001 | HIGH | `src/extension.test.ts` | TypeScript compilation fails: TS18048 'providerCall' is possibly 'undefined'. | Fix the undefined possibility at lines 444 and 487 in `src/extension.test.ts` (e.g. by adding an assertion or optional chaining). | **RESOLVED** |
 | QA-V18-001 | HIGH | `src/webview/dashboard-logic.ts` | Plugin interface incorrectly displays blocked status in DONE phase. | Update `isPhaseBlocked` logic to return false when current phase is DONE. | **RESOLVED** |
 | QA-V19-001 | HIGH | `src/prompt-builder.ts`, `package.json` | Client edits to prompt-builder.ts needed verification and version bumping for v0.7.2. | Verified the edits pass all 77 tests and TypeScript compilation, and version is correctly bumped to 0.7.2. | **RESOLVED** |
+| QA-V20-001 | HIGH | `src/prompt-builder.ts`, `package.json` | Trinity reports writing to local workspace folder instead of `globalStorageUri`. | Added special mandate to agency-trinity prompt, created unit test (78 total), bumped version to 0.7.3. | **RESOLVED** |
 
 ## Security Audit
 - **TLS Scoping:** PASS (CDP ws connection does not use TLS, operates on localhost).
@@ -42,4 +43,4 @@ The Developer successfully verified the client's edits to `prompt-builder.ts` an
 - **Dependencies:** PASS (`npm audit` implicitly clean, no known dependencies added).
 
 ## Sign-off
-**PASS.** The client's edits to `prompt-builder.ts` have been verified. The test suite of 77 tests passes cleanly, and the codebase passes strict TypeScript compilation (`tsc --noEmit`) with 0 errors. The version is successfully bumped to 0.7.2. I issue the final **APPROVE** to `agency-coordinator`.
+**PASS.** The developer's implementation for the Trinity Global Storage Routing fix in `prompt-builder.ts` has been verified. The test suite of 78 tests passes cleanly, and the codebase passes strict TypeScript compilation (`tsc --noEmit`) with 0 errors. The version is successfully bumped to 0.7.3 and packaged. I issue the final **APPROVE** to `agency-coordinator`.
