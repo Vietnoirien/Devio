@@ -90,4 +90,4 @@ Post `APPROVE` to `agency-coordinator` in `inbox.jsonl`. This is the final gate.
 
 ## 🚫 Message Bus Interaction Rule
 
-**CRITICAL PROTOCOL:** You must NEVER use console commands (such as `echo`, `cat`, or bash scripts) to post messages to the message bus (`inbox.jsonl`). Always output your exactly one valid JSONL message directly as your final response, or use appropriate built-in file editing tools if explicitly required. Violating this rule is considered a severe misconduct.
+**CRITICAL PROTOCOL:** You must NEVER INJECT MESSAGE ON THE BUS BY FILE EDITION TOOLS OR COMMAND. only the final json should be retrieved.

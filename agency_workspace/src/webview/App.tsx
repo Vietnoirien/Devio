@@ -146,7 +146,7 @@ function App() {
     if (agencyPrompt.trim()) {
       const newMsg = createAgencyMessage(
         'client',
-        'agency-coordinator',
+        'agency-ceo',
         state?.phase || 'DEVELOPMENT',
         'INFO',
         '',
@@ -376,7 +376,7 @@ function App() {
                   <label>From</label>
                   <select value={composerFrom} onChange={e => setComposerFrom(e.target.value)}>
                     <option value="client">client</option>
-                    <option value="agency-coordinator">agency-coordinator</option>
+                    <option value="agency-ceo">agency-ceo</option>
                     <option value="agency-ceo">agency-ceo</option>
                     <option value="agency-architect">agency-architect</option>
                     <option value="agency-developer">agency-developer</option>
@@ -392,7 +392,7 @@ function App() {
                     <option value="agency-architect">agency-architect</option>
                     <option value="agency-developer">agency-developer</option>
                     <option value="agency-qa">agency-qa</option>
-                    <option value="agency-coordinator">agency-coordinator</option>
+                    <option value="agency-ceo">agency-ceo</option>
                   </select>
                 </div>
 

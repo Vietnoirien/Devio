@@ -56,6 +56,6 @@ export class OrchestrationEngine {
             throw new Error(`CRITICAL: Timed out or failed to extract a valid AgencyMessage. Last error: ${lastError?.message}`);
         }
 
-        await this.writer.applyResponse(finalParsed, finalMessage, persona, 'agency-coordinator', phase);
+        await this.writer.applyResponse(finalParsed, finalMessage, persona, 'agency-ceo', phase);
     }
 }

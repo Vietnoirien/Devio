@@ -33,7 +33,7 @@ describe('PromptBuilder', () => {
     });
 
     it('should include company insight for coordinator and ceo', async () => {
-        const resultCoord = await builder.buildPrompt('agency-coordinator', 'DEVELOPMENT');
+        const resultCoord = await builder.buildPrompt('agency-ceo', 'DEVELOPMENT');
         expect(resultCoord.prompt).toContain('@/mock-global-storage/.agent/insights/agency_performance.md');
 
         const resultCeo = await builder.buildPrompt('agency-ceo', 'DEVELOPMENT');

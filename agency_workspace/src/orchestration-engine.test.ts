@@ -59,7 +59,7 @@ describe('OrchestrationEngine', () => {
         // Extract message should have been called
         expect(writer.extractMessage).toHaveBeenCalledWith({ text: 'res', files: [] }, 'key123');
         // Because extractMessage succeeded, applyResponse should be called with the parsed response AND the extracted message
-        expect(writer.applyResponse).toHaveBeenCalledWith({ text: 'res', files: [] }, { id: '1', type: 'INFO', message: 'test', timestamp: '', from: '', to: '', phase: '', ref_doc: null, in_reply_to: null, status: 'OPEN' } as any, 'agency-developer', 'agency-coordinator', 'DEVELOPMENT');
+        expect(writer.applyResponse).toHaveBeenCalledWith({ text: 'res', files: [] }, { id: '1', type: 'INFO', message: 'test', timestamp: '', from: '', to: '', phase: '', ref_doc: null, in_reply_to: null, status: 'OPEN' } as any, 'agency-developer', 'agency-ceo', 'DEVELOPMENT');
     });
 
     it('should proceed if generation never starts but timeout is reached', async () => {

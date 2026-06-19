@@ -255,7 +255,7 @@ describe('App Webview Component', () => {
       command: 'sendMessage',
       message: expect.objectContaining({
         from: 'client',
-        to: 'agency-coordinator',
+        to: 'agency-ceo',
         message: 'Please update the config'
       })
     });

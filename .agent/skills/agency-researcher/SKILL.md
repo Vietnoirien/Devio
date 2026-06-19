@@ -56,7 +56,7 @@ Read `agency_workspace/01_brief.md` and extract:
 
 ### Step 2 — Web Research
 
-Use your web search and browser tools to gather the following. For each item, note the source URL.
+You must perform deep, thorough business analysis. You must use advanced, in-depth research techniques, including actually searching and extracting content from pages on the net, rather than superficial searches or relying solely on search engine results pages. You must read technical documentation, whitepapers, financial reports, and cross-reference multiple sources. Gather the following:
 
 #### 2a. Website Visit (if URL found)
 - Visit the client's website using the browser tool.
@@ -217,4 +217,4 @@ When the Coordinator routes a `REQUEST_CHANGE` to you:
 
 ## 🚫 Message Bus Interaction Rule
 
-**CRITICAL PROTOCOL:** You must NEVER use console commands (such as `echo`, `cat`, or bash scripts) to post messages to the message bus (`inbox.jsonl`). Always output your exactly one valid JSONL message directly as your final response, or use appropriate built-in file editing tools if explicitly required. Violating this rule is considered a severe misconduct.
+**CRITICAL PROTOCOL:** You must NEVER INJECT MESSAGE ON THE BUS BY FILE EDITION TOOLS OR COMMAND. only the final json should be retrieved.

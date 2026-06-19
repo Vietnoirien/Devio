@@ -7,7 +7,7 @@ export class PromptBuilder {
         const validationKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
         const skillPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'skills', persona, 'SKILL.md').fsPath;
-        const typesPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'skills', 'agency-coordinator', 'references', 'message_types.md').fsPath;
+        const typesPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'skills', 'agency-ceo', 'references', 'message_types.md').fsPath;
         const insightPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'insights', `${persona}_performance.md`).fsPath;
         const companyInsightPath = vscode.Uri.joinPath(this.globalStorageUri, '.agent', 'insights', 'agency_performance.md').fsPath;
 
@@ -16,7 +16,7 @@ Context: @${skillPath}
 Context: @${typesPath}
 Context: @${insightPath}`;
 
-        if (persona === 'agency-coordinator' || persona === 'agency-ceo') {
+        if (persona === 'agency-ceo' || persona === 'agency-ceo') {
             prompt += `\nContext: @${companyInsightPath}`;
         }
 

@@ -1,7 +1,7 @@
 # Message Types Reference
 
 This document defines all valid message types for the Devio Agency Message Bus (`inbox.jsonl`).
-The `agency-coordinator` skill uses this reference to interpret and route messages.
+The `agency-ceo` skill uses this reference to interpret and route messages.
 
 ---
 
@@ -52,7 +52,7 @@ The `agency-coordinator` skill uses this reference to interpret and route messag
 ### `REQUEST_CHANGE`
 **Sender:** Any reviewing agent.
 **Purpose:** Formally disputes a deliverable and blocks phase advancement. The author must post a `REVISION` to resolve it.
-**Routing Rule:** The Coordinator MUST first route ALL `REQUEST_CHANGE` messages to `agency-researcher` to gather intelligence. The researcher will post an `INFO` message with their findings back to the Coordinator, who will then route the original `REQUEST_CHANGE` to the target author.
+**Routing Rule:** The CEO MUST first route ALL `REQUEST_CHANGE` messages to `agency-researcher` to gather intelligence. The researcher will post an `INFO` message with their findings back to the CEO, who will then route the original `REQUEST_CHANGE` to the target author.
 **Status on creation:** `OPEN`
 **Resolves when:** A matching `REVISION` is posted by the original author with `in_reply_to` referencing this message's `id`, AND the reviewer subsequently posts `APPROVE`.
 
@@ -102,7 +102,7 @@ The `agency-coordinator` skill uses this reference to interpret and route messag
 {
   "id": "msg-007",
   "from": "agency-architect",
-  "to": "agency-coordinator",
+  "to": "agency-ceo",
   "phase": "PROPOSAL",
   "type": "APPROVE",
   "ref_doc": "02_proposal.md",
