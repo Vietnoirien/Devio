@@ -193,6 +193,40 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               vscode.window.showErrorMessage(`Failed to apply GEMINI.md: ${err.message}`);
             }
             break;
+          case 'getInsights':
+            try {
+              const fs = require('fs/promises');
+              const path = require('path');
+              const insightsPath = path.join(this._globalStorageUri.fsPath, '.agent', 'insights');
+              let files: string[] = [];
+              try {
+                files = await fs.readdir(insightsPath);
+              } catch (e) {
+                // ignore
+              }
+              const insights = [];
+              for (const file of files) {
+                if (file.endsWith('_performance.md')) {
+                  const content = await fs.readFile(path.join(insightsPath, file), 'utf8');
+                  insights.push({ file, content });
+                }
+              }
+              await webviewView.webview.postMessage({ type: 'insightsData', insights });
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to get insights: ${err.message}`);
+            }
+            break;
+          case 'saveInsight':
+            try {
+              const fs = require('fs/promises');
+              const path = require('path');
+              const insightsPath = path.join(this._globalStorageUri.fsPath, '.agent', 'insights');
+              await fs.writeFile(path.join(insightsPath, message.file), message.content, 'utf8');
+              vscode.window.showInformationMessage(`Insight ${message.file} saved.`);
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to save insight: ${err.message}`);
+            }
+            break;
         }
       }
     );
@@ -221,6 +255,9 @@ export async function activate(context: vscode.ExtensionContext) {
     const extensionAgentUri = vscode.Uri.joinPath(context.extensionUri, '.agent');
     const globalAgentUri = vscode.Uri.joinPath(context.globalStorageUri, '.agent');
     await vscode.workspace.fs.copy(extensionAgentUri, globalAgentUri, { overwrite: true });
+
+    const insightsUri = vscode.Uri.joinPath(globalAgentUri, 'insights');
+    await vscode.workspace.fs.createDirectory(insightsUri);
   } catch (err) {
     console.error('Failed to copy .agent to globalStorageUri', err);
   }

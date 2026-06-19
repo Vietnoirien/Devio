@@ -269,3 +269,69 @@ Instead of relying on brittle HTTP polling to a separate extension, Devio can me
    - `src/extension.ts`: Pass `context.globalStorageUri.fsPath` down to `PromptBuilder`. Implement the copy logic here.
    - `src/prompt-builder.ts`: Update the `Context: @.agent/skills/...` lines to use the absolute path from the global storage (e.g., `Context: @${path.join(globalStoragePath, '.agent/skills', persona, 'SKILL.md')}`) so the agent reads the globally installed files instead of local ones.
    - `package.json` / `.vscodeignore`: Ensure `.agent` is included in the `.vsix` bundle.
+
+---
+
+## Addendum — RH Team Trinity Integration & Performance Analytics
+*Triggered by client request, Phase RESEARCH*
+
+**Finding:** The client has requested research into the integration of a new HR ("RH") team member, **Trinity**, whose role is to analyze the agency's message bus (`inbox.jsonl`) to extract insights and generate team performance reviews.
+
+### 1. Built-in Tools vs. Custom Parser Engine
+
+**Finding:** A custom Node.js script or "Inbox Analytics Engine" is **redundant and unnecessary**. Antigravity IDE equips agents with built-in native tools (e.g., `view_file`, `grep_search`). Trinity can leverage these tools autonomously to read, paginate, and query `inbox.jsonl` directly, eliminating the need to build and maintain a custom parser.
+
+### 2. Structuring RH Performance Insights
+
+To properly pass insights to other agents, Trinity must generate two distinct levels of structured reports:
+- **Company Insights (`agency_performance.md`):** A high-level overview of global bottlenecks, team velocity, and overall protocol adherence.
+- **Agent Insights (`{agent_name}_performance.md`):** Individualized reports detailing specific protocol violations, recurrent feedback (e.g., QA rejections), and individual strengths/weaknesses.
+
+### 3. Local Storage and UI Integration
+
+These insight documents must be stored locally within the plugin folder (e.g., in `globalStorageUri/.agent/insights/`) to ensure persistent read/write access. To expose these insights to the user:
+- **Company Insights Tab:** A new tab in the React Webview providing a summary for the user.
+- **Agent/Company Insights Manager:** A dedicated UI section to view and edit the performance insights natively.
+The plugin backend will implement IPC handlers to read and update these specific files upon UI request.
+
+### 4. File Size Limits & Context Windows
+
+To prevent LLM context window exhaustion, Trinity must enforce strict file size constraints on the generated insight documents.
+- **Constraint Strategy:** The reports must be strictly capped (e.g., max 500 lines or a specific token limit). Trinity should employ a rolling log or truncation strategy to archive or summarize older insights rather than allowing the files to grow indefinitely.
+
+**Next Steps for Proposal:**
+- Revise the proposal to remove the custom Inbox Analytics Engine script.
+- Detail the Company vs. Individual agent report structures.
+- Define the UI additions (Company Insights tab and Insights manager).
+- Formalize the file size limitation strategy.
+
+---
+
+## Addendum — SOTA Agentic Workflows & Trinity Routing Strategy
+*Triggered by client request, Phase RESEARCH*
+
+**Finding:** The client requested extended research on State-of-the-Art (SOTA) agentic workflows to maximize communication and cooperative results, along with precise routing rules defining when the HR agent (Trinity) should operate.
+
+### 1. SOTA Agentic Workflow & Communication Models
+Research into leading multi-agent frameworks (e.g., MetaGPT, AutoGen, ChatDev) reveals the following SOTA patterns for maximizing inter-agent cooperation:
+- **Blackboard Architecture (Shared Context):** Agents communicate via a central, append-only message bus (like Devio's `inbox.jsonl`), ensuring all specialists share a single source of truth without tight point-to-point coupling.
+- **Hierarchical Supervisor Routing:** A central Coordinator routes tasks to specialists based on their roles. Unstructured chat is minimized; all communication follows strict phase-based state machines.
+- **Reflection & Critic Loops:** Incorporating an independent "Critic" or "HR" agent that observes the workflow and provides actionable feedback on process adherence, ensuring continuous improvement.
+- **Standardized Operating Procedures (SOPs):** Agents perform best when given explicit, structured step-by-step instructions (skills) rather than open-ended prompts.
+
+**Adaptation for Devio:** Devio already utilizes a Blackboard (`inbox.jsonl`) and Hierarchical Routing (via Coordinator). To achieve SOTA cooperative results, Devio must implement the **Reflection & Critic Loop** by formally integrating Trinity into the orchestration cycle.
+
+### 2. Defining Trinity's Routing & Operating Triggers
+Trinity's role is performance analytics and process improvement. To prevent Trinity from bottlenecking the critical development path, her routing must be precisely defined. Trinity should operate under the following triggers:
+
+- **Trigger 1: Post-Mortem Analysis (End of Cycle):** 
+  When the agency phase transitions to `DONE`, the Coordinator routes a task to Trinity to analyze the completed cycle. Trinity reads the recent `inbox.jsonl` entries to calculate metrics (e.g., number of revisions, QA rejection rates) and updates the Company and Agent Insight documents.
+- **Trigger 2: Escalation / Deadlock Intervention:** 
+  If the Coordinator detects excessive friction (e.g., a specific deliverable receives more than 3 consecutive `REQUEST_CHANGE` messages), the Coordinator temporarily halts the phase and summons Trinity. Trinity diagnoses the communication breakdown, outputs actionable feedback directly to the struggling agents, and updates their performance records.
+- **Trigger 3: Periodic Background Audit:** 
+  In a continuous operation mode, Trinity can run asynchronously (e.g., every 50 messages) to identify protocol violations (like unauthorized file edits) and flag them in the Agent Insights file for immediate correction by the Coordinator.
+
+**Next Steps for Proposal:**
+- Update the workflow routing rules in the proposal to explicitly include the three operating triggers for Trinity.
+- Detail how the Coordinator will handle the "Escalation" trigger and route to Trinity during deadlocks.
+- Emphasize how the inclusion of Trinity fulfills the SOTA Reflection & Critic Loop requirement to maximize agency cooperation.

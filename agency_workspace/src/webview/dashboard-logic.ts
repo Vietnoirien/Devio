@@ -30,6 +30,7 @@ export function formatPhaseName(phase: string): string {
  * Checks if the specified phase has any unresolved blocking messages.
  */
 export function isPhaseBlocked(messages: AgencyMessage[], currentPhase: string): boolean {
+  if (currentPhase === 'DONE') return false;
   return messages.some((msg) => msg.phase === currentPhase && msg.status === 'OPEN');
 }
 

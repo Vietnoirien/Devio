@@ -326,4 +326,57 @@ describe('App Webview Component', () => {
     fireEvent.click(deleteBtns[0]);
     expect(mockPostMessage).toHaveBeenCalledWith({ command: 'deleteMessage', messageId: '12345' });
   });
+
+  it('should render Company Insights tab and display insights', () => {
+    render(<App />);
+    initState();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'insightsData',
+            insights: [{ file: 'agency_performance.md', content: '# Performance' }]
+          }
+        })
+      );
+    });
+
+    const companyInsightsTab = screen.getByRole('button', { name: /Company Insights/i });
+    fireEvent.click(companyInsightsTab);
+
+    expect(screen.getByRole('heading', { name: 'Company Insights' })).toBeDefined();
+    expect(screen.getByText('# Performance')).toBeDefined();
+  });
+
+  it('should render Insights Manager tab and allow editing insights', () => {
+    render(<App />);
+    initState();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'insightsData',
+            insights: [{ file: 'agent_ceo_insight.md', content: 'CEO insight' }]
+          }
+        })
+      );
+    });
+
+    const insightsManagerTab = screen.getByRole('button', { name: /Insights Manager/i });
+    fireEvent.click(insightsManagerTab);
+
+    expect(screen.getByRole('heading', { name: 'Insights Manager' })).toBeDefined();
+    
+    const textarea = screen.getByDisplayValue('CEO insight') as HTMLTextAreaElement;
+    fireEvent.change(textarea, { target: { value: 'Updated CEO insight' } });
+    
+    const saveBtn = screen.getByRole('button', { name: /Save/i });
+    fireEvent.click(saveBtn);
+    
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      command: 'saveInsight',
+      file: 'agent_ceo_insight.md',
+      content: 'Updated CEO insight'
+    });
+  });
 });

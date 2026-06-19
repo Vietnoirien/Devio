@@ -34,7 +34,8 @@ function App() {
   const [geminiMdValid, setGeminiMdValid] = useState<boolean>(true);
   const [isAgencyRunning, setIsAgencyRunning] = useState<boolean>(false);
   
-  const [activeTab, setActiveTab] = useState<'chat' | 'devtools' | 'document' | 'settings'>('chat');
+  const [activeTab, setActiveTab] = useState<'chat' | 'devtools' | 'document' | 'settings' | 'company_insights' | 'insights_manager'>('chat');
+  const [insights, setInsights] = useState<{file: string, content: string}[]>([]);
   const [agencyPrompt, setAgencyPrompt] = useState('');
   const [documentContent, setDocumentContent] = useState<string | null>(null);
   const [documentFile, setDocumentFile] = useState<string | null>(null);
@@ -89,6 +90,8 @@ function App() {
         setActiveTab('document');
       } else if (message.type === 'agencyRunning') {
         setIsAgencyRunning(message.isRunning);
+      } else if (message.type === 'insightsData') {
+        setInsights(message.insights || []);
       }
     };
 
@@ -96,6 +99,7 @@ function App() {
 
     if (vscode) {
       vscode.postMessage({ command: 'ready' });
+      vscode.postMessage({ command: 'getInsights' });
     } else {
       setLoading(false);
     }
@@ -174,6 +178,14 @@ function App() {
     }
   };
 
+  const handleSaveInsight = (file: string, content: string) => {
+    if (vscode) {
+      vscode.postMessage({ command: 'saveInsight', file, content });
+    } else {
+      setInsights(insights.map(i => i.file === file ? { ...i, content } : i));
+    }
+  };
+
   if (loading && !state) {
     return (
       <div className="loading-screen">
@@ -221,6 +233,18 @@ function App() {
             onClick={() => setActiveTab('settings')}
           >
             Settings
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'company_insights' ? 'active' : ''}`}
+            onClick={() => setActiveTab('company_insights')}
+          >
+            Company Insights
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'insights_manager' ? 'active' : ''}`}
+            onClick={() => setActiveTab('insights_manager')}
+          >
+            Insights Manager
           </button>
           <button 
             className={`tab-btn ${activeTab === 'devtools' ? 'active' : ''}`}
@@ -466,6 +490,55 @@ function App() {
               <input type="text" value="9222" disabled />
             </div>
             <p className="help-text">Settings are managed via VS Code's settings.json (search for 'devio').</p>
+          </div>
+        )}
+
+        {activeTab === 'company_insights' && (
+          <div className="insights-layout glass-panel">
+            <h3>Company Insights</h3>
+            {insights.length === 0 ? (
+              <p>No insights generated yet. The Trinity agent will generate them automatically.</p>
+            ) : (
+              <div className="insights-grid">
+                {insights.filter(i => i.file === 'agency_performance.md').length === 0 && (
+                  <p>Company insights (agency_performance.md) not found.</p>
+                )}
+                {insights.filter(i => i.file === 'agency_performance.md').map((insight, idx) => (
+                  <div key={idx} className="insight-card">
+                    <h4>{insight.file}</h4>
+                    <pre className="document-content">{insight.content}</pre>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button className="btn-refresh" onClick={() => vscode?.postMessage({ command: 'getInsights' })}>Refresh Insights</button>
+          </div>
+        )}
+
+        {activeTab === 'insights_manager' && (
+          <div className="insights-layout glass-panel">
+            <h3>Insights Manager</h3>
+            {insights.length === 0 ? (
+              <p>No insights generated yet.</p>
+            ) : (
+              <div className="insights-list">
+                {insights.map((insight, idx) => (
+                  <div key={idx} className="insight-editor">
+                    <h4>{insight.file}</h4>
+                    <textarea 
+                      value={insight.content} 
+                      onChange={(e) => setInsights(insights.map(i => i.file === insight.file ? { ...i, content: e.target.value } : i))}
+                      rows={10}
+                      style={{ width: '100%', fontFamily: 'monospace', marginBottom: '10px' }}
+                    />
+                    <button onClick={() => handleSaveInsight(insight.file, insight.content)} style={{ padding: '6px 12px', background: 'var(--accent-primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                      Save {insight.file}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button className="btn-refresh" onClick={() => vscode?.postMessage({ command: 'getInsights' })} style={{ marginTop: '20px' }}>Refresh</button>
           </div>
         )}
       </main>

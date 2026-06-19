@@ -90,3 +90,7 @@ See `references/coding_standards.md` for the full guide. Key rules:
 - **Comment the "why":** Don't comment what the code does — comment why it does it if non-obvious.
 - **No dead code:** Never leave commented-out blocks of old code in committed files.
 - **Error handling is not optional:** Every external call (API, DB, filesystem) must handle failures explicitly.
+
+## 🚫 Message Bus Interaction Rule
+
+**CRITICAL PROTOCOL:** You must NEVER use console commands (such as `echo`, `cat`, or bash scripts) to post messages to the message bus (`inbox.jsonl`). Always output your exactly one valid JSONL message directly as your final response, or use appropriate built-in file editing tools if explicitly required. Violating this rule is considered a severe misconduct.

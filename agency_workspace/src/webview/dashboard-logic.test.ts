@@ -55,6 +55,24 @@ describe('Dashboard Logic', () => {
     it('should return false if there are no messages for the phase', () => {
       expect(isPhaseBlocked(sampleMessages, 'ARCHITECTURE')).toBe(false);
     });
+
+    it('should never be blocked if the phase is DONE, even with OPEN messages', () => {
+      const doneMessages: AgencyMessage[] = [
+        {
+          id: 'msg-003',
+          timestamp: '2026-06-19T11:39:00+02:00',
+          from: 'agency-ceo',
+          to: 'client',
+          phase: 'DONE',
+          type: 'SUBMIT',
+          ref_doc: '06_delivery_summary.md',
+          message: 'Final delivery',
+          in_reply_to: null,
+          status: 'OPEN'
+        }
+      ];
+      expect(isPhaseBlocked(doneMessages, 'DONE')).toBe(false);
+    });
   });
 
   describe('getLatestMessages', () => {

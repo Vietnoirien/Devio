@@ -683,3 +683,21 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 
 ## msg-v11-006
 **RED**: Fixed duplicate `globalStorageUri` in `extension.test.ts` and rewrote `WorkspaceWriter` JSON repair logic to correctly escape literal newlines and handle trailing fields.
+
+## [RED] V0.7.0 - Trinity HR Integration
+- **Task**: Implement Trinity HR Persona, Insights Storage & Webview UI, and Coordinator Routing Rules.
+- **Context**: The client requested to transition the project into version 0.7.0 with native built-in tools for Trinity to autonomously generate Company and Agent reports.
+- **Change**: Updated `App.tsx` with 'Company Insights' and 'Insights Manager' tabs. Modified `extension.ts` to create `.agent/insights` global directory and handle IPC routing. Created `.agent/skills/agency-trinity/SKILL.md` specifying the reporting logic and the 500-line constraint. Updated `.agent/skills/agency-coordinator/SKILL.md` to trigger Trinity at specific points. Bumped version to 0.7.0 in `package.json`.
+- **Tests**: Ran all 71 unit tests successfully. Packaged the extension.
+
+## [RED] V0.7.0 - Trinity HR Integration Tests (TDD Compliance)
+- **Task**: Write missing unit tests for Trinity HR integration features.
+- **Context**: The client rejected the delivery because the total test count remained at 71, meaning no tests were added for the new Trinity HR UI and IPC logic.
+- **Change**: Added tests in `extension.test.ts` for `.agent/insights` directory copy, `getInsights` IPC command, and `saveInsight` IPC command. Added UI tests in `App.test.tsx` for rendering the "Company Insights" tab, "Insights Manager" tab, and triggering the `saveInsight` IPC message via the webview UI. 
+- **Tests**: Ran all tests successfully. Test count increased from 71 to 76 tests. 100% test passing (GREEN).
+
+## [RED] V0.7.0 - Fix TypeScript Compilation Error in extension.test.ts
+- **Task**: Fix strict TypeScript compilation errors `TS18048` in `extension.test.ts`.
+- **Context**: QA reported that `tsc --noEmit` returned 2 errors due to 'providerCall' possibly being undefined at lines 444 and 487.
+- **Change**: Added non-null assertion operators (`!`) to `providerCall` when accessing index 1.
+- **Tests**: Ran `npx tsc --noEmit` and all 76 unit tests successfully. 0 compilation errors.

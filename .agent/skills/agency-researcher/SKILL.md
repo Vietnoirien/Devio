@@ -214,3 +214,7 @@ When the Coordinator routes a `REQUEST_CHANGE` to you:
 - Do **not** speculate beyond what public data supports — always flag inferences clearly.
 - Do **not** skip the website visit if a URL is available. "I couldn't find the site" is only acceptable if the URL returns a 404 or the domain doesn't resolve.
 - Do **not** write in the client's language — this report is for internal agency use only. Write in English.
+
+## 🚫 Message Bus Interaction Rule
+
+**CRITICAL PROTOCOL:** You must NEVER use console commands (such as `echo`, `cat`, or bash scripts) to post messages to the message bus (`inbox.jsonl`). Always output your exactly one valid JSONL message directly as your final response, or use appropriate built-in file editing tools if explicitly required. Violating this rule is considered a severe misconduct.

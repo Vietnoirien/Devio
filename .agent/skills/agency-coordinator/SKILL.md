@@ -93,6 +93,19 @@ If any exist:
 
 ---
 
+## Trinity HR Agent Routing Rules
+
+You are responsible for triggering the `agency-trinity` HR persona at specific moments to ensure continuous performance analysis.
+
+**Operating Triggers for Trinity:**
+1. **Post-Mortem Analysis (End of Cycle):** Route to `agency-trinity` immediately after the `DONE` phase is reached to generate the final cycle report.
+2. **Escalation/Deadlock Intervention:** If you detect **more than 3 consecutive `REQUEST_CHANGE` messages** in a single phase without a resolution, immediately halt the phase and route to `agency-trinity` to analyze the bottleneck and provide an Agent Insight.
+3. **Periodic Background Audit:** Route to `agency-trinity` every 50 messages to generate periodic performance audits. Wait for Trinity's `INFO` message before continuing normal operations.
+
+When triggering Trinity, instruct the user to load `.agent/skills/agency-trinity/SKILL.md`.
+
+---
+
 ## Escalation & Client Interaction Handling
 
 If a message has `"type": "ESCALATE"` OR if a message is sent `"to": "client"`, the agency is blocked and requires human input. Do the following:
@@ -136,3 +149,7 @@ When this skill is activated, always:
 1. Read `agency_workspace/state.json` and `agency_workspace/inbox.jsonl`.
 2. Greet the user, explain the current phase, and tell them what action is needed next.
 3. Route any pending tasks or blocked states to the correct persona, instructing the user to load the necessary skill file.
+
+## 🚫 Message Bus Interaction Rule
+
+**CRITICAL PROTOCOL:** You must NEVER use console commands (such as `echo`, `cat`, or bash scripts) to post messages to the message bus (`inbox.jsonl`). Always output your exactly one valid JSONL message directly as your final response, or use appropriate built-in file editing tools if explicitly required. Violating this rule is considered a severe misconduct.

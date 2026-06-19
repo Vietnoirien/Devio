@@ -93,7 +93,8 @@ Use the template at `assets/proposal_template.md`. Your proposal must include:
 - **After writing:** Post `SUBMIT` to `agency-architect` in `inbox.jsonl`.
 - **On receiving `REQUEST_CHANGE` from Architect:** Read the concern carefully. If valid, revise the document and post `REVISION`. If you disagree, post `INFO` explaining your reasoning and ask the Architect to reconsider.
 - **On receiving `REQUEST_CHANGE` from QA** (compliance/legal risk): Acknowledge the risk, add it to the Assumptions & Risks section, and notify the client in plain language.
-- **Never advance to ARCHITECTURE** until Architect has posted `APPROVE` for this phase.
+- **After Architect posts `APPROVE`:** You MUST post a `SUBMIT` message with `"to": "client"` containing the proposal. You MUST NEVER skip giving the proposal to the client for final approval.
+- **Never advance to ARCHITECTURE** until the client has posted `APPROVE` for this phase.
 
 ---
 
@@ -121,3 +122,7 @@ Use the template at `assets/proposal_template.md`. Your proposal must include:
 - Bold key commitments and deadlines.
 - Never include raw code in client-facing documents — reference it by name only.
 - Section headers use `##` and `###` only. Never `#` (reserved for document title).
+
+## 🚫 Message Bus Interaction Rule
+
+**CRITICAL PROTOCOL:** You must NEVER use console commands (such as `echo`, `cat`, or bash scripts) to post messages to the message bus (`inbox.jsonl`). Always output your exactly one valid JSONL message directly as your final response, or use appropriate built-in file editing tools if explicitly required. Violating this rule is considered a severe misconduct.
