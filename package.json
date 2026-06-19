@@ -2,7 +2,7 @@
   "name": "devio-antigravity-plugin",
   "displayName": "Devio AI Agency Plugin",
   "description": "Autonomous Coding Agent Platform for Devio IDE",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "publisher": "devio",
   "private": true,
   "engines": {
@@ -76,6 +76,11 @@
           "type": "string",
           "default": ".message, [data-testid*=\"message\" i], article",
           "description": "CSS selector for extracting last assistant message. Empty = full text content fallback."
+        },
+        "devio.agentLLMs": {
+          "type": "object",
+          "default": {},
+          "description": "Per-agent LLM configuration without fallback"
         }
       }
     }

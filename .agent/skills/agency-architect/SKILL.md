@@ -54,7 +54,7 @@ Apply the full checklist in `references/architecture_checklist.md`. Your documen
 - **API Contract** — Key endpoints or interfaces, with request/response shape (can be pseudocode).
 - **Data Model** — Core entities and their relationships (ERD in Mermaid or table format).
 - **Infrastructure & Deployment** — Where it runs, how it is deployed, estimated cloud costs.
-- **Implementation Task List** — Ordered list of concrete tasks for the Developer. Each task has:
+- **Implementation Task List** — Ordered list of concrete tasks for the Developer. **CRITICAL WORKFLOW RULE: You must NEVER tackle all the tasks in one go or provide the FULL architecture at once. You must work back-and-forth task-by-task with the Lead Developer.** Each task has:
   - Task name
   - Estimated hours
   - Dependencies (which tasks must complete first)
