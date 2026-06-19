@@ -701,3 +701,15 @@ The `mcpServers` contribution point in `package.json` is not recognized by Antig
 - **Context**: QA reported that `tsc --noEmit` returned 2 errors due to 'providerCall' possibly being undefined at lines 444 and 487.
 - **Change**: Added non-null assertion operators (`!`) to `providerCall` when accessing index 1.
 - **Tests**: Ran `npx tsc --noEmit` and all 76 unit tests successfully. 0 compilation errors.
+
+## [RED/GREEN] V0.7.1 - Fix Blocked Status in DONE Phase
+- **Task**: Fix issue where project shows as blocked when in the DONE phase.
+- **Context**: The client reported that the UI still displayed "BLOCKED" after the project was marked as DONE. This was because `DONE` phase had OPEN messages from the final delivery submission.
+- **Change**: Updated `isPhaseBlocked` logic in `dashboard-logic.ts` to explicitly return `false` if the phase is `DONE`. Added a test in `dashboard-logic.test.ts` to ensure this behavior. Bumped version to 0.7.1 in `package.json`.
+- **Tests**: Ran all 77 unit tests successfully. Packaged the extension.
+
+## [RED/GREEN] V0.7.2 - Verify Prompt Builder Edits
+- **Task**: Verify the client's edits to the prompt builder and bump version.
+- **Context**: The client edited `prompt-builder.ts` to solve an immediate issue and required verification by dev before creating the 0.7.2 release.
+- **Change**: Verified the `prompt-builder.ts` edits by successfully running the unit tests and TypeScript compiler. Bumped version to 0.7.2 in `package.json`.
+- **Tests**: Ran all 77 unit tests successfully. 0 compilation errors. Packaged the extension.

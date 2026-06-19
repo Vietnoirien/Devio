@@ -1,10 +1,10 @@
 {
-  "phase": "DEVELOPMENT",
-  "owner": "agency-developer",
+  "phase": "DELIVERY",
+  "owner": "agency-ceo",
   "project": "RH Team Trinity Integration",
   "client": "Devio Client",
   "started_at": "2026-06-19T07:49:14Z",
-  "updated_at": "2026-06-19T09:41:18Z",
+  "updated_at": "2026-06-19T11:46:15+02:00",
   "blocked_by": [],
   "history": [
     {
@@ -213,6 +213,22 @@
         "agency-ceo"
       ],
       "note": "Final package v0.7.0 compiled and approved"
+    },
+    {
+      "phase": "REVIEW",
+      "completed_at": "2026-06-19T11:46:00+02:00",
+      "approved_by": [
+        "agency-qa"
+      ],
+      "note": "v0.7.1 Blocked Status UI fix QA APPROVED"
+    },
+    {
+      "phase": "REVIEW",
+      "completed_at": "2026-06-19T12:06:00+02:00",
+      "approved_by": [
+        "agency-qa"
+      ],
+      "note": "v0.7.2 Prompt Builder edits QA APPROVED"
     }
   ]
 }
