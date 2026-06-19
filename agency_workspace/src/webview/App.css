@@ -604,3 +604,34 @@ button {
   font-size: 12px;
   margin-top: 24px;
 }
+
+/* Typing Indicator */
+.typing-indicator-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--status-active);
+  border-radius: 12px;
+  padding: 12px 16px;
+  width: fit-content;
+  animation: slideIn 0.3s ease-out;
+  align-self: flex-start;
+}
+
+.whatsapp-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(52, 211, 153, 0.2);
+  border-top-color: var(--status-active);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.typing-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 500;
+}

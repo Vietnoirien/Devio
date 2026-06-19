@@ -327,6 +327,12 @@ function App() {
                   </div>
                 ))
               )}
+              {isAgencyRunning && (
+                <div className="typing-indicator-container">
+                  <div className="whatsapp-spinner"></div>
+                  <span className="typing-text">{(state?.owner || 'agency-ceo')} is typing...</span>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 

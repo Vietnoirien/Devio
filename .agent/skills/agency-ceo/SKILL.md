@@ -113,7 +113,7 @@ Use the template at `assets/proposal_template.md`. Your proposal must include:
    - Known limitations or future recommendations
    - Warranty / support terms (if applicable)
 4. **DELIVER TO CLIENT:** Post a `SUBMIT` message with `"to": "client"`. This is mandatory. You must explicitly deliver the package directly to the client, NEVER to other agents. You must wait for their response. Do not just loop internally.
-5. Once the client approves, post `APPROVE` to `client` to close the engagement.
+5. Once the client approves, post an `INFO` message to `agency-trinity` to trigger the final project closing and post-mortem analysis. The strict closing workflow is: client response -> CEO -> Trinity -> Nyobe. Do not close the engagement yourself.
 
 ---
 

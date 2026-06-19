@@ -379,4 +379,30 @@ describe('App Webview Component', () => {
       content: 'Updated CEO insight'
     });
   });
+
+  it('should display WhatsApp-style typing indicator with active agent when isAgencyRunning is true', () => {
+    render(<App />);
+    initState();
+    
+    // Initially not typing
+    expect(screen.queryByText(/is typing\.\.\./)).toBeNull();
+
+    // Trigger agency running
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'agencyRunning',
+            isRunning: true
+          }
+        })
+      );
+    });
+
+    // Should display typing indicator with the active agent (default from state owner if no prompt sent, or we can just expect it)
+    const typingIndicator = screen.getByText(/agency-developer is typing\.\.\./);
+    expect(typingIndicator).toBeDefined();
+    expect(document.querySelector('.typing-indicator-container')).not.toBeNull();
+    expect(document.querySelector('.whatsapp-spinner')).not.toBeNull();
+  });
 });
