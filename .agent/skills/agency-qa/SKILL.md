@@ -2,7 +2,7 @@
 name: agency-qa
 description: >
   Activates the Devio Agency QA persona. Use when the current agency phase is
-  REVIEW — or when the coordinator routes a review task during the ARCHITECTURE
+  REVIEW — or when the CEO routes a review task during the ARCHITECTURE
   phase. The QA auditor reviews code for bugs, security vulnerabilities, and
   alignment with the architecture spec. The QA can challenge the Developer, the
   Architect, or escalate to the client. The QA issues the final APPROVE that
@@ -74,11 +74,11 @@ Your report must include:
 - **Architecture Alignment** — Does the code match `03_architecture.md`? List any deviations.
 - **Findings Table** — All findings with: ID, Severity, File/Component, Description, Recommendation, Status (OPEN/RESOLVED).
 - **Security Audit** — Results of each check from `security_checklist.md` (PASS/FAIL/N-A).
-- **Sign-off** — Once all CRITICAL/HIGH/MEDIUM issues are resolved, write a clear sign-off statement and post `APPROVE` to `agency-coordinator`.
+- **Sign-off** — Once all CRITICAL/HIGH/MEDIUM issues are resolved, write a clear sign-off statement and post `APPROVE` to `agency-ceo`.
 
 ### When Done (All Issues Resolved)
 
-Post `APPROVE` to `agency-coordinator` in `inbox.jsonl`. This is the final gate. The CEO cannot enter DELIVERY without this message.
+Post `APPROVE` to `agency-ceo` in `inbox.jsonl`. This is the final gate. The CEO cannot enter DELIVERY without this message.
 
 ---
 

@@ -5,7 +5,7 @@ description: >
   is BRIEF, immediately after the brief is populated. The Researcher performs due
   diligence on the client — visiting their website, searching for business context,
   and producing a client intelligence report (00_client_intel.md). This report is
-  a mandatory input for the CEO (proposal), Architect (technical context), and QA
+  a mandatory input for the Lead Developer (proposal), Architect (technical context), and QA
   (risk context). The Researcher does NOT interact with the client directly.
 metadata:
   version: "1.0"
@@ -43,7 +43,7 @@ A proposal written without client research is unprofessional and risks misaligni
 
 ## Phase: RESEARCH (sub-step of BRIEF)
 
-**Goal:** Produce `agency_workspace/00_client_intel.md` before the CEO starts the proposal.
+**Goal:** Produce `agency_workspace/00_client_intel.md` before the Lead Developer relays it for the proposal.
 
 ### Step 1 — Extract Client Identity
 
@@ -157,7 +157,7 @@ Write `agency_workspace/00_client_intel.md` using the template below. Mark it co
 
 ## 6. Key Facts for the Proposal
 
-> Bullet points for quick reference by CEO and Architect.
+> Bullet points for quick reference by Lead Developer and Architect.
 
 - [key fact 1]
 - [key fact 2]
@@ -184,7 +184,7 @@ After writing `00_client_intel.md`, post the following to `inbox.jsonl`:
   "id": "msg-NNN",
   "timestamp": "ISO-8601",
   "from": "agency-researcher",
-  "to": "agency-ceo",
+  "to": "agency-lead-developer",
   "phase": "BRIEF",
   "type": "INFO",
   "ref_doc": "00_client_intel.md",
@@ -200,11 +200,11 @@ After writing `00_client_intel.md`, post the following to `inbox.jsonl`:
 
 **Goal:** Gather intelligence when a `REQUEST_CHANGE` is triggered, before the author enacts the change.
 
-When the Coordinator routes a `REQUEST_CHANGE` to you:
+When the Lead Developer routes a `REQUEST_CHANGE` to you:
 1. **Analyze the requested change** and the context of the current deliverable.
 2. **Perform necessary research** to gather intelligence, fact-check requirements, or find best practices relevant to the change request.
 3. **Document your findings** and provide actionable intelligence.
-4. **Reply** by posting an `INFO` message to `inbox.jsonl` directed to the `agency-coordinator` (or the target agent), detailing your findings so the author can accurately implement the `REVISION`.
+4. **Reply** by posting an `INFO` message to `inbox.jsonl` directed to the `agency-lead-developer` (or the target agent), detailing your findings so the author can accurately implement the `REVISION`.
 
 ---
 

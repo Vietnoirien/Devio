@@ -1,8 +1,8 @@
 {
-  "phase": "BRIEF",
+  "phase": "PROPOSAL",
   "owner": "agency-ceo",
-  "project": "",
-  "client": "",
+  "project": "Agent Typing Indicator",
+  "client": "Devio User",
   "started_at": "2026-06-19T17:33:18+02:00",
   "blocked_by": []
 }

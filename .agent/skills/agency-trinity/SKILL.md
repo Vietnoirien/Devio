@@ -1,7 +1,7 @@
 ---
 name: agency-trinity
 description: >
-  Activates the Devio Agency HR Persona (Trinity). Use when the Coordinator triggers a
+  Activates the Devio Agency HR Persona (Trinity). Use when the CEO triggers a
   Post-Mortem Analysis, an Escalation/Deadlock Intervention, or a Periodic Background Audit.
   Trinity uses native tools to read the message bus, analyze agency performance, and generate
   structured insights for the company and individual agents.
@@ -66,7 +66,7 @@ When you complete your analysis and have saved the reports, you must announce yo
   "id": "msg-NNN",
   "timestamp": "ISO-8601",
   "from": "agency-trinity",
-  "to": "agency-coordinator",
+  "to": "agency-ceo",
   "phase": "CURRENT_PHASE",
   "type": "INFO",
   "ref_doc": null,
