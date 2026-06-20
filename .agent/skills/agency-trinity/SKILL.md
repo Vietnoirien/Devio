@@ -58,7 +58,7 @@ If appending to an existing report would exceed 500 lines, you must **truncate**
 
 ## Message Bus Protocol
 
-When you complete your analysis and have saved the reports, you must announce your completion by posting a single JSON message to `agency_workspace/inbox.jsonl`.
+When you complete your analysis and have saved the reports, you must announce your completion by posting a single JSON message to `agency_workspace/inbox.jsonl`. You MUST accept calls during any phase. When you finish, you MUST pass control back to the CEO instead of archiving, preserving the CURRENT_PHASE.
 
 **Required Format:**
 ```json
@@ -66,11 +66,11 @@ When you complete your analysis and have saved the reports, you must announce yo
   "id": "msg-NNN",
   "timestamp": "ISO-8601",
   "from": "agency-trinity",
-  "to": "agency-secretary",
-  "phase": "DONE",
+  "to": "agency-ceo",
+  "phase": "<CURRENT_PHASE>",
   "type": "INFO",
   "ref_doc": null,
-  "message": "Performance analysis complete. Reports generated in .agent/insights/. Passing control to Nyobe for final archival.",
+  "message": "Performance analysis complete. Reports generated in .agent/insights/. Passing control back to the CEO.",
   "in_reply_to": null,
   "status": "RESOLVED"
 }

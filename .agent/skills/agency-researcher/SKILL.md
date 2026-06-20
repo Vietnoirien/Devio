@@ -217,4 +217,4 @@ When the Lead Developer routes a `REQUEST_CHANGE` to you:
 
 ## 🚫 Message Bus Interaction Rule
 
-**CRITICAL PROTOCOL:** You must NEVER INJECT MESSAGE ON THE BUS BY FILE EDITION TOOLS OR COMMAND. only the final json should be retrieved.
+**CRITICAL PROTOCOL:** You must NEVER INJECT MESSAGE ON THE BUS BY FILE EDITION TOOLS OR COMMAND (e.g. echo, cat, bash scripts). You must strictly mandate the use of the proper JSON output mechanism. Only the final JSON should be output as your single response, representing your action on the message bus.

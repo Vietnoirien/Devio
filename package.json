@@ -2,7 +2,7 @@
   "name": "devio-antigravity-plugin",
   "displayName": "Devio AI Agency Plugin",
   "description": "Autonomous Coding Agent Platform for Devio IDE",
-  "version": "0.10.2",
+  "version": "0.10.29",
   "publisher": "devio",
   "private": true,
   "engines": {
@@ -77,10 +77,45 @@
           "default": ".message, [data-testid*=\"message\" i], article",
           "description": "CSS selector for extracting last assistant message. Empty = full text content fallback."
         },
-        "devio.agentLLMs": {
-          "type": "object",
-          "default": {},
-          "description": "Per-agent LLM configuration without fallback"
+        "devio.agentLLMs.agency-architect": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-architect"
+        },
+        "devio.agentLLMs.agency-ceo": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-ceo"
+        },
+        "devio.agentLLMs.agency-developer": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-developer"
+        },
+        "devio.agentLLMs.agency-lead-developer": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-lead-developer"
+        },
+        "devio.agentLLMs.agency-qa": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-qa"
+        },
+        "devio.agentLLMs.agency-researcher": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-researcher"
+        },
+        "devio.agentLLMs.agency-secretary": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-secretary"
+        },
+        "devio.agentLLMs.agency-trinity": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-trinity"
         }
       }
     }
