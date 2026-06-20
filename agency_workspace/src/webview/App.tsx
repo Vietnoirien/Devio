@@ -44,6 +44,8 @@ function App() {
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [agents, setAgents] = useState<string[]>([]);
   const [loadingSettings, setLoadingSettings] = useState<boolean>(false);
+  const [autonomyMode, setAutonomyMode] = useState<string>('supervised');
+  const [antigravityLinkPort, setAntigravityLinkPort] = useState<string>('3717');
 
   const [composerFrom, setComposerFrom] = useState('client');
   const [composerTo, setComposerTo] = useState('agency-ceo');
@@ -101,6 +103,12 @@ function App() {
         setAgentLLMs(message.agentLLMs || {});
         setAvailableModels(message.availableModels || []);
         setAgents(message.agents || []);
+        if (message.autonomyMode !== undefined) {
+          setAutonomyMode(message.autonomyMode);
+        }
+        if (message.antigravityLinkPort !== undefined) {
+          setAntigravityLinkPort(String(message.antigravityLinkPort));
+        }
         setLoadingSettings(false);
       }
     };
@@ -523,15 +531,40 @@ function App() {
           <div className="settings-layout glass-panel">
             <h3>Agency Settings</h3>
             <div className="form-group">
-              <label>Autonomy Mode</label>
-              <select disabled>
-                <option>Fully Autonomous</option>
-                <option>Step-by-step</option>
+              <label htmlFor="autonomy-mode-select">Autonomy Mode</label>
+              <select 
+                id="autonomy-mode-select"
+                value={autonomyMode}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setAutonomyMode(val);
+                  if (vscode) {
+                    vscode.postMessage({ command: 'saveAutonomyMode', mode: val });
+                  }
+                }}
+              >
+                <option value="full">Fully Autonomous</option>
+                <option value="supervised">Step-by-step</option>
               </select>
             </div>
             <div className="form-group">
-              <label>Antigravity Link Port</label>
-              <input type="text" value="9222" disabled />
+              <label htmlFor="antigravity-link-port-input">Antigravity Link Port</label>
+              <input 
+                type="text" 
+                id="antigravity-link-port-input"
+                value={antigravityLinkPort}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const cleanVal = val.replace(/\D/g, '');
+                  setAntigravityLinkPort(cleanVal);
+                  if (cleanVal !== '') {
+                    const portNum = parseInt(cleanVal, 10);
+                    if (vscode) {
+                      vscode.postMessage({ command: 'saveAntigravityLinkPort', port: portNum });
+                    }
+                  }
+                }}
+              />
             </div>
             <hr style={{ borderColor: 'var(--border-color)', margin: '20px 0' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

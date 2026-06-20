@@ -464,5 +464,58 @@ describe('App Webview Component', () => {
       model: 'Gemini 3.1 Pro'
     });
   });
+
+  it('should render Settings tab with editable autonomyMode and antigravityLinkPort and dispatch changes', () => {
+    render(<App />);
+    initState();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'settingsData',
+            autonomyMode: 'supervised',
+            antigravityLinkPort: 3717,
+            agentLLMs: {},
+            availableModels: [],
+            agents: []
+          }
+        })
+      );
+    });
+
+    const settingsTab = screen.getByRole('button', { name: /Settings/i });
+    fireEvent.click(settingsTab);
+
+    // autonomyMode select should not be disabled
+    const autonomySelect = screen.getByLabelText('Autonomy Mode') as HTMLSelectElement;
+    expect(autonomySelect.disabled).toBe(false);
+    expect(autonomySelect.value).toBe('supervised');
+
+    // antigravityLinkPort input should not be disabled
+    const portInput = screen.getByLabelText('Antigravity Link Port') as HTMLInputElement;
+    expect(portInput.disabled).toBe(false);
+    expect(portInput.value).toBe('3717');
+
+    // Changing autonomyMode should post saveAutonomyMode
+    fireEvent.change(autonomySelect, { target: { value: 'full' } });
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      command: 'saveAutonomyMode',
+      mode: 'full'
+    });
+
+    // Changing antigravityLinkPort should post saveAntigravityLinkPort
+    fireEvent.change(portInput, { target: { value: '4000' } });
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      command: 'saveAntigravityLinkPort',
+      port: 4000
+    });
+
+    // Antigravity Link Port input only accepts numerical values
+    fireEvent.change(portInput, { target: { value: 'not-a-number' } });
+    expect(mockPostMessage).not.toHaveBeenCalledWith(expect.objectContaining({
+      command: 'saveAntigravityLinkPort',
+      port: 'not-a-number'
+    }));
+  });
 });
 

@@ -121,20 +121,31 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
                 const messages = await workspaceManager.readInbox();
                 const lastMessage = messages[messages.length - 1];
 
-                // Stop if the last message is addressed to the client
-                if (lastMessage && lastMessage.to === 'client') {
-                  vscode.window.showInformationMessage('Agency paused: Waiting for client input.');
-                  break;
-                }
-
-                // If the last message was to another agent, update the owner
-                if (lastMessage && lastMessage.to && lastMessage.to !== state.owner) {
-                  state.owner = lastMessage.to;
-                  if (lastMessage.phase) {
-                    state.phase = lastMessage.phase as any;
-                  }
-                  await workspaceManager.writeState(state);
-                }
+                 // Stop if the last message is addressed to the client
+                 if (lastMessage && lastMessage.to === 'client') {
+                   const autonomyMode = vscode.workspace.getConfiguration('devio').get<string>('autonomyMode', 'supervised');
+                   if (autonomyMode === 'full') {
+                     if (lastMessage.from) {
+                       state.owner = lastMessage.from;
+                       if (lastMessage.phase) {
+                         state.phase = lastMessage.phase as any;
+                       }
+                       await workspaceManager.writeState(state);
+                     }
+                   } else {
+                     vscode.window.showInformationMessage('Agency paused: Waiting for client input.');
+                     break;
+                   }
+                 }
+ 
+                 // If the last message was to another agent, update the owner
+                 if (lastMessage && lastMessage.to && lastMessage.to !== 'client' && lastMessage.to !== state.owner) {
+                   state.owner = lastMessage.to;
+                   if (lastMessage.phase) {
+                     state.phase = lastMessage.phase as any;
+                   }
+                   await workspaceManager.writeState(state);
+                 }
 
                 const fresh = vscode.workspace.getConfiguration('devio').get<boolean>('freshConversationPerTurn', true);
                 await orchestrationEngine.runTurn(state.owner || 'agency-ceo', state.phase || 'DEVELOPMENT', fresh);
@@ -145,6 +156,11 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
                 const newLastMessage = newMessages[newMessages.length - 1];
                 if (newLastMessage && newLastMessage.to === 'client') {
                   vscode.window.showInformationMessage('Agency paused: Waiting for client input.');
+                  break;
+                }
+
+                const autonomyMode = vscode.workspace.getConfiguration('devio').get<string>('autonomyMode', 'supervised');
+                if (autonomyMode === 'supervised') {
                   break;
                 }
               }
@@ -269,7 +285,9 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               } catch (e: any) {
                 console.error("Failed to fetch dynamic models", e);
               }
-              await webviewView.webview.postMessage({ type: 'settingsData', agentLLMs, availableModels, agents });
+              const autonomyMode = config.get<string>('autonomyMode', 'supervised');
+              const antigravityLinkPort = config.get<number>('antigravityLinkPort', 3717);
+              await webviewView.webview.postMessage({ type: 'settingsData', agentLLMs, availableModels, agents, autonomyMode, antigravityLinkPort });
             } catch (err: any) {
               vscode.window.showErrorMessage(`Failed to get settings data: ${err.message}`);
             }
@@ -283,6 +301,26 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               vscode.window.showInformationMessage(`Updated LLM for ${message.agent} to ${message.model}`);
             } catch (err: any) {
               vscode.window.showErrorMessage(`Failed to save agent LLM: ${err.message}`);
+            }
+            break;
+          }
+          case 'saveAutonomyMode': {
+            try {
+              const config = vscode.workspace.getConfiguration('devio');
+              await config.update('autonomyMode', message.mode, vscode.ConfigurationTarget.Global);
+              vscode.window.showInformationMessage(`Updated autonomy mode to ${message.mode}`);
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to save autonomy mode: ${err.message}`);
+            }
+            break;
+          }
+          case 'saveAntigravityLinkPort': {
+            try {
+              const config = vscode.workspace.getConfiguration('devio');
+              await config.update('antigravityLinkPort', message.port, vscode.ConfigurationTarget.Global);
+              vscode.window.showInformationMessage(`Updated Antigravity Link Port to ${message.port}`);
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to save Antigravity Link Port: ${err.message}`);
             }
             break;
           }

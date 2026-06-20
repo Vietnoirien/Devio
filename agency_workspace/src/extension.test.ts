@@ -4,6 +4,28 @@ const mockRegisterCommand = vi.fn();
 const mockRegisterWebviewViewProvider = vi.fn();
 
 vi.mock('vscode', () => {
+  const configStore: Record<string, any> = {
+    freshConversationPerTurn: true,
+    newChatSelector: 'Add context',
+    autonomyMode: 'supervised',
+    antigravityLinkPort: 3717
+  };
+  (globalThis as any).__devioConfigStore = configStore;
+  (globalThis as any).__devioUpdateCalls = [];
+
+  const getConfiguration = () => ({
+    get: (key: string, defaultValue: any) => {
+      return (globalThis as any).__devioConfigStore[key] ?? defaultValue ?? 9222;
+    },
+    update: (key: string, value: any, target: any) => {
+      (globalThis as any).__devioConfigStore[key] = value;
+      (globalThis as any).__devioUpdateCalls.push([key, value, target]);
+      return Promise.resolve();
+    }
+  });
+
+  (globalThis as any).__devioDefaultGetConfiguration = getConfiguration;
+
   return {
     commands: {
       registerCommand: (id: string, callback: Function) => {
@@ -29,6 +51,11 @@ vi.mock('vscode', () => {
       File: 1,
       Directory: 2,
       SymbolicLink: 64
+    },
+    ConfigurationTarget: {
+      Global: 1,
+      Workspace: 2,
+      WorkspaceFolder: 3
     },
     RelativePattern: class {
       constructor(public base: string, public pattern: string) {}
@@ -56,13 +83,7 @@ vi.mock('vscode', () => {
           }
         }
       ],
-      getConfiguration: vi.fn().mockReturnValue({
-        get: vi.fn((key: string, defaultValue: any) => {
-          if (key === 'freshConversationPerTurn') return true;
-          if (key === 'newChatSelector') return 'Add context';
-          return 9222;
-        })
-      }),
+      getConfiguration: getConfiguration,
       createFileSystemWatcher: vi.fn().mockReturnValue({
         onDidChange: vi.fn(),
         onDidCreate: vi.fn(),
@@ -120,10 +141,19 @@ vi.mock('./orchestration-engine', () => {
 import { activate } from './extension';
 
 describe('Extension Activation', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     mockRegisterCommand.mockReset();
     mockRegisterWebviewViewProvider.mockReset();
     mockRunTurn.mockReset();
+    (globalThis as any).__devioUpdateCalls = [];
+    (globalThis as any).__devioConfigStore = {
+      freshConversationPerTurn: true,
+      newChatSelector: 'Add context',
+      autonomyMode: 'supervised',
+      antigravityLinkPort: 3717
+    };
+    const vscode = await import('vscode');
+    (vscode.workspace.getConfiguration as any) = (globalThis as any).__devioDefaultGetConfiguration;
   });
 
   it('should register devio.start command on activation', async () => {
@@ -226,6 +256,7 @@ describe('Extension Activation', () => {
     provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
 
     if (messageListener) {
+      (globalThis as any).__devioConfigStore.autonomyMode = 'autonomous';
       mockRunTurn.mockImplementationOnce(async () => {
         const { WorkspaceManager } = await import('./workspace-manager');
         (WorkspaceManager as any).stopLoop();
@@ -602,6 +633,229 @@ describe('Extension Activation', () => {
       // It should throw an error since the file doesn't exist and fs is not fully mocked, 
       // but it will be caught and showErrorMessage will be called
       expect(vscodeMock.window.showErrorMessage).toHaveBeenCalled();
+    }
+  });
+
+  it('should handle getSettingsData command and return settingsData containing autonomyMode and antigravityLinkPort', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { fsPath: '/mock-global-storage' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    await activate(mockContext);
+
+    const providerCall = mockRegisterWebviewViewProvider.mock.calls.find(call => call[0] === 'devio-sidebar-view');
+    const provider = providerCall![1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockPostMessage = vi.fn();
+    const mockWebviewView = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: mockPostMessage,
+        options: {}
+      },
+      onDidDispose: vi.fn()
+    } as any;
+
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+    if (messageListener) {
+      await (messageListener as Function)({ command: 'getSettingsData' });
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'settingsData',
+          autonomyMode: 'supervised',
+          antigravityLinkPort: 3717
+        })
+      );
+    }
+  });
+
+  it('should handle saveAutonomyMode command and save globally', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { fsPath: '/mock-global-storage' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    await activate(mockContext);
+
+    const providerCall = mockRegisterWebviewViewProvider.mock.calls.find(call => call[0] === 'devio-sidebar-view');
+    const provider = providerCall![1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockWebviewView = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: vi.fn(),
+        options: {}
+      },
+      onDidDispose: vi.fn()
+    } as any;
+
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+    if (messageListener) {
+      await (messageListener as Function)({ command: 'saveAutonomyMode', mode: 'full' });
+      expect((globalThis as any).__devioUpdateCalls).toContainEqual(['autonomyMode', 'full', 1]);
+    }
+  });
+
+  it('should handle saveAntigravityLinkPort command and save globally', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { fsPath: '/mock-global-storage' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    await activate(mockContext);
+
+    const providerCall = mockRegisterWebviewViewProvider.mock.calls.find(call => call[0] === 'devio-sidebar-view');
+    const provider = providerCall![1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockWebviewView = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: vi.fn(),
+        options: {}
+      },
+      onDidDispose: vi.fn()
+    } as any;
+
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+    if (messageListener) {
+      await (messageListener as Function)({ command: 'saveAntigravityLinkPort', port: 1234 });
+      expect((globalThis as any).__devioUpdateCalls).toContainEqual(['antigravityLinkPort', 1234, 1]);
+    }
+  });
+
+  it('should break runAgency loop after one turn if autonomyMode is supervised', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { fsPath: '/mock-global-storage' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    await activate(mockContext);
+    
+    const providerCall = mockRegisterWebviewViewProvider.mock.calls.find(call => call[0] === 'devio-sidebar-view');
+    const provider = providerCall![1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockWebviewView = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: vi.fn(),
+        options: {}
+      },
+      onDidDispose: vi.fn()
+    } as any;
+
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+    if (messageListener) {
+      (globalThis as any).__devioConfigStore.autonomyMode = 'supervised';
+      mockRunTurn.mockResolvedValueOnce(undefined);
+
+      const mockMessage = { command: 'runAgency' };
+      await (messageListener as Function)(mockMessage);
+      
+      expect(mockRunTurn).toHaveBeenCalledTimes(1);
+      expect(mockRunTurn).toHaveBeenCalledWith('agency-ceo', 'DEVELOPMENT', true);
+    }
+  });
+
+  it('should resume from the last step state when transitioning to autonomous mode with no new client message', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { fsPath: '/mock-global-storage' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    await activate(mockContext);
+    
+    const providerCall = mockRegisterWebviewViewProvider.mock.calls.find(call => call[0] === 'devio-sidebar-view');
+    const provider = providerCall![1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockWebviewView = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: vi.fn(),
+        options: {}
+      },
+      onDidDispose: vi.fn()
+    } as any;
+
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+    if (messageListener) {
+      const { WorkspaceManager } = await import('./workspace-manager');
+      const mgr = new WorkspaceManager();
+      const inbox = await mgr.readInbox();
+      
+      // Set the last message in the inbox to be addressed to 'client' from 'agency-ceo'
+      inbox.push({
+        id: 'msg-to-client',
+        from: 'agency-ceo',
+        to: 'client',
+        phase: 'DEVELOPMENT',
+        message: 'Hello client'
+      });
+
+      (globalThis as any).__devioConfigStore.autonomyMode = 'full';
+      
+      // When the turn runs, simulate stopping the loop by appending another client message
+      mockRunTurn.mockImplementationOnce(async () => {
+        (WorkspaceManager as any).stopLoop();
+      });
+
+      const mockMessage = { command: 'runAgency' };
+      await (messageListener as Function)(mockMessage);
+      
+      // Since autonomyMode is 'full' and we resume, it should run the turn for the last step's sender ('agency-ceo')
+      expect(mockRunTurn).toHaveBeenCalledWith('agency-ceo', 'DEVELOPMENT', true);
+      
+      (WorkspaceManager as any).resetInbox();
     }
   });
 });

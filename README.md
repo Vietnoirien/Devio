@@ -184,7 +184,7 @@ The Devio plugin relies on the native IDE debugging port (CDP) for orchestration
 
 1. Clone the repository and install dependencies:
    ```bash
-   npm install
+   npm install --legacy-peer-deps
    ```
 2. Build the extension bundle and React webview:
    ```bash
