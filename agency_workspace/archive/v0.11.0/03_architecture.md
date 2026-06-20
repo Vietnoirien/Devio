@@ -13,10 +13,10 @@
 - **Job Details:** Responsible for project financial modeling, budget planning, and quote calculations using regional freelance intelligence. Validates quote correctness and verifies cost allocations across project phases.
 - **Activation Workflows:** Active in PROPOSAL (automatically triggered to calculate quote) and ARCHITECTURE (reviews budget impacts of changes to roadmap/tasks and updates estimates).
 - **Settings & UI Integration:** Ensure the agent correctly registers in the dynamic Settings view. Update dropdowns in `App.tsx` and configuration fields in `package.json` to fully support manual interaction for the `agency-accountant`.
-- **Quote Calculation Rules:** Implement logic such that the Accountant uses the formula: `Quote (in EUR HT) = Duration (working days) * 1,500 € HT` (based on a daily team rate of 1,500 € HT for 2 senior AI-powered French developers).
+- **Quote Calculation Rules:** Implement logic such that the Accountant uses the formula: `Quote (in EUR HT) = Duration (working days) * 1,200 € HT` (based on a daily team rate of 1,200 € HT for 2 senior AI-powered French developers).
 
 ### 1.3 Team SKILL.md Integrations
-- **CEO (`agency-ceo/SKILL.md`):** Update orchestration to redirect to `agency-designer` and `agency-accountant`. In BRIEF/PROPOSAL, collaborate with Accountant on quotes (1,500 € HT/day) and Designer on UI/UX scope. In DELIVERY, include their reports in summary.
+- **CEO (`agency-ceo/SKILL.md`):** Update orchestration to redirect to `agency-designer` and `agency-accountant`. In BRIEF/PROPOSAL, collaborate with Accountant on quotes (1,200 € HT/day) and Designer on UI/UX scope. In DELIVERY, include their reports in summary.
 - **Lead Developer (`agency-lead-developer/SKILL.md`):** Coordinate financial/design validation in PROPOSAL. Ensure Architect/Designer collaborate in ARCHITECTURE, and Accountant adjusts quotes. In DEVELOPMENT, ensure Designer reviews before QA.
 - **Architect (`agency-architect/SKILL.md`):** Collaborate with Designer on design tokens, custom tokenizer styles, and component feasibility. Consult Accountant for budget impacts of structural changes.
 - **Developer (`agency-developer/SKILL.md`):** Work closely with Designer during TDD loops for frontend features. Implement components exactly to Designer specifications.

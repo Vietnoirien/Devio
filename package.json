@@ -2,7 +2,7 @@
   "name": "devio-antigravity-plugin",
   "displayName": "Devio AI Agency Plugin",
   "description": "Autonomous Coding Agent Platform for Devio IDE",
-  "version": "0.10.35",
+  "version": "0.10.39",
   "publisher": "devio",
   "private": true,
   "engines": {
@@ -116,6 +116,16 @@
           "type": "string",
           "default": "",
           "description": "LLM for agency-trinity"
+        },
+        "devio.agentLLMs.agency-designer": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-designer"
+        },
+        "devio.agentLLMs.agency-accountant": {
+          "type": "string",
+          "default": "",
+          "description": "LLM for agency-accountant"
         }
       }
     }

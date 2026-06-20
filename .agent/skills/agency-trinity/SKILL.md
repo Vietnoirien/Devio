@@ -24,6 +24,7 @@ Your primary role is to monitor the agency's operations, identify bottlenecks, e
    - Protocol violations by any persona.
    - Individual agent strengths and weaknesses.
 3. **Generate Structured Reports**: Produce clear, actionable insights in markdown format.
+4. **Extend Monitoring**: Extend HR audit logs to monitor productivity and protocol compliance of `agency-designer` and `agency-accountant`.
 
 ## Insight Generation & Storage
 

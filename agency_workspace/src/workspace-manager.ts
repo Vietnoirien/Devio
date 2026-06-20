@@ -22,6 +22,7 @@ export interface AgencyMessage {
   message: string;
   in_reply_to: string | null;
   status: "OPEN" | "RESOLVED";
+  files?: Array<{ path: string; content: string }>;
 }
 
 export class WorkspaceManager {
@@ -227,5 +228,52 @@ export class WorkspaceManager {
     } catch {
       return false;
     }
+  }
+
+  /**
+   * Recursively scans the workspace for files modified after the given timestamp.
+   * Excludes: .git, node_modules, dist, dist-webview, .agent
+   */
+  async scanWorkspace(preTurnTimestamp: number): Promise<Array<{ path: string; content: string }>> {
+    const files: Array<{ path: string; content: string }> = [];
+    const exclusions = new Set(['.git', 'node_modules', 'dist', 'dist-webview', '.agent']);
+
+    const scanDir = async (dir: string) => {
+      let entries: string[] = [];
+      try {
+        entries = await fs.readdir(dir);
+      } catch (err) {
+        return; // Skip if directory cannot be read
+      }
+
+      for (const entry of entries) {
+        if (exclusions.has(entry)) continue;
+
+        const fullPath = path.join(dir, entry);
+        let stat: import('fs').Stats;
+        try {
+          stat = await fs.stat(fullPath);
+        } catch (err) {
+          continue;
+        }
+
+        if (stat.isDirectory()) {
+          await scanDir(fullPath);
+        } else if (stat.isFile()) {
+          // Compare mtime (modification time) with the pre-turn timestamp
+          if (stat.mtimeMs >= preTurnTimestamp) {
+            try {
+              const content = await fs.readFile(fullPath, 'utf8');
+              files.push({ path: fullPath, content });
+            } catch (err) {
+              // Skip unreadable files
+            }
+          }
+        }
+      }
+    };
+
+    await scanDir(this.workspacePath);
+    return files;
   }
 }

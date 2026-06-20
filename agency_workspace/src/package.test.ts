@@ -49,6 +49,8 @@ describe('Extension Packaging', () => {
     expect(props['devio.agentLLMs.agency-researcher']).toBeDefined();
     expect(props['devio.agentLLMs.agency-secretary']).toBeDefined();
     expect(props['devio.agentLLMs.agency-trinity']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-designer']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-accountant']).toBeDefined();
     
     expect(props['devio.agentLLMs.agency-ceo'].type).toBe('string');
     expect(props['devio.agentLLMs.agency-ceo'].default).toBe('');

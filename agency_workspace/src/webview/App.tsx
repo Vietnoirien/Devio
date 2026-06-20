@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatPhaseName, isPhaseBlocked, getLatestMessages, createAgencyMessage } from './dashboard-logic';
 import { AgencyState, AgencyMessage } from '../workspace-manager';
+import { DocumentRenderer } from './DocumentRenderer';
 import './App.css';
 
 let _vscode: ReturnType<typeof acquireVsCodeApi> | null = null;
@@ -429,22 +430,28 @@ function App() {
                   <select value={composerFrom} onChange={e => setComposerFrom(e.target.value)}>
                     <option value="client">client</option>
                     <option value="agency-ceo">agency-ceo</option>
-                    <option value="agency-ceo">agency-ceo</option>
                     <option value="agency-architect">agency-architect</option>
                     <option value="agency-developer">agency-developer</option>
+                    <option value="agency-lead-developer">agency-lead-developer</option>
                     <option value="agency-qa">agency-qa</option>
                     <option value="agency-researcher">agency-researcher</option>
+                    <option value="agency-designer">agency-designer</option>
+                    <option value="agency-accountant">agency-accountant</option>
                   </select>
                 </div>
                 
                 <div className="form-group">
                   <label>To Agent</label>
                   <select value={composerTo} onChange={e => setComposerTo(e.target.value)}>
+                    <option value="client">client</option>
                     <option value="agency-ceo">agency-ceo</option>
                     <option value="agency-architect">agency-architect</option>
                     <option value="agency-developer">agency-developer</option>
+                    <option value="agency-lead-developer">agency-lead-developer</option>
                     <option value="agency-qa">agency-qa</option>
-                    <option value="agency-ceo">agency-ceo</option>
+                    <option value="agency-researcher">agency-researcher</option>
+                    <option value="agency-designer">agency-designer</option>
+                    <option value="agency-accountant">agency-accountant</option>
                   </select>
                 </div>
 
@@ -517,9 +524,8 @@ function App() {
         {activeTab === 'document' && (
           <div className="document-layout">
             {documentFile ? (
-              <div className="glass-panel document-panel">
-                <h3>Viewing: {documentFile}</h3>
-                <pre className="document-content">{documentContent}</pre>
+              <div className="glass-panel document-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <DocumentRenderer file={documentFile} content={documentContent || ''} messages={messages} />
               </div>
             ) : (
               <div className="empty-state">No document selected. Click a document tag in the chat to view it here.</div>

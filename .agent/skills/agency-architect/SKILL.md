@@ -63,6 +63,8 @@ Apply the full checklist in `references/architecture_checklist.md`. Your documen
 
 ### Interactions During ARCHITECTURE
 
+- **Collaborate**: Collaborate with Designer on design tokens, custom tokenizer styles, and component feasibility. Consult Accountant for budget impacts of structural changes.
+
 - **After writing:** Post `SUBMIT` to both `agency-lead-developer` and `agency-qa` in `inbox.jsonl`.
 - **On `REQUEST_CHANGE` from Lead Developer** (budget conflict, scope mismatch): Revise the architecture to reduce cost/complexity, post `REVISION`.
 - **On `REQUEST_CHANGE` from QA** (security concern in design): Address the structural fix, post `REVISION`.

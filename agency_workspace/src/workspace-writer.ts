@@ -12,7 +12,7 @@ export interface ParsedResponse {
 }
 
 export class WorkspaceWriter {
-    private manager: WorkspaceManager;
+    public manager: WorkspaceManager;
 
     constructor(manager: WorkspaceManager) {
         this.manager = manager;
@@ -239,12 +239,25 @@ export class WorkspaceWriter {
         return null;
     }
 
-    async applyResponse(response: ParsedResponse, msg: AgencyMessage, from: string, to: string, phase: string): Promise<void> {
+    async applyResponse(response: ParsedResponse, msg: AgencyMessage, from: string, to: string, phase: string, preTurnTimestamp?: number): Promise<void> {
         // Apply files atomically
         for (const file of response.files) {
             const dir = path.dirname(file.path);
             await fs.mkdir(dir, { recursive: true });
             await fs.writeFile(file.path, file.content, 'utf8');
+        }
+
+        if (preTurnTimestamp !== undefined) {
+            const scannedFiles = await this.manager.scanWorkspace(preTurnTimestamp);
+            const mergedFiles = [...response.files];
+            for (const sf of scannedFiles) {
+                if (!mergedFiles.some(mf => mf.path === sf.path)) {
+                    mergedFiles.push(sf);
+                }
+            }
+            if (mergedFiles.length > 0) {
+                msg.files = mergedFiles;
+            }
         }
 
         await this.manager.appendInbox(msg);

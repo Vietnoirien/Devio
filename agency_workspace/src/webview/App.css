@@ -634,4 +634,16 @@ button {
   color: var(--text-muted);
   font-style: italic;
   font-weight: 500;
-}
+}/* Token Highlights */
+.token.keyword { color: var(--vscode-editor-keywordForeground, #d16969); }
+.token.string { color: var(--vscode-editor-stringForeground, #ce9178); }
+.token.number { color: var(--vscode-editor-numberForeground, #b5cea8); }
+.token.boolean { color: var(--vscode-editor-keywordForeground, #569cd6); }
+.token.comment { color: var(--vscode-editor-commentForeground, #6a9955); font-style: italic; }
+.token.key { color: var(--vscode-editor-propertyForeground, #9cdcfe); }
+.token.tag { color: var(--vscode-editor-tagForeground, #569cd6); }
+.token.attribute-name { color: var(--vscode-editor-attributeNameForeground, #9cdcfe); }
+.token.attribute-value { color: var(--vscode-editor-attributeValueForeground, #ce9178); }
+.token.selector { color: var(--vscode-editor-propertyForeground, #d7ba7d); }
+.token.property { color: var(--vscode-editor-propertyForeground, #9cdcfe); }
+.token.value { color: var(--vscode-editor-stringForeground, #ce9178); }

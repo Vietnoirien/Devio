@@ -6,7 +6,7 @@ describe('Agency Skills', () => {
   it('agency-ceo SKILL.md should instruct the CEO to manage client requests and redirect to Lead Developer and Trinity', () => {
     const skillPath = path.join(__dirname, '../../.agent/skills/agency-ceo/SKILL.md');
     const content = fs.readFileSync(skillPath, 'utf8');
-    expect(content).toContain('manage client requests and redirect to the Lead Developer (Merovingien) and Trinity (HR) as needed');
+    expect(content).toContain('manage client requests and redirect to the Lead Developer (Merovingien), Trinity (HR), Designer (Tank), and Accountant (Councillor Hamann) as needed');
   });
 
   describe('Task 2: agency-secretary and agency-coordinator', () => {

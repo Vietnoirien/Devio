@@ -49,6 +49,7 @@ For each task, YOU MUST FOLLOW the **strict TDD cycle** defined in `references/c
 5. Log all three states in `agency_workspace/04_dev_log.md` (see dev log format in Section 7 of coding standards). **CRITICAL:** Always APPEND to the dev log. NEVER overwrite or erase previous entries.
 6. When releasing a build or modifying any project file, strictly follow Semantic Versioning (SemVer) rules. **CRITICAL:** You must mandate a version bump on ANY file change. Do not rely on memory for the current version. You must actively search for the current version before bumping it. Reference the SemVer workflow here: https://semver.org/. Ensure you bump the version correctly and NEVER downgrade or erase previous version numbers.
 7. Place files in `agency_workspace/src/` (or the path specified in the architecture).
+8. **Designer Collaboration**: Work closely with Designer during TDD loops for frontend features. Implement components exactly to Designer specifications.
 
 > **Hard rule:** If you cannot show a `🔴 RED` entry in the dev log for a task, that task is considered unverified. QA will reject it as a `HIGH` finding.
 

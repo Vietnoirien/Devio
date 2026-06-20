@@ -66,6 +66,7 @@ export class OrchestrationEngine {
         }
 
 
+        const preTurnTimestamp = Date.now();
         const { prompt, validationKey } = await this.promptBuilder.buildPrompt(persona, phase);
         await this.bridge.injectMessage(prompt);
 
@@ -105,6 +106,7 @@ export class OrchestrationEngine {
             throw new Error(`CRITICAL: Timed out or failed to extract a valid AgencyMessage. Last error: ${lastError?.message}`);
         }
 
-        await this.writer.applyResponse(finalParsed, finalMessage, persona, 'agency-ceo', phase);
+        // Apply any files provided by the AI response first (this writes them to the workspace), then scan and append
+        await this.writer.applyResponse(finalParsed, finalMessage, persona, 'agency-ceo', phase, preTurnTimestamp);
     }
 }
