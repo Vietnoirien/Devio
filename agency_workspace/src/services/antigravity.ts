@@ -628,6 +628,7 @@ export async function clickElement(
              if (['INPUT', 'TEXTAREA'].includes(el.tagName) || el.getAttribute('contenteditable') === 'true') {
                  el.focus();
              }
+             try { el.click(); } catch(e) {}
         }
 
         // Recursive search that enters Shadow DOM

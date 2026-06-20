@@ -1,8 +1,9 @@
 {
-  "phase": "ARCHITECTURE",
-  "owner": "agency-ceo",
-  "project": "",
-  "client": "",
-  "started_at": "",
+  "phase": "DELIVERY",
+  "owner": "agency-secretary",
+  "project": "Antigravity Plugin",
+  "client": "viet",
+  "started_at": "2026-06-19T20:00:00Z",
+  "updated_at": "2026-06-20T13:13:11+02:00",
   "blocked_by": []
 }

@@ -35,4 +35,22 @@ describe('Extension Packaging', () => {
       expect(stats.size).toBeGreaterThan(0);
     }
   });
+
+  it('package.json should strictly define devio.agentLLMs configuration constraints as flat keys', () => {
+    const packageJsonPath = path.join(__dirname, '../../package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    
+    const props = packageJson.contributes.configuration.properties;
+    expect(props['devio.agentLLMs.agency-ceo']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-architect']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-developer']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-lead-developer']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-qa']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-researcher']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-secretary']).toBeDefined();
+    expect(props['devio.agentLLMs.agency-trinity']).toBeDefined();
+    
+    expect(props['devio.agentLLMs.agency-ceo'].type).toBe('string');
+    expect(props['devio.agentLLMs.agency-ceo'].default).toBe('');
+  });
 });

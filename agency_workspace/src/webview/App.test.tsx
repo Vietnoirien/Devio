@@ -405,4 +405,64 @@ describe('App Webview Component', () => {
     expect(document.querySelector('.typing-indicator-container')).not.toBeNull();
     expect(document.querySelector('.whatsapp-spinner')).not.toBeNull();
   });
+
+  it('should dispatch stopAgency command when Stop button is clicked while agency is running', () => {
+    render(<App />);
+    initState();
+    
+    // Trigger agency running
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'agencyRunning',
+            isRunning: true
+          }
+        })
+      );
+    });
+    
+    const stopBtn = screen.getByRole('button', { name: /Stop Agency/i });
+    fireEvent.click(stopBtn);
+    
+    expect(mockPostMessage).toHaveBeenCalledWith({ command: 'stopAgency' });
+  });
+  it('should render Settings tab with per-agent LLM dropdowns and dispatch saveAgentLLM', () => {
+    render(<App />);
+    initState();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'settingsData',
+            agentLLMs: { 'agency-ceo': 'Gemini 3.5 Flash' },
+            availableModels: ['Gemini 3.5 Flash', 'Gemini 3.1 Pro'],
+            agents: ['agency-ceo', 'agency-developer']
+          }
+        })
+      );
+    });
+
+    const settingsTab = screen.getByRole('button', { name: /Settings/i });
+    fireEvent.click(settingsTab);
+
+    expect(screen.getByText('agency-ceo')).toBeDefined();
+    expect(screen.getByText('agency-developer')).toBeDefined();
+
+    const selects = screen.getAllByRole('combobox');
+    // from/to/type selects in devtools are hidden because devtools is not active tab
+    // So selects should just be the autonomy mode (disabled) + the agent dropdowns
+    // Let's just find by display value or label, but since labels don't have htmlFor, we just find by value
+    const ceoSelect = screen.getByDisplayValue('Gemini 3.5 Flash') as HTMLSelectElement;
+    expect(ceoSelect).toBeDefined();
+
+    fireEvent.change(ceoSelect, { target: { value: 'Gemini 3.1 Pro' } });
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      command: 'saveAgentLLM',
+      agent: 'agency-ceo',
+      model: 'Gemini 3.1 Pro'
+    });
+  });
 });
+

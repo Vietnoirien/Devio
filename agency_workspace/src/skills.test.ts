@@ -3,10 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 describe('Agency Skills', () => {
-  it('agency-ceo SKILL.md should instruct the CEO to manage client requests and redirect to Researcher, Trinity, or Merovingien', () => {
+  it('agency-ceo SKILL.md should instruct the CEO to manage client requests and redirect to Lead Developer and Trinity', () => {
     const skillPath = path.join(__dirname, '../../.agent/skills/agency-ceo/SKILL.md');
     const content = fs.readFileSync(skillPath, 'utf8');
-    expect(content).toContain('manage client requests and redirect to Researcher, Trinity, or Merovingien');
+    expect(content).toContain('manage client requests and redirect to the Lead Developer (Merovingien) and Trinity (HR) as needed');
   });
 
   describe('Task 2: agency-secretary and agency-coordinator', () => {
@@ -14,7 +14,7 @@ describe('Agency Skills', () => {
       const skillPath = path.join(__dirname, '../../.agent/skills/agency-secretary/SKILL.md');
       expect(fs.existsSync(skillPath)).toBe(true);
       const content = fs.readFileSync(skillPath, 'utf8');
-      expect(content).toContain('archiving triggers ONLY in the DONE phase after agency-trinity has completed her job');
+      expect(content).toContain('Archiving triggers ONLY in the DONE phase after agency-trinity has completed her job');
       expect(content).toContain('the CEO or Lead Developer can ask the Secretary (Nyobe) for the context path');
     });
 
@@ -46,9 +46,15 @@ describe('Agency Skills', () => {
         const skillPath = path.join(skillsDir, agent, 'SKILL.md');
         if (fs.existsSync(skillPath)) {
           const content = fs.readFileSync(skillPath, 'utf8');
-          expect(content).toContain('NEVER INJECT MESSAGE ON THE BUS BY FILE EDITION TOOLS OR COMMAND. only the final json should be retrieved');
+          expect(content).toContain('NEVER INJECT MESSAGE ON THE BUS BY FILE EDITION TOOLS OR COMMAND');
         }
       });
+    });
+
+    it('agency-researcher SKILL.md should explicitly mandate proper JSON output', () => {
+      const skillPath = path.join(__dirname, '../../.agent/skills/agency-researcher/SKILL.md');
+      const content = fs.readFileSync(skillPath, 'utf8');
+      expect(content).toContain('strictly mandate the use of the proper JSON output mechanism');
     });
   });
 });

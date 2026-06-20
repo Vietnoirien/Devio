@@ -113,8 +113,8 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
           case 'runAgency':
             webviewView.webview.postMessage({ type: 'agencyRunning', isRunning: true });
             try {
-              let isRunning = true;
-              while (isRunning) {
+              this.isAgencyRunningLoop = true;
+              while (this.isAgencyRunningLoop) {
                 const state = await workspaceManager.readState();
                 
                 // Read inbox to see who the last message was addressed to
@@ -154,7 +154,20 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               webviewView.webview.postMessage({ type: 'agencyRunning', isRunning: false });
             }
             break;
-          case 'openDocument':
+          case 'stopAgency': {
+            try {
+              this.isAgencyRunningLoop = false;
+              orchestrationEngine.stop();
+              await nativeBridge.clickButton('Cancel');
+              webviewView.webview.postMessage({ type: 'agencyRunning', isRunning: false });
+              vscode.window.showInformationMessage('Agency stopped.');
+              await syncWorkspaceData();
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to stop agency: ${err.message}`);
+            }
+            break;
+          }
+          case 'openDocument': {
             try {
               const docPath = message.file;
               const fs = require('fs/promises');
@@ -181,7 +194,8 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               vscode.window.showErrorMessage(`Failed to open document: ${err.message}`);
             }
             break;
-          case 'fixGeminiMd':
+          }
+          case 'fixGeminiMd': {
             try {
               const fs = require('fs/promises');
               const path = require('path');
@@ -193,7 +207,8 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               vscode.window.showErrorMessage(`Failed to apply GEMINI.md: ${err.message}`);
             }
             break;
-          case 'getInsights':
+          }
+          case 'getInsights': {
             try {
               const fs = require('fs/promises');
               const path = require('path');
@@ -216,7 +231,8 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               vscode.window.showErrorMessage(`Failed to get insights: ${err.message}`);
             }
             break;
-          case 'saveInsight':
+          }
+          case 'saveInsight': {
             try {
               const fs = require('fs/promises');
               const path = require('path');
@@ -227,6 +243,49 @@ class DevioSidebarProvider implements vscode.WebviewViewProvider {
               vscode.window.showErrorMessage(`Failed to save insight: ${err.message}`);
             }
             break;
+          }
+          case 'getSettingsData': {
+            try {
+              const config = vscode.workspace.getConfiguration('devio');
+              const fs = require('fs/promises');
+              const path = require('path');
+              let agents: string[] = [];
+              try {
+                const skillsDir = path.join(this._globalStorageUri.fsPath, '.agent', 'skills');
+                const dirs = await fs.readdir(skillsDir, { withFileTypes: true });
+                agents = dirs.filter((d: any) => d.isDirectory()).map((d: any) => d.name);
+              } catch (e) {
+                agents = ['agency-ceo', 'agency-architect', 'agency-developer', 'agency-lead-developer', 'agency-qa', 'agency-researcher', 'agency-secretary', 'agency-trinity'];
+              }
+              const agentLLMs: Record<string, string> = {};
+              for (const agent of agents) {
+                agentLLMs[agent] = config.get<string>(`agentLLMs.${agent}`) || '';
+              }
+              let availableModels: string[] = [];
+              try {
+                const port = vscode.workspace.getConfiguration('devio').get<number>('antigravityLinkPort', 9222);
+                await nativeBridge.connectCDP(port);
+                availableModels = await nativeBridge.getAvailableModels();
+              } catch (e: any) {
+                console.error("Failed to fetch dynamic models", e);
+              }
+              await webviewView.webview.postMessage({ type: 'settingsData', agentLLMs, availableModels, agents });
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to get settings data: ${err.message}`);
+            }
+            break;
+          }
+          case 'saveAgentLLM': {
+            try {
+              const config = vscode.workspace.getConfiguration('devio');
+              const key = `agentLLMs.${message.agent}`;
+              await config.update(key, message.model, vscode.ConfigurationTarget.Global);
+              vscode.window.showInformationMessage(`Updated LLM for ${message.agent} to ${message.model}`);
+            } catch (err: any) {
+              vscode.window.showErrorMessage(`Failed to save agent LLM: ${err.message}`);
+            }
+            break;
+          }
         }
       }
     );

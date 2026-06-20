@@ -112,6 +112,7 @@ vi.mock('./orchestration-engine', () => {
   return {
     OrchestrationEngine: class {
       runTurn = mockRunTurn;
+      stop = vi.fn();
     }
   };
 });
@@ -239,6 +240,55 @@ describe('Extension Activation', () => {
       
       const { WorkspaceManager } = await import('./workspace-manager');
       (WorkspaceManager as any).resetInbox();
+    }
+  });
+
+  it('should handle stopAgency command, break execution loop, and click IDE cancel button', async () => {
+    const mockContext = {
+      subscriptions: [],
+      extensionUri: { path: '/mock-extension' },
+      globalStorageUri: { path: '/mock-global-storage' },
+      secrets: { get: vi.fn().mockResolvedValue('token') }
+    } as any;
+
+    await activate(mockContext);
+    const provider = mockRegisterWebviewViewProvider.mock.calls[0][1];
+
+    let messageListener: Function | null = null;
+    const mockOnDidReceiveMessage = (listener: Function) => {
+      messageListener = listener;
+      return { dispose: () => {} };
+    };
+
+    const mockWebviewView = {
+      webview: {
+        html: '',
+        onDidReceiveMessage: mockOnDidReceiveMessage,
+        postMessage: vi.fn(),
+        options: {}
+      },
+      onDidDispose: vi.fn()
+    } as any;
+
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+    if (messageListener) {
+      const { NativeBridge } = await import('./native-bridge');
+      const clickButtonSpy = vi.spyOn(NativeBridge.prototype, 'clickButton').mockResolvedValue(undefined);
+      
+      mockRunTurn.mockImplementationOnce(async () => {
+        // while running, simulate receiving a stopAgency message!
+        await (messageListener as Function)({ command: 'stopAgency' });
+      });
+
+      const mockMessage = { command: 'runAgency' };
+      await (messageListener as Function)(mockMessage);
+      
+      expect(clickButtonSpy).toHaveBeenCalledWith('Cancel');
+      
+      const { WorkspaceManager } = await import('./workspace-manager');
+      (WorkspaceManager as any).resetInbox();
+      clickButtonSpy.mockRestore();
     }
   });
 

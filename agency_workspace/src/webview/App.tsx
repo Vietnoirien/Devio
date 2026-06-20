@@ -40,6 +40,11 @@ function App() {
   const [documentContent, setDocumentContent] = useState<string | null>(null);
   const [documentFile, setDocumentFile] = useState<string | null>(null);
 
+  const [agentLLMs, setAgentLLMs] = useState<Record<string, string>>({});
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [agents, setAgents] = useState<string[]>([]);
+  const [loadingSettings, setLoadingSettings] = useState<boolean>(false);
+
   const [composerFrom, setComposerFrom] = useState('client');
   const [composerTo, setComposerTo] = useState('agency-ceo');
   const [composerType, setComposerType] = useState<"SUBMIT" | "REQUEST_CHANGE" | "REVISION" | "APPROVE" | "ESCALATE" | "INFO">('INFO');
@@ -92,6 +97,11 @@ function App() {
         setIsAgencyRunning(message.isRunning);
       } else if (message.type === 'insightsData') {
         setInsights(message.insights || []);
+      } else if (message.type === 'settingsData') {
+        setAgentLLMs(message.agentLLMs || {});
+        setAvailableModels(message.availableModels || []);
+        setAgents(message.agents || []);
+        setLoadingSettings(false);
       }
     };
 
@@ -100,6 +110,7 @@ function App() {
     if (vscode) {
       vscode.postMessage({ command: 'ready' });
       vscode.postMessage({ command: 'getInsights' });
+      vscode.postMessage({ command: 'getSettingsData' });
     } else {
       setLoading(false);
     }
@@ -166,6 +177,12 @@ function App() {
     }
   };
 
+  const handleStopAgency = () => {
+    if (vscode) {
+      vscode.postMessage({ command: 'stopAgency' });
+    }
+  };
+
   const openDocument = (docPath: string) => {
     if (vscode) {
       vscode.postMessage({ command: 'openDocument', file: docPath });
@@ -183,6 +200,20 @@ function App() {
       vscode.postMessage({ command: 'saveInsight', file, content });
     } else {
       setInsights(insights.map(i => i.file === file ? { ...i, content } : i));
+    }
+  };
+
+  const handleAgentLLMChange = (agent: string, model: string) => {
+    setAgentLLMs(prev => ({ ...prev, [agent]: model }));
+    if (vscode) {
+      vscode.postMessage({ command: 'saveAgentLLM', agent, model });
+    }
+  };
+
+  const refreshSettings = () => {
+    setLoadingSettings(true);
+    if (vscode) {
+      vscode.postMessage({ command: 'getSettingsData' });
     }
   };
 
@@ -350,9 +381,16 @@ function App() {
                 }}
                 rows={3}
               />
-              <button className="btn-run-agency" onClick={handleRunAgency} disabled={isAgencyRunning} aria-label="Run Agency" title="Run Agency">
+              <button 
+                className={`btn-run-agency ${isAgencyRunning ? 'stop-mode' : ''}`} 
+                onClick={isAgencyRunning ? handleStopAgency : handleRunAgency} 
+                aria-label={isAgencyRunning ? "Stop Agency" : "Run Agency"} 
+                title={isAgencyRunning ? "Stop Agency" : "Run Agency"}
+              >
                 {isAgencyRunning ? (
-                  <div className="loader-small"></div>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="12" height="12" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                  </svg>
                 ) : (
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -495,6 +533,34 @@ function App() {
               <label>Antigravity Link Port</label>
               <input type="text" value="9222" disabled />
             </div>
+            <hr style={{ borderColor: 'var(--border-color)', margin: '20px 0' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3>Per-Agent LLM Configuration</h3>
+              <button onClick={refreshSettings} disabled={loadingSettings} style={{ padding: '4px 8px', borderRadius: '4px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: loadingSettings ? 'not-allowed' : 'pointer' }}>
+                {loadingSettings ? 'Fetching...' : 'Refresh Models'}
+              </button>
+            </div>
+            {agents.length > 0 ? (
+              <div className="agents-llm-list" style={{ marginTop: '10px' }}>
+                {agents.map(agent => (
+                  <div key={agent} className="form-group" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <label style={{ width: '150px', marginBottom: '0' }}>{agent}</label>
+                    <select 
+                      value={agentLLMs[agent] || ''} 
+                      onChange={(e) => handleAgentLLMChange(agent, e.target.value)}
+                      style={{ flex: 1, marginLeft: '10px' }}
+                    >
+                      <option value="" disabled>Select a model...</option>
+                      {availableModels.map(model => (
+                        <option key={model} value={model}>{model}</option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No agents found or loading...</p>
+            )}
             <p className="help-text">Settings are managed via VS Code's settings.json (search for 'devio').</p>
           </div>
         )}
