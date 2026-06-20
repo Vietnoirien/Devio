@@ -56,8 +56,10 @@ You are strictly forbidden from editing ANY project code, configuration, or stru
    - Timeline expectations
    - Budget range
    - Success criteria
+   
+   *Note: For Devio internal work, there are no time limits or budgets, and the budget/timeline check and clarification step is skipped.*
 3. If you lack business context or industry facts, post a message to `"agency-lead-developer"` to gather the intel instead of guessing.
-4. Once you have enough to proceed, update `01_brief.md` with a clean summary and post `INFO` to `agency-lead-developer` with any budget constraints discovered.
+4. Once you have enough to proceed, update `01_brief.md` with a clean summary and post `INFO` to `agency-lead-developer` with any budget constraints discovered (or explicitly note it as internal work with no budget/timeline constraints).
 5. Update `state.json` phase to `PROPOSAL`.
 
 ---
