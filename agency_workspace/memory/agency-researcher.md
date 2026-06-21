@@ -1,0 +1,5 @@
+# Memory for agency-researcher
+
+- 2026-06-21: Received REQUEST_RESEARCH from agency-lead-developer to investigate SOTA agentic workflows, vertical tasking, skill fragmentation, and path linking based on the YouTube reference. Populated the `agency_workspace/intelligence/` folder with two topic files: `sota_agentic_workflows_vertical_tasking.md` and `skill_fragmentation_path_linking.md`. Replied to `msg-004` with an `INFO` message containing the findings.
+- 2026-06-21: Received REQUEST_RESEARCH (`msg-012`) from agency-lead-developer to identify and redefine new agent roles/personas based on the methodology shown in the reference video. Researched the video content and Matt Pocock's workflow, created `sota_agent_roles_video_methodology.md` in the intelligence folder, and responded with an INFO message.
+- 2026-06-21: Received REQUEST_RESEARCH (`msg-014`) from agency-lead-developer to research specific directory structures for vertical tasking. Investigated Vertical Slice Architecture and feature-centric structures, created `vertical_tasking_directory_structure.md` in the intelligence folder, and responded with an INFO message.
